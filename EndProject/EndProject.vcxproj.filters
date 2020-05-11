@@ -29,16 +29,10 @@
     <ClInclude Include="Base_Creature.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
     <ClInclude Include="Players.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="Ethnicity.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="Base_Character.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

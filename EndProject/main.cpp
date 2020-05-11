@@ -1,4 +1,5 @@
-﻿#include"Monster.h"
+﻿#include"Ethnicity.h"
+#include"Players.h"
 #include<fstream>
 
 int main(int argc, char* argv[])

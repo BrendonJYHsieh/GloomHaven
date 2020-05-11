@@ -156,10 +156,8 @@
     <ClCompile Include="Monster.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Base_Character.h" />
     <ClInclude Include="Base_Creature.h" />
     <ClInclude Include="Ethnicity.h" />
-    <ClInclude Include="Monster.h" />
     <ClInclude Include="Players.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
