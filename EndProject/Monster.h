@@ -1,15 +1,11 @@
 #pragma once
-#include "Base_Creature.h"
-class Monster :
-	public Base_Creature
+#include"Ethnicity.h"
+
+class Monster : public Ethnicity 
 {
 public:
-	//Constructure Ä~©Ó
 	Monster();
-	Monster(string name, int hp, int damage, int range);
-	//©Çª«¶Ë®`
-	int Damage;
-	//§ðÀ»½d³ò
-	int Attack_Range;
+	~Monster();
+private:
+	vector<Ethnicity> Ethnicity_List;
 };
-

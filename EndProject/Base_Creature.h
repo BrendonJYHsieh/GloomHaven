@@ -13,11 +13,12 @@ struct Card
 	int ID;
 	//敏捷值
 	int Dexterity_Value;
-	//卡片(上)動作 and 數值
-	vector<Card_Property> MovementUp;
-	//卡片(下)動作 and 數值
-	vector<Card_Property> MovementDown;
+	//卡片動作 and 數值
+	vector<Card_Property> Movement;
 };
+
+/*=============生物模板=============*/
+
 class Base_Creature
 {
 public:
@@ -26,8 +27,15 @@ public:
 	Base_Creature(string name,int hp);
 
 	//Property
+
+	//生物名子
 	string Name;
+	//生物生命
 	int Hp;
-	vector<Card>Cards;
+	//生物傷害
+	int Damage;
+	//生物範圍
+	int Attack_Range;
+	//
 };
 
