@@ -15,8 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EndProject.cpp">
+    <ClCompile Include="Base_Creature.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Base_Creature.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
