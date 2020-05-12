@@ -1,7 +1,40 @@
 #include"Game_Manager.h"
+/*=============main_function==============*/
+//遊戲主程式
+void Main_Game(fstream& File_Character,fstream& File_Monster)
+{
+	vector<Character> Player;
+	get_Character_Data(Player);
+}
 
+void get_Character_Data(vector<Character> player)
+{
+	int Charactor_number = 0;
+	cout << "請輸入出場角色數量:" << endl;
+	cin >> Charactor_number;
+}
+
+/*==============DEBUG_MODE================*/
+
+/*================UI_MODE=================*/
+void Main_Game_UI() 
+{
+	switch (Project_Start_UI())
+	{
+	case 0:		//開始遊戲
+		break;
+	case 1:		//結束遊戲
+		system("cls");
+		cout << "感謝您的遊玩" << endl << endl;
+		system("pause");
+		return;
+		break;
+	default:
+		break;
+	}
+}
 //開始介面  回傳值 = 0:開始遊戲 ，回傳值 = 1:結束遊戲
-int Project_Start() 
+int Project_Start_UI() 
 {
 	cout << "    GloomHaven   " << endl << endl;
 	cout << "=================" << endl;
@@ -58,12 +91,8 @@ int Project_Start()
 			return mode;
 	}
 }
-//遊戲主程式
-void Main_Game() 
-{
 
-}
-
+/*=============Windows.h的function==============*/
 void setPrintPosition(int x, int y)		//改變Print的起始位置
 {
 	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -1,10 +1,9 @@
 ﻿#include"Game_Manager.h"
-#include<fstream>
 
 void main(int argc, char* argv[])
 {	
 	fstream File_Character, File_Monster;
-	bool DEBUG_MODE = false;
+	int DEBUG_MODE = false;		//0:未開啟	1:開啟	2:UI_Mode
 	
 	//防止編譯錯誤
 	if (argc == 4) {
@@ -12,18 +11,21 @@ void main(int argc, char* argv[])
 		File_Monster.open(argv[2]);
 		DEBUG_MODE = atoi(argv[3]);
 	}
-	switch (Project_Start())
+
+	File_Character.open("character1.txt", ios::in);
+	File_Monster.open("monster1.txt", ios::in);
+	cin >> DEBUG_MODE;
+	system("cls");
+	switch (DEBUG_MODE) 
 	{
-	case 0:		//開始遊戲
-		Main_Game();
+	case 0:
+		Main_Game(File_Character,File_Monster);
 		break;
-	case 1:		//結束遊戲
-		system("cls");
-		cout << "感謝您的遊玩" << endl << endl;
-		system("pause");
-		return;
+	case 1:
+
 		break;
-	default:
+	case 2:
+		Main_Game_UI();
 		break;
 	}
 }

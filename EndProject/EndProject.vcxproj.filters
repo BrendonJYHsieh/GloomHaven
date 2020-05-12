@@ -27,6 +27,9 @@
     <ClCompile Include="Game.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Players.h">
@@ -39,6 +42,9 @@
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="Game_Manager.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
