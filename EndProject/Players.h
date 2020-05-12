@@ -2,11 +2,7 @@
 #include<vector>
 #include<iostream>
 using namespace std;
-struct Card_Property
-{
-	string Movement;
-	int Movement_Value;
-};
+
 struct Player_Card
 {
 	//卡片ID
@@ -31,7 +27,7 @@ public:
 	~Character();
 
 	//位置
-	int positionX, positionY;
+	Position position;
 	//名子
 	string Character_name;
 	//生命值

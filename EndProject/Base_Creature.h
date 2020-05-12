@@ -20,6 +20,11 @@ struct Creature_Card
 	//重洗標誌
 	bool Shuffle_Mark;
 };
+struct Position
+{
+	int x;
+	int y;
+};
 
 /*=============生物模板=============*/
 
@@ -32,7 +37,7 @@ public:
 	Base_Creature(string name, int hp, int atk, int range, int elite_hp, int elite_damage, int elite_range);
 
 	//Property
-	int positionX,positionY;
+	Position position;
 	//生物名子
 	string Name;
 	//生物生命
