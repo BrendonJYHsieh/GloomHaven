@@ -1,11 +1,13 @@
 #pragma once
 #include<iostream>
 #include<vector>
+#include<string>
 using namespace std;
 struct Card_Property
 {
 	string Movement;
 	int Movement_Value;
+	string Move_Command;	//僅怪物move指令時使用
 };
 struct Creature_Card
 {
@@ -18,12 +20,12 @@ struct Creature_Card
 	/*卡片狀態	0:在牌堆裡	1:棄牌區*/
 	int status = 0;
 	//重洗標誌
-	bool Shuffle_Mark;
+	bool Shuffle_Mark = false;
 };
 struct Position
 {
-	int x;
-	int y;
+	int x = 0;
+	int y = 0;
 };
 
 /*=============生物模板=============*/
@@ -53,6 +55,6 @@ public:
 	//菁英生物範圍
 	int Elite_Range;
 	//怪物狀態 0:隱藏	1:普通	2:菁英
-	int mode;
+	int mode = 0;
 };
 

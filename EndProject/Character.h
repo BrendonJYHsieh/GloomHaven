@@ -12,9 +12,8 @@ struct Player_Card
 	vector<Card_Property> MovementUp;
 	//卡片(下)動作 and 數值
 	vector<Card_Property> MovementDown;
-
 	/*卡片狀態	0:在牌堆裡	1:手上	2:棄牌區  3:離場	取消使用ERASE代替離場，避免重新開始遊戲時產生問題*/
-	int status = 0;
+	int status = 3;
 };
 
 /*==========角色模板===========*/
@@ -23,7 +22,10 @@ class Character
 {
 public:
 	Character();
-
+	Character(string name,int hp,int hand):Character_name(name),Hp(hp),Hand(hand){}
+	/*=====function=====*/
+	void Add_NewCard();
+	/*====資訊====*/
 	//位置
 	Position position;
 	//名子

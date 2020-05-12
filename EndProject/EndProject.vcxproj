@@ -156,13 +156,14 @@
     <ClCompile Include="Monster_Base.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Ethnicity.cpp" />
+    <ClCompile Include="Character.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="Game_Manager.h" />
     <ClInclude Include="Monster_Base.h" />
     <ClInclude Include="Ethnicity.h" />
-    <ClInclude Include="Players.h" />
+    <ClInclude Include="Character.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

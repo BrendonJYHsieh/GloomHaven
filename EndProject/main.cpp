@@ -14,7 +14,9 @@ void main(int argc, char* argv[])
 
 	File_Character.open("character1.txt", ios::in);
 	File_Monster.open("monster1.txt", ios::in);
+
 	cin >> DEBUG_MODE;
+
 	system("cls");
 	switch (DEBUG_MODE) 
 	{
