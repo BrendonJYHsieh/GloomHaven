@@ -2,7 +2,11 @@
 #include<vector>
 #include<iostream>
 using namespace std;
-
+struct Card_Property_Player
+{
+	string Movement;
+	int Movement_Value;
+};
 struct Player_Card
 {
 	//卡片ID
@@ -10,9 +14,9 @@ struct Player_Card
 	//敏捷值
 	int Dexterity_Value;
 	//卡片(上)動作 and 數值
-	vector<Card_Property> MovementUp;
+	vector<Card_Property_Player> MovementUp;
 	//卡片(下)動作 and 數值
-	vector<Card_Property> MovementDown;
+	vector<Card_Property_Player> MovementDown;
 
 	/*卡片狀態	0:在牌堆裡	1:手上	2:棄牌區	離場時使用erase將卡牌刪除*/
 	int status = 0;
