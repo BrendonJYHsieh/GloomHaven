@@ -1,15 +1,15 @@
 #pragma once
-#include "Base_Creature.h"
-class Ethnicity : public Base_Creature
+#include "Monster_Base.h"
+class Ethnicity : public Monster_Base
 {
 public:
 	//Constructure Ä~©Ó
 	Ethnicity();
 	Ethnicity(string name);
 	~Ethnicity();
-	void Add_Creature(string name, int hp, int atk, int range, int elite_hp, int elite_atk, int elite_range);
+
 	string Ethnicity_Name;
-	vector<Base_Creature> Creature_List;
+	vector<Monster_Base> Creature_List;
 	vector<Creature_Card>Deck;
 };
 

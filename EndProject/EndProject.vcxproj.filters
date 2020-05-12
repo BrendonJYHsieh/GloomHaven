@@ -15,24 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Base_Creature.cpp">
-      <Filter>來源檔案</Filter>
-    </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>來源檔案</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Base.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="Ethnicity.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Base_Creature.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
     <ClInclude Include="Players.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="Ethnicity.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Base.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

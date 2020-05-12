@@ -28,13 +28,13 @@ struct Position
 
 /*=============¥Íª«¼ÒªO=============*/
 
-class Base_Creature
+class Monster_Base
 {
 public:
 	//Constructure
-	Base_Creature();
-	Base_Creature(string name,int hp);
-	Base_Creature(string name, int hp, int atk, int range, int elite_hp, int elite_damage, int elite_range);
+	Monster_Base();
+	Monster_Base(string name,int hp);
+	Monster_Base(string name, int hp, int atk, int range, int elite_hp, int elite_damage, int elite_range);
 
 	//Property
 	Position position;
