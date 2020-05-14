@@ -55,11 +55,11 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 bool compare(Position a,Position b) 
 {
 	if (a.y > b.y)
-		return true;
-	else if (a.y == b.y && a.x > b.x)
-		return true;
-	else
 		return false;
+	else if (a.y == b.y && a.x > b.x)
+		return false;
+	else
+		return true;
 }
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map)
 {
@@ -106,6 +106,9 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 					start_point.x++;
 				}
 				break;
+			case'e':
+			case 'E':
+				break;
 			default:
 				break;
 			}
@@ -124,6 +127,18 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 		}
 		Game_Map.print_Map(play_Character, Monster);
 	}
+	for (int i = 0; i < Game_Map.High; i++) 
+	{
+		for (int j = 0; j < Game_Map.Width; j++)
+		{
+			if (Game_Map.Game_Map[i][j]==5) 
+			{
+				Game_Map.Game_Map[i][j] = 1;
+			}
+			
+		}
+	}
+	Game_Map.print_Map(play_Character, Monster);
 }
 //ÅªÀÉ
 void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_Character)
