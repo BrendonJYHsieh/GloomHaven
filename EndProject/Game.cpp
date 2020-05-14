@@ -7,18 +7,59 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 	vector<Character> Base_Character;	//角色模板，，用於之後創建角色清單時從裡面複製角色資料
 	vector<Ethnicity> Monster;			//所有種族
 	Map GameMap; //所有Map
+	vector<Character> play_Character;	//玩家選擇的角色列表
+
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
-
-	get_All_Base_Character_Data(Base_Character);
-
 	read_Monster_Data(File_Monster, Monster);			//Monster讀檔
-	vector<Character> play_Character;	//玩家選擇的角色列表 
-	Map play_map;
-	//creat_Character(Base_Character, play_Character);		//創建角色
-	read_Map_Data(File_Map, GameMap, Monster,play_Character.size()); //Map讀檔案
-	//讀取地圖資料
+	creat_Character(Base_Character, play_Character);		//創建角色
+	read_Map_Data(File_Map, GameMap, Monster,play_Character.size()); //Map讀檔
+	//get_All_Base_Character_Data(play_Character);	//檢查Character資料
+	//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+	//get_int_Map(GameMap);	//檢查地圖資料
+	choose_Start_Position(play_Character,Monster, GameMap);
 	//選擇起始位置
 	//開始遊戲
+}
+void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character)
+{
+	int character_count;
+	do {
+		cout << "請輸入出場角色數量:" << endl;	//輸入角色數量
+		cin >> character_count;
+		if (character_count < 2 || character_count>4)
+			cout << "數量錯誤!" << endl;
+	} while (character_count < 2 || character_count>4);
+	for (int i = 0; i < character_count; i++)
+	{
+		int character_number = 0; string character_name;
+		cin >> character_name;
+		for (int j = 0; j < Base_Character.size(); j++)
+		{
+			if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
+				character_number = j; break;
+		}
+		Character newCharacter = Base_Character[character_number];		//複製模板中的資料
+		for (int j = 0; j < newCharacter.Hand; j++)
+		{
+			int active_Card_ID;
+			do {
+				cin >> active_Card_ID;
+				if (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1)
+					cout << "輸入錯誤!" << endl;
+			} while (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1);
+			newCharacter.Deck[active_Card_ID].status = 1;	//設定起始的手牌
+		}
+		play_Character.push_back(newCharacter);
+	}
+}
+void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map)
+{
+	Game_Map.check_road(Game_Map.Init_Pos[0].x, Game_Map.Init_Pos[0].y);
+	Game_Map.print_Map(play_Character, Monster);
+	for (int i = 0; i < play_Character.size(); i++) 
+	{
+
+	}
 }
 //讀檔
 void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_Character)
@@ -88,6 +129,7 @@ void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster)
 		for (int j = 0; j < 6; j++)		//怪物固定六張技能卡
 		{
 			string per_line, Movement;
+			int skill_Value;
 			stringstream interval("");
 			Creature_Card newCard;	//新的卡片
 			File_Monster >> Ethnicity_Name >> newCard.ID >> newCard.Dexterity_Value;	//讀取卡片資料
@@ -112,7 +154,16 @@ void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster)
 				}
 				else
 				{
-					interval >> newMovement.Movement_Value;
+					interval >> skill_Value;
+					if (Movement == "range") 
+					{
+						newCard.Movement[newCard.Movement.size() - 1].range = skill_Value;
+						continue;
+					}
+					else 
+					{
+						newMovement.Movement_Value = skill_Value;
+					}
 				}
 				newMovement.Movement = Movement;
 				newCard.Movement.push_back(newMovement);
@@ -126,15 +177,22 @@ void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster)
 }
 void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int Player_num)
 {
+	string File_Name;	
+	//cin >> File_Name;	//輸入地圖檔名
+	//File_Map.open(File_Name, ios::in);	//正式用
+	File_Map.open("map1.txt", ios::in);		//測試用
 	File_Map >> Map.High >> Map.Width;
 	cout << Map.High << " " << Map.Width << endl;
 	vector<int>temp;
-	for (int i = 0; i < Map.High; i++) {
-		for (int j = 0; j < Map.Width; j++) {
+	for (int i = 0; i < Map.High; i++) 
+	{
+		for (int j = 0; j < Map.Width; j++) 
+		{
 			char temp_num;
 			File_Map >> temp_num;
 			temp_num -= 48;
-			if (temp_num==1) {
+			if (temp_num==1) 
+			{
 				temp_num = 4;
 			}
 			temp.push_back(temp_num);
@@ -143,36 +201,39 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 		temp.clear();
 	}
 	int x, y;
-	while (File_Map >> x >> y) {
+	for (int i = 0; i < 4; i++) 
+	{
+		File_Map >> x >> y;
 		Position temp;
 		temp.x = x;
 		temp.y = y;
 		Map.Game_Map[y][x] = 5;
 		Map.Init_Pos.push_back(temp);
 	}
-	for (int i = 0; i < Map.High; i++) {
-		for (int j = 0; j < Map.Width; j++) {
-			cout << Map.Game_Map[i][j];
-		}
-		cout << endl;
-	}
 	File_Map >> Map.Monster_Count;
-	for (int i = 0; i < Map.Monster_Count; i++) {
+	for (int i = 0; i < Map.Monster_Count; i++) 
+	{
 		string Monster_Type;
 		Monster_Base Monster_temp;
 		Position temp;
 		int Status[3];
 		int mode;
 		File_Map >> Monster_Type;
-		for (int j = 0; Monster.size(); j++) {
-			if (Monster_Type == Monster[j].Ethnicity_Base_value.Name) {
+		for (int j = 0; j < Monster.size(); j++) 
+		{
+			if (Monster_Type == Monster[j].Ethnicity_Base_value.Name) 
+			{
 				File_Map >> temp.x >> temp.y >> Status[0] >> Status[1] >> Status[2];
 				mode = Status[Player_num - 2];
 			}
-			if (mode == 0) {
+			else 
+				continue;
+			if (mode == 0) 
+			{
 				break;
 			}
-			else if (mode == 1) {
+			else if (mode == 1) 
+			{
 				Monster_temp.Damage = Monster[j].Ethnicity_Base_value.Damage;
 				Monster_temp.Hp = Monster[j].Ethnicity_Base_value.Hp;
 				Monster_temp.Name = Monster[j].Ethnicity_Base_value.Name;
@@ -182,7 +243,8 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 				Monster_temp.icon = 'a' + i;
 				Monster[j].Creature_List.push_back(Monster_temp);
 			}
-			else {
+			else 
+			{
 				Monster_temp.Damage = Monster[j].Ethnicity_Base_value.Elite_Damage;
 				Monster_temp.Hp = Monster[j].Ethnicity_Base_value.Elite_Hp;
 				Monster_temp.Name = Monster[j].Ethnicity_Base_value.Name;
@@ -193,38 +255,6 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 				Monster[j].Creature_List.push_back(Monster_temp);
 			}
 		}	
-	}
-}
-void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character) 
-{
-	int character_count;
-	do {
-		cout << "請輸入出場角色數量:" << endl;	//輸入角色數量
-		cin >> character_count;
-		if (character_count < 2 || character_count>4)
-			cout << "數量錯誤!" << endl;
-	} while (character_count < 2 || character_count>4);
-	for (int i = 0; i < character_count; i++) 
-	{
-		int character_number = 0; string character_name;
-		cin >> character_name;
-		for (int j = 0; j < Base_Character.size(); j++) 
-		{
-			if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
-				character_number = j; break;
-		}
-		Character newCharacter = Base_Character[character_number];		//複製模板中的資料
-		for (int j = 0; j < newCharacter.Hand; j++) 
-		{
-			int active_Card_ID;
-			do {
-				cin >> active_Card_ID;
-				if (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1)
-					cout << "輸入錯誤!" << endl;
-			} while (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1);
-			newCharacter.Deck[active_Card_ID].status = 1;	//設定起始的手牌
-		}
-		play_Character.push_back(newCharacter);
 	}
 }
 
@@ -266,21 +296,48 @@ void get_All_Base_Monster_Data(vector<Ethnicity> Base_Monster)
 			<< " 普通範圍：" << Base_Monster[i].Ethnicity_Base_value.Range
 			<< " 菁英生命：" << Base_Monster[i].Ethnicity_Base_value.Elite_Hp
 			<< " 菁英攻擊：" << Base_Monster[i].Ethnicity_Base_value.Elite_Damage
-			<< " 菁英範圍：" << Base_Monster[i].Ethnicity_Base_value.Elite_Range << endl;
+			<< " 菁英範圍：" << Base_Monster[i].Ethnicity_Base_value.Elite_Range << endl << endl;
+		for (int j = 0; j < Base_Monster[i].Creature_List.size(); j++)
+		{
+			cout << "怪物" << Base_Monster[i].Creature_List[j].icon;
+			if (Base_Monster[i].Creature_List[j].mode == 2)
+				cout << ": 菁英";
+			else
+				cout << ": 普通";
+			cout << " 生命值:" << Base_Monster[i].Creature_List[j].Hp
+				<< " 傷害:" << Base_Monster[i].Creature_List[j].Damage
+				<< " 範圍:" << Base_Monster[i].Creature_List[j].Range << endl;
+		}
 		cout << "技能卡：" << endl;
 		for (int j = 0; j < 6; j++) 
 		{
-			cout << "ID：" << Base_Monster[i].Deck[j].ID << "	敏捷值：" << Base_Monster[i].Deck[j].Dexterity_Value << "	";
+			cout << "ID：" << Base_Monster[i].Deck[j].ID << " 狀態: " << Base_Monster[i].Deck[j].status << "	敏捷值：" << Base_Monster[i].Deck[j].Dexterity_Value << "	";
 			for (int k = 0; k < Base_Monster[i].Deck[j].Movement.size(); k++) 
 			{
 				cout << Base_Monster[i].Deck[j].Movement[k].Movement<<" ";
-				if (Base_Monster[i].Deck[j].Movement[k].Movement == "move")
+				if (Base_Monster[i].Deck[j].Movement[k].Movement == "move") 
+				{
 					cout << Base_Monster[i].Deck[j].Movement[k].Move_Command << " ";
-				else
+				}
+				else 
+				{
 					cout << Base_Monster[i].Deck[j].Movement[k].Movement_Value << " ";
+					if (Base_Monster[i].Deck[j].Movement[k].Movement == "attack")
+						cout << " range " << Base_Monster[i].Deck[j].Movement[k].range << " ";
+				}
 			}
 			cout <<"重洗標誌："<< Base_Monster[i].Deck[j].Shuffle_Mark << endl;
 		}
+		cout << endl << endl;
+	}
+}
+void get_int_Map(Map Map) 
+{
+	for (int i = 0; i < Map.High; i++) {
+		for (int j = 0; j < Map.Width; j++) {
+			cout << Map.Game_Map[i][j];
+		}
+		cout << endl;
 	}
 }
 
