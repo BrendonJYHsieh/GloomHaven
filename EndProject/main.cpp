@@ -2,7 +2,7 @@
 
 void main(int argc, char* argv[])
 {	
-	fstream File_Character, File_Monster;
+	fstream File_Character, File_Monster, File_Map;
 	int DEBUG_MODE = 0;		//0:未開啟	1:開啟	2:UI_Mode
 	
 	//防止編譯錯誤
@@ -16,6 +16,7 @@ void main(int argc, char* argv[])
 	/*====測試時使用====*/
 	File_Character.open("character1.txt", ios::in);
 	File_Monster.open("monster1.txt", ios::in);
+	File_Map.open("map1.txt", ios::in);
 	cin >> DEBUG_MODE;
 	system("cls");
 
@@ -23,7 +24,7 @@ void main(int argc, char* argv[])
 	switch (DEBUG_MODE) 
 	{
 	case 0:
-		Main_Game(File_Character,File_Monster);
+		Main_Game(File_Character,File_Monster, File_Map);
 		break;
 	case 1:
 

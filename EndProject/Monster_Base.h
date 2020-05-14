@@ -55,8 +55,8 @@ public:
 	int Elite_Damage;
 	//菁英生物範圍
 	int Elite_Range;
-	//怪物狀態 0:隱藏	1:普通	2:菁英
+	//怪物狀態 0:隱藏1:普通	2:菁英
 	int mode = 0;
-	char icon = 'M';
+	char icon;
 };
 

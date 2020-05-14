@@ -2,10 +2,11 @@
 /*=============main_function==============*/
 
 //遊戲主程式
-void Main_Game(fstream& File_Character,fstream& File_Monster)
+void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 {
 	vector<Character> Base_Character;	//角色模板，，用於之後創建角色清單時從裡面複製角色資料
 	vector<Ethnicity> Monster;			//所有種族
+	Map GameMap; //所有Map
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
 
 	get_All_Base_Character_Data(Base_Character);
@@ -13,7 +14,8 @@ void Main_Game(fstream& File_Character,fstream& File_Monster)
 	read_Monster_Data(File_Monster, Monster);			//Monster讀檔
 	vector<Character> play_Character;	//玩家選擇的角色列表 
 	Map play_map;
-	creat_Character(Base_Character, play_Character);		//創建角色
+	//creat_Character(Base_Character, play_Character);		//創建角色
+	read_Map_Data(File_Map, GameMap, Monster,play_Character.size()); //Map讀檔案
 	//讀取地圖資料
 	//選擇起始位置
 	//開始遊戲
@@ -120,6 +122,77 @@ void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster)
 			Base_Type.Deck.push_back(newCard);
 		}
 		Base_Monster.push_back(Base_Type);
+	}
+}
+void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int Player_num)
+{
+	File_Map >> Map.High >> Map.Width;
+	cout << Map.High << " " << Map.Width << endl;
+	vector<int>temp;
+	for (int i = 0; i < Map.High; i++) {
+		for (int j = 0; j < Map.Width; j++) {
+			char temp_num;
+			File_Map >> temp_num;
+			temp_num -= 48;
+			if (temp_num==1) {
+				temp_num = 4;
+			}
+			temp.push_back(temp_num);
+		}
+		Map.Game_Map.push_back(temp);
+		temp.clear();
+	}
+	int x, y;
+	while (File_Map >> x >> y) {
+		Position temp;
+		temp.x = x;
+		temp.y = y;
+		Map.Game_Map[y][x] = 5;
+		Map.Init_Pos.push_back(temp);
+	}
+	for (int i = 0; i < Map.High; i++) {
+		for (int j = 0; j < Map.Width; j++) {
+			cout << Map.Game_Map[i][j];
+		}
+		cout << endl;
+	}
+	File_Map >> Map.Monster_Count;
+	for (int i = 0; i < Map.Monster_Count; i++) {
+		string Monster_Type;
+		Monster_Base Monster_temp;
+		Position temp;
+		int Status[3];
+		int mode;
+		File_Map >> Monster_Type;
+		for (int j = 0; Monster.size(); j++) {
+			if (Monster_Type == Monster[j].Ethnicity_Base_value.Name) {
+				File_Map >> temp.x >> temp.y >> Status[0] >> Status[1] >> Status[2];
+				mode = Status[Player_num - 2];
+			}
+			if (mode == 0) {
+				break;
+			}
+			else if (mode == 1) {
+				Monster_temp.Damage = Monster[j].Ethnicity_Base_value.Damage;
+				Monster_temp.Hp = Monster[j].Ethnicity_Base_value.Hp;
+				Monster_temp.Name = Monster[j].Ethnicity_Base_value.Name;
+				Monster_temp.Range = Monster[j].Ethnicity_Base_value.Range;
+				Monster_temp.mode = mode;
+				Monster_temp.position = temp;
+				Monster_temp.icon = 'a' + i;
+				Monster[j].Creature_List.push_back(Monster_temp);
+			}
+			else {
+				Monster_temp.Damage = Monster[j].Ethnicity_Base_value.Elite_Damage;
+				Monster_temp.Hp = Monster[j].Ethnicity_Base_value.Elite_Hp;
+				Monster_temp.Name = Monster[j].Ethnicity_Base_value.Name;
+				Monster_temp.Range = Monster[j].Ethnicity_Base_value.Elite_Range;
+				Monster_temp.mode = mode;
+				Monster_temp.position = temp;
+				Monster_temp.icon = 'a' + i;
+				Monster[j].Creature_List.push_back(Monster_temp);
+			}
+		}	
 	}
 }
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character) 

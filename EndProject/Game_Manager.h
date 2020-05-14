@@ -9,9 +9,10 @@
 
 /*=============main_function==============*/
 
-void Main_Game(fstream& File_Character,fstream& File_Monster);			//主程式
+void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map);			//主程式
 void read_Character_Data(fstream& File_Character, vector<Character>& Base_Character);	//讀取角色檔案
 void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster);			//讀取怪物檔案
+void read_Map_Data(fstream& File_Map,Map& Game_Map, vector<Ethnicity>& Base_Monster,int);
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);
 
 /*==============DEBUG_MODE================*/
