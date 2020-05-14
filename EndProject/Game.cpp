@@ -52,13 +52,77 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 		play_Character.push_back(newCharacter);
 	}
 }
+bool compare(Position a,Position b) 
+{
+	if (a.y > b.y)
+		return true;
+	else if (a.y == b.y && a.x > b.x)
+		return true;
+	else
+		return false;
+}
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map)
 {
+	sort(Game_Map.Init_Pos.begin(), Game_Map.Init_Pos.end(),compare);
+	get_int_Map(Game_Map);
 	Game_Map.check_road(Game_Map.Init_Pos[0].x, Game_Map.Init_Pos[0].y);
 	Game_Map.print_Map(play_Character, Monster);
 	for (int i = 0; i < play_Character.size(); i++) 
 	{
-
+		string position_input;
+		Position start_point;
+		start_point = Game_Map.Init_Pos[0];
+		cin.ignore();
+		getline(cin, position_input);
+		for(int i=0;i<position_input.size();i++)
+		{
+			switch (position_input[i])
+			{
+			case'w':
+			case 'W':
+				if (Game_Map.Game_Map[start_point.y - 1][start_point.x] == 5) 
+				{
+					start_point.y--;
+				}
+				break;
+			case's':
+			case 'S':
+				if (Game_Map.Game_Map[start_point.y + 1][start_point.x] == 5)
+				{
+					start_point.y++;
+				}
+				break;
+			case'a':
+			case 'A':
+				if (Game_Map.Game_Map[start_point.y][start_point.x - 1] == 5)
+				{
+					start_point.x--;
+				}
+				break;
+			case'd':
+			case 'D':
+				if (Game_Map.Game_Map[start_point.y][start_point.x + 1] == 5)
+				{
+					start_point.x++;
+				}
+				break;
+			default:
+				break;
+			}
+			if (position_input[i] == 13)	//enterÁäµ²§ô
+				break;
+		}
+		play_Character[i].position.y = start_point.y;
+		play_Character[i].position.x = start_point.x;
+		Game_Map.Game_Map[start_point.y][start_point.x] = 1;
+		for (int j = 0; j < Game_Map.Init_Pos.size(); j++) 
+		{
+			if (Game_Map.Init_Pos[j].x == start_point.x && Game_Map.Init_Pos[j].y == start_point.y) 
+			{
+				Game_Map.Init_Pos.erase(Game_Map.Init_Pos.begin() + j);
+			}
+		}
+		Game_Map.print_Map(play_Character, Monster);
 	}
 }
 //ÅªÀÉ

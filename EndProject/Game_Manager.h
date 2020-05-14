@@ -6,12 +6,13 @@
 #include<Windows.h>
 #include<fstream>
 #include<sstream>
+#include<algorithm>
 
 /*=============main_function==============*/
 //遊戲主程式
 void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map);			//主程式
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);	//創建角色
-void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
+void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);	//選擇起始位置
 //讀檔
 void read_Character_Data(fstream& File_Character, vector<Character>& Base_Character);	//讀取角色檔案
 void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster);			//讀取怪物檔案

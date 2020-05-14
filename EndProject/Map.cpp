@@ -55,8 +55,13 @@ void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
 			bool check_Continue = false;
 			for (int k = 0; k < player.size(); k++) 
 			{
-				if ((i == player[k].position.y && i != 0) && (j == player[k].position.x && j != 0))
-					cout << k + 'A', check_Continue = true;
+				if ((i == player[k].position.y && i != 0) && (j == player[k].position.x && j != 0)) 
+				{
+
+					char output = 'A' + k;
+					cout << output;
+					check_Continue = true;
+				}
 			}
 			for (int k = 0; k < Monster.size(); k++)
 			{
