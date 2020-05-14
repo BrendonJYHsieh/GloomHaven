@@ -1,6 +1,6 @@
 #pragma once
 #include "Monster_Base.h"
-class Ethnicity :public Monster_Base
+class Ethnicity 
 {
 public:
 	//Constructure Ä~©Ó

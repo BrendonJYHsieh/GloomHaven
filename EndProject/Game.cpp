@@ -1,5 +1,6 @@
 #include"Game_Manager.h"
 /*=============main_function==============*/
+
 //遊戲主程式
 void Main_Game(fstream& File_Character,fstream& File_Monster)
 {
@@ -7,6 +8,11 @@ void Main_Game(fstream& File_Character,fstream& File_Monster)
 	vector<Ethnicity> Base_Monster;		//怪物模板，，用於之後創建怪物清單時從裡面複製怪物資料
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
 	read_Monster_Data(File_Monster, Base_Monster);			//Monster讀檔
+	vector<Character> play_Character;
+	vector<Ethnicity> play_Monster;
+	Map play_map;
+	creat_Character(Base_Character, play_Character);		//創建角色
+	get_All_Base_Character_Data(play_Character);
 	//輸入角色數量
 	//輸入角色資訊
 	//輸入地圖路徑
@@ -105,6 +111,34 @@ void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster)
 		Base_Monster.push_back(Base_Type);
 	}
 }
+void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character) 
+{
+	int character_count;
+	do {
+		cout << "請輸入出場角色數量:" << endl;
+		cin >> character_count;
+		if (character_count < 2 || character_count>4)
+			cout << "數量錯誤!" << endl;
+	} while (character_count < 2 || character_count>4);
+	for (int i = 0; i < character_count; i++) 
+	{
+		int character_number = 0; string character_name;
+		cin >> character_name;
+		for (int j = 0; j < Base_Character.size(); j++) 
+		{
+			if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
+				character_number = j; break;
+		}
+		Character newCharacter = Base_Character[character_number];		//複製模板中的資料
+		for (int j = 0; j < newCharacter.Hand; j++) 
+		{
+			int active_Card_ID;
+			cin >> active_Card_ID;
+			newCharacter.Deck[active_Card_ID].status = 1;	//設定起始的手牌
+		}
+		play_Character.push_back(newCharacter);
+	}
+}
 
 /*==============DEBUG_MODE================*/
 
@@ -115,7 +149,7 @@ void get_All_Base_Character_Data(vector<Character> Base_Player)
 		cout << "角色名：" << Base_Player[i].Character_name << "  角色 HP：" << Base_Player[i].Hp << " 角色手牌數：" << Base_Player[i].Hand << endl << "技能卡：" << endl;
 		for (int j = 0; j < Base_Player[i].Deck.size(); j++)
 		{
-			cout <<"ID：	"<< Base_Player[i].Deck[j].ID << "	敏捷值：	" << Base_Player[i].Deck[j].Dexterity_Value << "	上：";
+			cout << "ID：	" << Base_Player[i].Deck[j].ID << " 狀態: " << Base_Player[i].Deck[j].status << "	敏捷值：	" << Base_Player[i].Deck[j].Dexterity_Value << "	上：";
 			for (int k = 0; k < Base_Player[i].Deck[j].MovementUp.size(); k++)
 				cout << Base_Player[i].Deck[j].MovementUp[k].Movement << " " << Base_Player[i].Deck[j].MovementUp[k].Movement_Value << " ";
 			cout << " | 下：";

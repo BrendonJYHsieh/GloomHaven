@@ -11,14 +11,15 @@ public:
 
 class Door		//ªùª«¥ó
 {
+public:
 	Position position;
 };
 
 class Map : public Obstacle,public Door
 {
 public:
-	Map();
-	Map(int Width, int High);
+	Map(){}
+	Map(int Width, int High){}
 	/*===fuction===*/
 	
 	/*====value====*/
