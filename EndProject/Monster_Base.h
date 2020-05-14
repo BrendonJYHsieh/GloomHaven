@@ -8,6 +8,7 @@ struct Card_Property
 	string Movement;
 	int Movement_Value;
 	string Move_Command;	//僅怪物move指令時使用
+	int range = 0;	//範圍 預設為0，表近戰
 };
 struct Creature_Card
 {

@@ -5,17 +5,15 @@
 void Main_Game(fstream& File_Character,fstream& File_Monster)
 {
 	vector<Character> Base_Character;	//角色模板，，用於之後創建角色清單時從裡面複製角色資料
-	vector<Ethnicity> Base_Monster;		//怪物模板，，用於之後創建怪物清單時從裡面複製怪物資料
+	vector<Ethnicity> Monster;			//所有種族
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
-	read_Monster_Data(File_Monster, Base_Monster);			//Monster讀檔
-	vector<Character> play_Character;
-	vector<Ethnicity> play_Monster;
+
+	get_All_Base_Character_Data(Base_Character);
+
+	read_Monster_Data(File_Monster, Monster);			//Monster讀檔
+	vector<Character> play_Character;	//玩家選擇的角色列表 
 	Map play_map;
 	creat_Character(Base_Character, play_Character);		//創建角色
-	get_All_Base_Character_Data(play_Character);
-	//輸入角色數量
-	//輸入角色資訊
-	//輸入地圖路徑
 	//讀取地圖資料
 	//選擇起始位置
 	//開始遊戲
@@ -30,7 +28,6 @@ void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_
 	{
 		/*========讀取角色模板資訊=========*/
 		File_Charactervector >> Charactor_Name >> Hp >> Hand >> Deck;
-		File_Charactervector.ignore();
 		Character Base_type(Charactor_Name,Hp,Hand);		//新的模板
 		/*====讀取角色模板卡片資訊====*/
 		for (int j = 0; j < Deck; j++)	//一組共有Deck張卡 
@@ -40,22 +37,36 @@ void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_
 			File_Charactervector >> newCard.ID >> newCard.Dexterity_Value;		//讀取卡片的ID 和 敏捷值
 			getline(File_Charactervector, per_line);		//截下整段能力值
 			stringstream interval(per_line);
-			getline(interval, upString, '-');getline(interval, downString, '-');		//以"-"為界將整段字串分割成 上部分的技能 和 下部分的技能
+			getline(interval, upString, '-');getline(interval, downString);		//以"-"為界將整段字串分割成 上部分的技能 和 下部分的技能
 			interval.clear(); interval.str("");		//清空stringstream
 			interval << upString;
 			while (interval >> skill_Name >> skill_Value)	//用"空格"將字串分割成 能力 和 值	
 			{
-				Card_Property newMovement;
-				newMovement.Movement = skill_Name, newMovement.Movement_Value = skill_Value;
-				newCard.MovementUp.push_back(newMovement);
+				if (skill_Name == "range") 
+				{
+					newCard.MovementUp[newCard.MovementUp.size() - 1].range = skill_Value;
+				}
+				else 
+				{
+					Card_Property newMovement;
+					newMovement.Movement = skill_Name, newMovement.Movement_Value = skill_Value;
+					newCard.MovementUp.push_back(newMovement);
+				}
 			}
 			interval.clear(); interval.str("");		//清空stringstream
 			interval << downString;
 			while (interval >> skill_Name >> skill_Value)	//用"空格"將字串分割成 能力 和 值	
 			{
-				Card_Property newMovement;
-				newMovement.Movement = skill_Name, newMovement.Movement_Value = skill_Value;
-				newCard.MovementDown.push_back(newMovement);
+				if (skill_Name == "range")
+				{
+					newCard.MovementDown[newCard.MovementDown.size() - 1].range = skill_Value;
+				}
+				else
+				{
+					Card_Property newMovement;
+					newMovement.Movement = skill_Name, newMovement.Movement_Value = skill_Value;
+					newCard.MovementDown.push_back(newMovement);
+				}
 			}
 			interval.clear(); interval.str("");
 			Base_type.Deck.push_back(newCard);		//將新的卡片加進卡組
@@ -115,7 +126,7 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 {
 	int character_count;
 	do {
-		cout << "請輸入出場角色數量:" << endl;
+		cout << "請輸入出場角色數量:" << endl;	//輸入角色數量
 		cin >> character_count;
 		if (character_count < 2 || character_count>4)
 			cout << "數量錯誤!" << endl;
@@ -133,7 +144,11 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 		for (int j = 0; j < newCharacter.Hand; j++) 
 		{
 			int active_Card_ID;
-			cin >> active_Card_ID;
+			do {
+				cin >> active_Card_ID;
+				if (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1)
+					cout << "輸入錯誤!" << endl;
+			} while (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1);
 			newCharacter.Deck[active_Card_ID].status = 1;	//設定起始的手牌
 		}
 		play_Character.push_back(newCharacter);
@@ -150,11 +165,19 @@ void get_All_Base_Character_Data(vector<Character> Base_Player)
 		for (int j = 0; j < Base_Player[i].Deck.size(); j++)
 		{
 			cout << "ID：	" << Base_Player[i].Deck[j].ID << " 狀態: " << Base_Player[i].Deck[j].status << "	敏捷值：	" << Base_Player[i].Deck[j].Dexterity_Value << "	上：";
-			for (int k = 0; k < Base_Player[i].Deck[j].MovementUp.size(); k++)
+			for (int k = 0; k < Base_Player[i].Deck[j].MovementUp.size(); k++) 
+			{
 				cout << Base_Player[i].Deck[j].MovementUp[k].Movement << " " << Base_Player[i].Deck[j].MovementUp[k].Movement_Value << " ";
+				if (Base_Player[i].Deck[j].MovementUp[k].Movement == "attack")
+					cout << "range " << Base_Player[i].Deck[j].MovementUp[k].range << " ";
+			}
 			cout << " | 下：";
-			for (int k = 0; k < Base_Player[i].Deck[j].MovementDown.size(); k++)
+			for (int k = 0; k < Base_Player[i].Deck[j].MovementDown.size(); k++) 
+			{
 				cout << Base_Player[i].Deck[j].MovementDown[k].Movement << " " << Base_Player[i].Deck[j].MovementDown[k].Movement_Value << " ";
+				if (Base_Player[i].Deck[j].MovementDown[k].Movement == "attack")
+					cout <<"range "<< Base_Player[i].Deck[j].MovementDown[k].range << " ";
+			}
 			cout << endl;
 		}
 		cout << endl << endl;
@@ -165,12 +188,12 @@ void get_All_Base_Monster_Data(vector<Ethnicity> Base_Monster)
 	for (int i = 0; i < Base_Monster.size(); i++) 
 	{
 		cout << "種族名：" << Base_Monster[i].Ethnicity_Name
-			<< " 普通生命：" << Base_Monster[i].Creature_List[0].Hp
-			<< " 普通攻擊：" << Base_Monster[i].Creature_List[0].Damage
-			<< " 普通範圍：" << Base_Monster[i].Creature_List[0].Range
-			<< " 菁英生命：" << Base_Monster[i].Creature_List[0].Elite_Hp
-			<< " 菁英攻擊：" << Base_Monster[i].Creature_List[0].Elite_Damage
-			<< " 菁英範圍：" << Base_Monster[i].Creature_List[0].Elite_Range << endl;
+			<< " 普通生命：" << Base_Monster[i].Ethnicity_Base_value.Hp
+			<< " 普通攻擊：" << Base_Monster[i].Ethnicity_Base_value.Damage
+			<< " 普通範圍：" << Base_Monster[i].Ethnicity_Base_value.Range
+			<< " 菁英生命：" << Base_Monster[i].Ethnicity_Base_value.Elite_Hp
+			<< " 菁英攻擊：" << Base_Monster[i].Ethnicity_Base_value.Elite_Damage
+			<< " 菁英範圍：" << Base_Monster[i].Ethnicity_Base_value.Elite_Range << endl;
 		cout << "技能卡：" << endl;
 		for (int j = 0; j < 6; j++) 
 		{
