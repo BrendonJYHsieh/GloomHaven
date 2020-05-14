@@ -57,5 +57,6 @@ public:
 	int Elite_Range;
 	//©Çª«ª¬ºA 0:ÁôÂÃ	1:´¶³q	2:µ×­^
 	int mode = 0;
+	char icon = 'M';
 };
 
