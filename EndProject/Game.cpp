@@ -16,9 +16,8 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 	//get_All_Base_Character_Data(play_Character);	//檢查Character資料
 	//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 	//get_int_Map(GameMap);	//檢查地圖資料
-	choose_Start_Position(play_Character,Monster, GameMap);
-	//選擇起始位置
-	//開始遊戲
+	choose_Start_Position(play_Character,Monster, GameMap);	//選擇起始位置
+		//開始遊戲主流程
 }
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character)
 {
@@ -65,18 +64,21 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 {
 	sort(Game_Map.Init_Pos.begin(), Game_Map.Init_Pos.end(),compare);
 	get_int_Map(Game_Map);
-	Game_Map.check_road(Game_Map.Init_Pos[0].x, Game_Map.Init_Pos[0].y);
+	for (int i = 0; i < Game_Map.Init_Pos.size(); i++) 
+	{
+		Game_Map.check_road(Game_Map.Init_Pos[i].x, Game_Map.Init_Pos[i].y);
+	}
 	Game_Map.print_Map(play_Character, Monster);
+	cin.ignore();
 	for (int i = 0; i < play_Character.size(); i++) 
 	{
 		string position_input;
 		Position start_point;
 		start_point = Game_Map.Init_Pos[0];
-		cin.ignore();
 		getline(cin, position_input);
-		for(int i=0;i<position_input.size();i++)
+		for (int j = 0; j < position_input.size(); j++)
 		{
-			switch (position_input[i])
+			switch (position_input[j])
 			{
 			case'w':
 			case 'W':
@@ -112,7 +114,7 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 			default:
 				break;
 			}
-			if (position_input[i] == 13)	//enter鍵結束
+			if (position_input[j] == 13)	//enter鍵結束
 				break;
 		}
 		play_Character[i].position.y = start_point.y;
@@ -125,6 +127,8 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 				Game_Map.Init_Pos.erase(Game_Map.Init_Pos.begin() + j);
 			}
 		}
+		if (i == play_Character.size() - 1)
+			break;
 		Game_Map.print_Map(play_Character, Monster);
 	}
 	for (int i = 0; i < Game_Map.High; i++) 
@@ -139,6 +143,13 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 		}
 	}
 	Game_Map.print_Map(play_Character, Monster);
+}
+void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
+{
+	//角色準備
+	//怪物準備
+	//動作執行
+	//回合結算
 }
 //讀檔
 void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_Character)
