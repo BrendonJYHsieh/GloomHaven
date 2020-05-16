@@ -20,10 +20,10 @@ void main(int argc, char* argv[])
 	system("cls");
 
 
-	switch (DEBUG_MODE) 
+	switch (DEBUG_MODE)
 	{
 	case 0:
-		Main_Game(File_Character,File_Monster, File_Map);
+		Main_Game(File_Character, File_Monster, File_Map);
 		break;
 	case 1:
 
@@ -32,5 +32,6 @@ void main(int argc, char* argv[])
 		Main_Game_UI();
 		break;
 	}
+	
 }
 

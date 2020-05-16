@@ -11,13 +11,30 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
 	read_Monster_Data(File_Monster, Monster);			//Monster讀檔
-	creat_Character(Base_Character, play_Character);		//創建角色
-	read_Map_Data(File_Map, GameMap, Monster,play_Character.size()); //Map讀檔
-	//get_All_Base_Character_Data(play_Character);	//檢查Character資料
-	//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
-	//get_int_Map(GameMap);	//檢查地圖資料
-	choose_Start_Position(play_Character,Monster, GameMap);	//選擇起始位置
-		//開始遊戲主流程
+	while (1) 
+	{
+		creat_Character(Base_Character, play_Character);		//創建角色
+		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
+		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
+		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+		//get_int_Map(GameMap);	//檢查地圖資料
+		//choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
+			//開始遊戲主流程
+
+
+		play_Character.clear();
+		for (int i = 0; i < Monster.size(); i++) 
+		{
+			Monster[i].Creature_List.clear();
+		}
+		GameMap.Game_Map.clear();
+		GameMap.Init_Pos.clear();
+		char again;
+		cout << "是否選擇再遊玩一次？(y/n)";
+		cin >> again;
+		if (again == 'n')
+			break;
+	}
 }
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character)
 {
@@ -146,10 +163,25 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 }
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
 {
-	//角色準備
-	//怪物準備
-	//動作執行
-	//回合結算
+	int round = 1;
+	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
+	{
+		//角色準備
+		for (int i = 0; i < play_Character.size(); i++) 
+		{
+			string command_Input;
+			cin >> command_Input;
+
+		}
+		//怪物準備
+
+		//判斷出手順序
+
+		//動作執行
+
+		//回合結算
+
+	}
 }
 //讀檔
 void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_Character)
