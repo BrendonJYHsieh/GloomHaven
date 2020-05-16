@@ -18,8 +18,10 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
 		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
-		//choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
-			//開始遊戲主流程
+		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
+		//開始遊戲主流程
+
+
 
 
 		play_Character.clear();
@@ -378,6 +380,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 			}
 		}	
 	}
+	File_Map.close();
 }
 
 /*==============DEBUG_MODE================*/
