@@ -36,6 +36,8 @@ public:
 	int Max_HP;
 	//手牌數量
 	int Hand;
+	//敏捷值
+	int Dex;
 	//牌組
 	vector<Player_Card> Deck;
 };
