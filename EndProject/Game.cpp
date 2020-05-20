@@ -82,7 +82,7 @@ bool compare(Position a,Position b)
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map)
 {
 	sort(Game_Map.Init_Pos.begin(), Game_Map.Init_Pos.end(),compare);
-	get_int_Map(Game_Map);
+	//get_int_Map(Game_Map);
 	for (int i = 0; i < Game_Map.Init_Pos.size(); i++) 
 	{
 		Game_Map.check_road(Game_Map.Init_Pos[i].x, Game_Map.Init_Pos[i].y);
@@ -306,7 +306,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 	//File_Map.open(File_Name, ios::in);	//正式用
 	File_Map.open("map1.txt", ios::in);		//測試用
 	File_Map >> Map.High >> Map.Width;
-	cout << Map.High << " " << Map.Width << endl;
+	//cout << Map.High << " " << Map.Width << endl;
 	vector<int>temp;
 	for (int i = 0; i < Map.High; i++) 
 	{
