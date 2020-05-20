@@ -182,8 +182,11 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 
 					}
 				}
+				else {
+					cout << "Please Enter Correct UserID" << endl;
+				}
 			}
-		}while(player_num <play_Character.size())
+		} while (player_num < play_Character.size());
 		//怪物準備
 
 		//判斷出手順序
