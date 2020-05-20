@@ -7,6 +7,7 @@
 #include<fstream>
 #include<sstream>
 #include<algorithm>
+#include<ctime>
 
 /*=============main_function==============*/
 //遊戲主程式
