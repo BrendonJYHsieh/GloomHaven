@@ -18,7 +18,7 @@ struct Creature_Card
 	int Dexterity_Value;
 	//卡片動作 and 數值
 	vector<Card_Property> Movement;
-	/*卡片狀態	0:在牌堆裡	1:棄牌區*/
+	/*卡片狀態	0:在牌堆裡	1:棄牌區 2:出牌中*/
 	int status = 0;
 	//重洗標誌
 	bool Shuffle_Mark = false;
@@ -35,16 +35,33 @@ class Monster_Base
 {
 public:
 	//Constructure
-	Monster_Base();
-	Monster_Base(string name,int hp);
-	Monster_Base(string name, int hp, int atk, int range, int elite_hp, int elite_damage, int elite_range);
-
+	Monster_Base() {
+		this->Hp = 0;
+		this->Name = "";
+	}
+	Monster_Base(string name,int hp) {
+		this->Hp = hp;
+		this->Name = name;
+		this->Max_HP = hp;
+	}
+	Monster_Base(string name, int hp, int atk, int range, int elite_hp, int elite_damage, int elite_range) {
+		this->Name = name; 
+		this->Hp = hp; 
+		this->Max_HP = hp;
+		this->Damage = atk; 
+		this->Range = range; 
+		this->Elite_Hp = elite_hp; 
+		this->Elite_Damage = elite_damage; 
+		this->Elite_Range = elite_range;
+	}
 	//Property
 	Position position;
 	//生物名子
 	string Name;
-	//生物生命
+	//生物目前生命
 	int Hp;
+	//最大生命
+	int Max_HP;
 	//生物傷害
 	int Damage;
 	//生物範圍

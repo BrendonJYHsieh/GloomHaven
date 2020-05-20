@@ -15,14 +15,11 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 	{
 		creat_Character(Base_Character, play_Character);		//創建角色
 		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
-		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
-		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+		get_All_Base_Character_Data(play_Character);	//檢查Character資料
+		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
 		//開始遊戲主流程
-
-
-
 
 		play_Character.clear();
 		for (int i = 0; i < Monster.size(); i++) 
@@ -82,7 +79,6 @@ bool compare(Position a,Position b)
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map)
 {
 	sort(Game_Map.Init_Pos.begin(), Game_Map.Init_Pos.end(),compare);
-	get_int_Map(Game_Map);
 	for (int i = 0; i < Game_Map.Init_Pos.size(); i++) 
 	{
 		Game_Map.check_road(Game_Map.Init_Pos[i].x, Game_Map.Init_Pos[i].y);
@@ -168,13 +164,26 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	int round = 1;
 	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
-		//角色準備
-		for (int i = 0; i < play_Character.size(); i++) 
-		{
-			string command_Input;
-			cin >> command_Input;
+		int player_num = 0;
+		do {
+			char who;
+			cin >> who;
+			for (int i = 0; i < play_Character.size(); i++) {
+				if (who == i + 'A') {
+					string command;
+					cin >> command;
+					if (command == "-1") {
 
-		}
+					}
+					else if (command=="check") {
+
+					}
+					else {
+
+					}
+				}
+			}
+		}while(player_num <play_Character.size())
 		//怪物準備
 
 		//判斷出手順序
@@ -306,7 +315,6 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 	//File_Map.open(File_Name, ios::in);	//正式用
 	File_Map.open("map1.txt", ios::in);		//測試用
 	File_Map >> Map.High >> Map.Width;
-	cout << Map.High << " " << Map.Width << endl;
 	vector<int>temp;
 	for (int i = 0; i < Map.High; i++) 
 	{
@@ -341,7 +349,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 		Monster_Base Monster_temp;
 		Position temp;
 		int Status[3];
-		int mode;
+		int mode=0;
 		File_Map >> Monster_Type;
 		for (int j = 0; j < Monster.size(); j++) 
 		{
