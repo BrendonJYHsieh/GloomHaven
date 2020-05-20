@@ -161,6 +161,7 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 }
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
 {
+	srand(time(NULL));
 	int round = 1;
 	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
@@ -186,7 +187,12 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 					else if(IsPlayHandCard(play_Character[i],command) && !already_played[i]) {
 						int card2;
 						cin >> card2;
-						IsCardInHand(play_Character[i], card2);
+						if (IsCardInHand(play_Character[i], card2)) {
+							already_played[i] = true;
+						}
+						else {
+							break;
+						}
 						already_played[i] = true;
 					}
 					else {
@@ -202,7 +208,19 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			delete already_played;
 		} while (player_num < play_Character.size());
 		//怪物準備
-
+		for (int i = 0; i < Monster.size(); i++)	//第i個種族
+		{
+			bool finished = false;
+			do
+			{
+				int choose = rand() % (Monster[i].Deck.size());
+				if (Monster[i].Deck[choose].status == 0)	//確認是否在牌組中
+				{
+					Monster[i].Deck[choose].status = 2;	//改成出牌中
+					finished = true;		//結束選擇
+				}
+			} while (finished == true);		//結束選擇即跳出此迴圈
+		}
 		//判斷出手順序
 
 		//動作執行
