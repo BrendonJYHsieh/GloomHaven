@@ -19,6 +19,7 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
+		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
 		//開始遊戲主流程
 		main_Battle(play_Character, Monster, GameMap);
 		play_Character.clear();
@@ -30,7 +31,7 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 		GameMap.Init_Pos.clear();
 		char again;
 		cout << "是否選擇再遊玩一次？(y/n)";
-		cin >> again;
+		std::cin >> again;
 		if (again == 'n')
 			break;
 	}
@@ -40,14 +41,14 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 	int character_count;
 	do {
 		cout << "請輸入出場角色數量:" << endl;	//輸入角色數量
-		cin >> character_count;
+		std::cin >> character_count;
 		if (character_count < 2 || character_count>4)
 			cout << "數量錯誤!" << endl;
 	} while (character_count < 2 || character_count>4);
 	for (int i = 0; i < character_count; i++)
 	{
 		int character_number = 0; string character_name;
-		cin >> character_name;
+		std::cin >> character_name;
 		for (int j = 0; j < Base_Character.size(); j++)
 		{
 			if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
@@ -62,7 +63,7 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 		{
 			int active_Card_ID;
 			do {
-				cin >> active_Card_ID;
+				std::cin >> active_Card_ID;
 				if (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1)
 					cout << "輸入錯誤!" << endl;
 			} while (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1);
@@ -95,7 +96,7 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 		Position start_point;
 		start_point = Game_Map.Init_Pos[0];
 		//此段似乎有bug引起輸入錯誤 而且不知道發生原因 我之後再測看看 下次測試幫我看看這裡cin會不會跳過
-		/*std::*/cin >> position_input;
+		std::cin >> position_input;
 		for (int j = 0; j < position_input.size(); j++)
 		{
 			switch (position_input[j])
@@ -178,14 +179,15 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		}
 		do {
 			char who;
-			cin >> who;
+			std::cin >> who;
 			for (int i = 0; i < play_Character.size(); i++) {
 				if (who == i + 'A') {
 					int Discard_num = calculate_Discard(play_Character[i]); //計算棄牌數
 					string command; // 若為-1 check時為指令 其他則為 出牌的第一張
-					cin >> command;
+					std::cin >> command;
 					if (command == "-1"&&Discard_num>=2&& !already_played[i]) {
 						play_Character[i].Dex[0] = 99;
+						play_Character[i].Rest = true;
 						already_played[i] = true;
 					}
 					else if (command=="check") {
@@ -193,7 +195,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 					}
 					else if(IsPlayHandCard(play_Character[i],command) && !already_played[i]) {
 						int card2;
-						cin >> card2;
+						std::cin >> card2;
 						if (IsCardInHand(play_Character[i], card2)) {
 							for (int j = 0; j < 2; j++) 
 							{
@@ -309,8 +311,71 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		{
 			cout << attack_Sort[i] << " ";
 		}cout << endl;
-		//動作執行
 
+
+		//動作執行
+		cout << endl << "Battle Log : " << endl;
+		for (int i = 0; i < attack_Sort.size(); i++) 
+		{
+			if (attack_Sort[i] <= 'Z' && attack_Sort[i] >= 'A')	//角色行動
+			{
+				if (play_Character[attack_Sort[i] - 'A'].Rest == false) 
+				{
+					cout << play_Character[attack_Sort[i] - 'A'].ID << "'s round : ";
+					int card_num; char UpOrDown;
+					cin >> card_num >> UpOrDown;
+					cout << play_Character[attack_Sort[i] - 'A'].ID << " : ";
+					if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].status == 4) 
+					{
+						if (UpOrDown == 'u') 
+						{
+							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++) 
+							{
+
+							}
+						}
+						else 
+						{
+							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown.size(); j++)
+							{
+
+							}
+						}
+						play_Character[attack_Sort[i] - 'A'].Deck[card_num].status = 2;
+					}
+				}
+				else 
+				{
+					cout << play_Character[attack_Sort[i] - 'A'].ID << " : Rest" << endl;
+				}
+			}
+			else //怪物行動
+			{
+				int Card_pos;
+				for (int j = 0; j < Monster[attack_Sort[i] - 'a'].Deck.size();j++) 
+				{
+					if (Monster[attack_Sort[i] - 'a'].Deck[j].status == 2)
+						Card_pos = j;
+				}
+				for (int j = 0; j < Monster[attack_Sort[i] - 'a'].Creature_List.size(); j++) 
+				{
+					if (Monster[attack_Sort[i] - 'a'].Creature_List[j].active == false)
+						continue;
+					cout << Monster[attack_Sort[i] - 'a'].Creature_List[j].icon << " : ";
+					for (int k = 0; k < Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement.size(); k++) 
+					{
+						cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement << " ";
+						if (Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement == "move")
+							cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Move_Command << " ";
+						else if (Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement == "attack")
+							cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement_Value << " range:" << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].range << " ";
+						else
+							cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement_Value << " ";
+					}
+					cout << endl;
+				}
+			}
+		}
 		//回合結算
 
 	}
@@ -590,6 +655,21 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 		}	
 	}
 	File_Map.close();
+}
+//確認怪物狀態
+void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map) 
+{
+	for (int i = 0; i < Monster.size(); i++) 
+	{
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++) 
+		{
+			int x = Monster[i].Creature_List[j].position.x; int y = Monster[i].Creature_List[j].position.y;
+			if (Game_Map.Game_Map[y][x] == 1) 
+			{
+				Monster[i].Creature_List[j].active = true;
+			}
+		}
+	}
 }
 
 /*==============DEBUG_MODE================*/

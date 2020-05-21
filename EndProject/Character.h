@@ -39,7 +39,9 @@ public:
 	//手牌數量
 	int Hand;
 	//兩張牌的敏捷值
-	int Dex[2];
+	int Dex[2] = {0,0};
+	//是否為長休狀態
+	bool Rest = false;
 	//牌組
 	vector<Player_Card> Deck;
 };

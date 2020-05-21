@@ -76,7 +76,9 @@ public:
 	int mode = 0;
 	//敏捷值
 	int Dex;
-
+	//icon
 	char icon;
+	//判斷是否在可視範圍內，如果不在，就不會進行任何動作
+	bool active=false;
 };
 
