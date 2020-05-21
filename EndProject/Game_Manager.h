@@ -25,12 +25,15 @@ void read_Character_Data(fstream& File_Character, vector<Character>& Base_Charac
 void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster);			//讀取怪物檔案
 void read_Map_Data(fstream& File_Map,Map& Game_Map, vector<Ethnicity>& Base_Monster,int);//讀取地圖檔案
 /*==============Support================*/
+
 int calculate_Discard(Character); //計算角色棄牌堆的數量
 bool IsPlayHandCard(Character&,string); //判斷是否為出牌
 bool IsCardInHand(Character &C, int card); //判斷出的牌是否在正確 and 出牌
 bool check_player_done(bool* player, int num);
 int get_Character_Dex(vector<Character> Play_Character, char name, int num);
 int get_Monster_Dex(vector<Ethnicity> Monster, char name);
+bool find_by_step(int x1, int y1, int x2, int y2, int step);
+
 /*==============DEBUG_MODE================*/
 
 void get_All_Base_Character_Data(vector<Character> Base_Character);	//顯示所有角色的變數值

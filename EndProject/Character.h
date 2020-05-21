@@ -2,6 +2,8 @@
 #include<vector>
 #include<iostream>
 using namespace std;
+class Map;
+
 struct Player_Card
 {
 	//卡片ID
@@ -24,7 +26,11 @@ public:
 	Character();
 	Character(string name,int hp,int hand):Character_name(name),Hp(hp),Hand(hand),Max_HP(hp){}
 	/*=====function=====*/
+
 	void Add_NewCard();
+	void Attack(int value,vector<Ethnicity>& Monster);
+	void Attack(int value ,int range, vector<Ethnicity>& Monster);
+
 	/*====資訊====*/
 	//icon
 	char ID;

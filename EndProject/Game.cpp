@@ -366,7 +366,7 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 				for (int j = 0; j < Character.Deck[card_num].MovementUp.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementUp[j].Movement == "attack") {
-						cout << "attack" << endl;
+						Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster, Game_Map);
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
 						cout << "shield" << endl;
@@ -773,6 +773,27 @@ void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map)
 				Monster[i].Creature_List[j].active = true;
 			}
 		}
+	}
+}
+bool find_by_step(int x1, int y1, int x2, int y2, int step)
+{
+	if (x1 == x2 && y1 == y2)
+	{
+		return true;
+	}
+	if (step > 0)
+	{
+		if (find_by_step(x1 + 1, y1, x2, y2, step - 1) == true
+			|| find_by_step(x1, y1 + 1, x2, y2, step - 1) == true
+			|| find_by_step(x1 - 1, y1, x2, y2, step - 1) == true
+			|| find_by_step(x1, y1 - 1, x2, y2, step - 1) == true)
+		{
+			return true;
+		}
+	}
+	else if (step == 0)
+	{
+		return false;
 	}
 }
 
