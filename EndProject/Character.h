@@ -26,6 +26,8 @@ public:
 	/*=====function=====*/
 	void Add_NewCard();
 	/*====資訊====*/
+	//
+	char ID;
 	//位置
 	Position position;
 	//名子
