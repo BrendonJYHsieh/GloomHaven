@@ -161,15 +161,17 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 }
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
 {
+	bool* already_played = nullptr;
 	srand(time(NULL));
 	int round = 1;
 	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
-		bool *already_played = new bool[play_Character.size()];
+		
+		already_played = new bool[play_Character.size()];
 		for (int i = 0; i < play_Character.size(); i++) {
 			already_played[i] = false;
+			cout << already_played[i] << endl;
 		}
-		int player_num = 0;
 		do {
 			char who;
 			cin >> who;
@@ -178,11 +180,12 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 					int Discard_num = calculate_Discard(play_Character[i]); //計算棄牌數
 					string command; // 若為-1 check時為指令 其他則為 出牌的第一張
 					cin >> command;
-					if (command == "-1"&&Discard_num>=2&&!already_played[i]) {
+					if (command == "-1"&&Discard_num>=2&& !already_played[i]) {
+						play_Character[i].Dex = 99;
 						already_played[i] = true;
 					}
 					else if (command=="check") {
-
+						check(play_Character[i]);
 					}
 					else if(IsPlayHandCard(play_Character[i],command) && !already_played[i]) {
 						int card2;
@@ -193,20 +196,16 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 						else {
 							break;
 						}
-						already_played[i] = true;
 					}
 					else {
 						cout << "Wrong Command" << endl;
 					}
 					break;
 				}
-				else {
-					cout << "Please Enter Correct UserID" << endl;
-					break;
-				}
 			}
-			delete already_played;
-		} while (player_num < play_Character.size());
+		} while (check_player_done(already_played, play_Character.size()));
+		delete[] already_played;
+		cout << "End" << endl;
 		//怪物準備
 		for (int i = 0; i < Monster.size(); i++)	//第i個種族
 		{
@@ -240,23 +239,24 @@ int calculate_Discard(Character C) {
 	return num;
 }
 //判斷是否打手牌
-bool IsPlayHandCard(Character C,string command ) {
+bool IsPlayHandCard(Character &C,string command ) {
 	if (command.size() > 1) {
 		return false;
 	}
-	else if (command.size() == 1 && command[0] >= 65 && command[0] <= 97) {
+	else if (command.size() == 1 && command[0] >= 48 && command[0] <= 57) {
 		for (int i = 0; i < C.Deck.size(); i++) {
-			if (C.Deck[i].ID == (command[0] - 'A')) {
+			if (C.Deck[i].ID == (command[0] - '0')) {
 				C.Deck[i].status = 4;
 				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 	else {
 		return false;
 	}
 }
+//判斷是否為手牌 若是的話狀態改為出牌
 bool IsCardInHand(Character &C,int card) {
 	for (int i = 0; i < C.Deck.size(); i++) {
 		if (C.Deck[i].ID == card) {
@@ -266,6 +266,38 @@ bool IsCardInHand(Character &C,int card) {
 	}
 	return false;
 }
+//Check
+void check(Character C) {
+	cout << "HandCard:";
+	for (int i = 0; i < C.Deck.size(); i++) {
+		if (C.Deck[i].status == 1) {
+			cout << C.Deck[i].ID << " ";
+		}
+	}
+	cout << "Discard:";
+	for (int i = 0; i < C.Deck.size(); i++) {
+		if (C.Deck[i].status == 2) {
+			cout << C.Deck[i].ID << " ";
+		}
+	}
+	cout << "NowPlay:";
+	for (int i = 0; i < C.Deck.size(); i++) {
+		if (C.Deck[i].status == 4) {
+			cout << C.Deck[i].ID << " ";
+		}
+	}
+	cout << endl;
+
+}
+bool check_player_done(bool* player, int num) {
+	for (int i = 0; i < num; i++) {
+		if (!player[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 //讀檔
 void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_Character)
 {
