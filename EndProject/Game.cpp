@@ -281,28 +281,38 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		//再排怪物		由於怪物是以種族來排，所以序列裡我將怪物的代號以('a'+i代替)，到時候寫攻擊時要稍微注意
 		for (int i = 0; i < Monster.size(); i++) 
 		{
-			for (int j = 0; j < attack_Sort.size(); j++) 
+			for (int k = 0; k < Monster[i].Creature_List.size(); k++) 
 			{
-				if (attack_Sort[j] >= 'A' && attack_Sort[j] <= 'Z') //判斷是否是玩家角色
+				if (Monster[i].Creature_List[k].active == false)
+					continue;
+				for (int j = 0; j < attack_Sort.size(); j++)
 				{
-					if (Monster[i].Dex < get_Character_Dex(play_Character, attack_Sort[j], 0)) 
+					if (attack_Sort[j] >= 'A' && attack_Sort[j] <= 'Z') //判斷是否是玩家角色
 					{
-						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
+						if (Monster[i].Dex < get_Character_Dex(play_Character, attack_Sort[j], 0))
+						{
+							attack_Sort.insert(attack_Sort.begin() + j,Monster[i].Creature_List[k].icon);
+							break;
+						}
+					}
+					else
+					{
+						if (Monster[i].Dex < get_Monster_Dex( Monster, attack_Sort[j]))
+						{
+							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
+							break;
+						}
+						else if (Monster[i].Dex == get_Monster_Dex(Monster, attack_Sort[j]) && Monster[i].Creature_List[k].icon < attack_Sort[j])
+						{
+							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
+							break;
+						}
+					}
+					if (j + 1 == attack_Sort.size())
+					{
+						attack_Sort.push_back(Monster[i].Creature_List[k].icon);
 						break;
 					}
-				}
-				else 
-				{
-					if (Monster[i].Dex < Monster[attack_Sort[j] - 'a'].Dex) 
-					{
-						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
-						break;
-					}
-				}
-				if (j + 1 == attack_Sort.size())
-				{
-					attack_Sort.push_back('a' + i);
-					break;
 				}
 			}
 		}
@@ -351,29 +361,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 			else //怪物行動
 			{
-				int Card_pos;
-				for (int j = 0; j < Monster[attack_Sort[i] - 'a'].Deck.size();j++) 
-				{
-					if (Monster[attack_Sort[i] - 'a'].Deck[j].status == 2)
-						Card_pos = j;
-				}
-				for (int j = 0; j < Monster[attack_Sort[i] - 'a'].Creature_List.size(); j++) 
-				{
-					if (Monster[attack_Sort[i] - 'a'].Creature_List[j].active == false)
-						continue;
-					cout << Monster[attack_Sort[i] - 'a'].Creature_List[j].icon << " : ";
-					for (int k = 0; k < Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement.size(); k++) 
-					{
-						cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement << " ";
-						if (Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement == "move")
-							cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Move_Command << " ";
-						else if (Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement == "attack")
-							cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement_Value << " range:" << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].range << " ";
-						else
-							cout << Monster[attack_Sort[i] - 'a'].Deck[Card_pos].Movement[k].Movement_Value << " ";
-					}
-					cout << endl;
-				}
+				
 			}
 		}
 		//回合結算
@@ -457,6 +445,17 @@ int get_Character_Dex(vector<Character> Play_Character,char name, int num)
 		if (Play_Character[i].ID == name) 
 		{
 			return Play_Character[i].Dex[num];
+		}
+	}
+}
+int get_Monster_Dex(vector<Ethnicity> Monster, char name)
+{
+	for (int i = 0; i < Monster.size(); i++) 
+	{
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++)
+		{
+			if (Monster[i].Creature_List[j].icon == name)
+				return Monster[i].Dex;
 		}
 	}
 }
