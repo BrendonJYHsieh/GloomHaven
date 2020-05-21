@@ -329,107 +329,148 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		{
 			if (attack_Sort[i] <= 'Z' && attack_Sort[i] >= 'A')	//角色行動
 			{
-				if (play_Character[attack_Sort[i] - 'A'].Rest == false) 
-				{
-					cout << play_Character[attack_Sort[i] - 'A'].ID << "'s round : ";
-					int card_num; char UpOrDown;
-					cin >> card_num >> UpOrDown;
-					cout << play_Character[attack_Sort[i] - 'A'].ID << " : ";
-					if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].status == 4) 
-					{
-						if (UpOrDown == 'u') 
-						{
-							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++) 
-							{
-								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement=="attack") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "shield") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "heal") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "move") {
-
-								}
-							}
-							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck.size(); j++) {
-								if (play_Character[attack_Sort[i] - 'A'].Deck[j].status == 4 && play_Character[attack_Sort[i] - 'A'].Deck[j].ID != card_num) {
-									card_num = play_Character[attack_Sort[i] - 'A'].Deck[j].ID;
-									break;
-								}
-							}
-							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++)
-							{
-								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "attack") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "shield") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "heal") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "move") {
-
-								}
-							}
-						}
-						else 
-						{
-							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown.size(); j++)
-							{
-								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "attack") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "shield") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "heal") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "move") {
-
-								}
-							}
-							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck.size(); j++) {
-								if (play_Character[attack_Sort[i] - 'A'].Deck[j].status == 4 && play_Character[attack_Sort[i] - 'A'].Deck[j].ID != card_num) {
-									card_num = play_Character[attack_Sort[i] - 'A'].Deck[j].ID;
-									break;
-								}
-							}
-							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++)
-							{
-								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "attack") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "shield") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "heal") {
-
-								}
-								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "move") {
-
-								}
-							}
-						}
-						play_Character[attack_Sort[i] - 'A'].Deck[card_num].status = 2;
-					}
-				}
-				else 
-				{
-					cout << play_Character[attack_Sort[i] - 'A'].ID << " : Rest" << endl;
-				}
+				players_round(play_Character[attack_Sort[i] - 'A'], Monster, Game_Map);
 			}
 			else //怪物行動
 			{
-				
+				for (int j = 0; j < Monster.size(); j++) 
+				{
+					for (int k = 0; k < Monster[j].Creature_List.size(); k++)
+					{
+						if (attack_Sort[i] == Monster[j].Creature_List[k].icon) 
+						{
+							monsters_round(play_Character, Monster[j], Monster[j].Creature_List[k], Game_Map);
+							break;
+						}
+					}
+				}
 			}
 		}
 		//回合結算
 
+	}
+}
+//行動
+void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_Map) 
+{
+	if (Character.Rest == false)
+	{
+		cout << Character.ID << "'s round : ";
+		int card_num; char UpOrDown;
+		cin >> card_num >> UpOrDown;
+		cout <<Character.ID << " : ";
+		if (Character.Deck[card_num].status == 4)
+		{
+			if (UpOrDown == 'u')
+			{
+				for (int j = 0; j < Character.Deck[card_num].MovementUp.size(); j++)
+				{
+					if (Character.Deck[card_num].MovementUp[j].Movement == "attack") {
+						cout << "attack" << endl;
+					}
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
+						cout << "shield" << endl;
+					}
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						cout << "heal" << endl;
+					}
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						cout << "move" << endl;
+					}
+				}
+				for (int j = 0; j < Character.Deck.size(); j++) {
+					if (Character.Deck[j].status == 4 && Character.Deck[j].ID != card_num) {
+						card_num = Character.Deck[j].ID;
+						break;
+					}
+				}
+				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
+				{
+					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
+						cout << "attack" << endl;
+					}
+					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
+						cout << "shield" << endl;
+					}
+					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
+						cout << "heal" << endl;
+					}
+					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
+						cout << "move" << endl;
+					}
+				}
+			}
+			else
+			{
+				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
+				{
+					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
+						cout << "attack" << endl;
+					}
+					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
+						cout << "shield" << endl;
+					}
+					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
+						cout << "heal" << endl;
+					}
+					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
+						cout << "move" << endl;
+					}
+				}
+				for (int j = 0; j < Character.Deck.size(); j++) {
+					if (Character.Deck[j].status == 4 && Character.Deck[j].ID != card_num) {
+						card_num = Character.Deck[j].ID;
+						break;
+					}
+				}
+				for (int j = 0; j < Character.Deck[card_num].MovementUp.size(); j++)
+				{
+					if (Character.Deck[card_num].MovementUp[j].Movement == "attack") {
+						cout << "attack" << endl;
+					}
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
+						cout << "shield" << endl;
+					}
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "heal") {
+						cout << "heal" << endl;
+					}
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "move") {
+						cout << "move" << endl;
+					}
+				}
+			}
+			Character.Deck[card_num].status = 2;
+		}
+	}
+	else
+	{
+		cout << Character.ID << " : Rest" << endl;
+	}
+}
+void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map) 
+{
+	cout << monster.icon << "'s round : ";
+	for (int i = 0; i < Monster_Ethnicity.Deck.size(); i++)
+	{
+		if (Monster_Ethnicity.Deck[i].status == 2) 
+		{
+			for (int j = 0; j < Monster_Ethnicity.Deck[i].Movement.size(); j++) 
+			{
+				if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "attack") {
+					cout << "attack" << endl;
+				}
+				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "shield") {
+					cout << "shield" << endl;
+				}
+				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "heal") {
+					cout << "heal" << endl;
+				}
+				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "move") {
+					cout << "move" << endl;
+				}
+			}
+			break;
+		}
 	}
 }
 //計算角色棄牌堆的數量
