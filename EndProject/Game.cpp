@@ -341,14 +341,78 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 						{
 							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++) 
 							{
+								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement=="attack") {
 
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "shield") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "heal") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "move") {
+
+								}
+							}
+							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck.size(); j++) {
+								if (play_Character[attack_Sort[i] - 'A'].Deck[j].status == 4 && play_Character[attack_Sort[i] - 'A'].Deck[j].ID != card_num) {
+									card_num = play_Character[attack_Sort[i] - 'A'].Deck[j].ID;
+									break;
+								}
+							}
+							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++)
+							{
+								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "attack") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "shield") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "heal") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp[j].Movement == "move") {
+
+								}
 							}
 						}
 						else 
 						{
 							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown.size(); j++)
 							{
+								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "attack") {
 
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "shield") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "heal") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "move") {
+
+								}
+							}
+							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck.size(); j++) {
+								if (play_Character[attack_Sort[i] - 'A'].Deck[j].status == 4 && play_Character[attack_Sort[i] - 'A'].Deck[j].ID != card_num) {
+									card_num = play_Character[attack_Sort[i] - 'A'].Deck[j].ID;
+									break;
+								}
+							}
+							for (int j = 0; j < play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementUp.size(); j++)
+							{
+								if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "attack") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "shield") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "heal") {
+
+								}
+								else if (play_Character[attack_Sort[i] - 'A'].Deck[card_num].MovementDown[j].Movement == "move") {
+
+								}
 							}
 						}
 						play_Character[attack_Sort[i] - 'A'].Deck[card_num].status = 2;

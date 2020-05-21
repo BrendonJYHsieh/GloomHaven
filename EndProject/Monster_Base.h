@@ -5,7 +5,7 @@
 using namespace std;
 struct Card_Property
 {
-	string Movement;
+	string Movement; 
 	int Movement_Value;
 	string Move_Command;	//僅怪物move指令時使用
 	int range = 0;	//範圍 預設為0，表近戰
@@ -74,6 +74,8 @@ public:
 	int Elite_Range;
 	//怪物狀態 0:隱藏1:普通	2:菁英
 	int mode = 0;
+	//能量護盾
+	int Shield=0;
 	//敏捷值
 	int Dex;
 	//icon

@@ -36,6 +36,8 @@ public:
 	int Hp;
 	//最大生命值
 	int Max_HP;
+	//能量護盾
+	int Shield;
 	//手牌數量
 	int Hand;
 	//兩張牌的敏捷值
