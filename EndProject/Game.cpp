@@ -486,44 +486,64 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 	}
 }
 void character_move(Character &C, int step, Map& Game_Map) {
-	char position_input;
-	for (int i = 0; i < step; i++) {
+	string position_input;
+	Position start = C.position;
+	bool wrong = true;
+	while (wrong) {
+		C.position = start;
 		std::cin >> position_input;
-			switch (position_input)
-			{
-			case'w':
-			case 'W':
-				if (Game_Map.Game_Map[C.position.y - 1][C.position.x] == 1)
+		if (position_input.size() <= step) {
+			for (int i = 0; i < position_input.size(); i++) {
+				switch (position_input[i])
 				{
-					C.position.y--;
+				case'w':
+				case 'W':
+					if (Game_Map.Game_Map[C.position.y - 1][C.position.x] == 1)
+					{
+						C.position.y--;
+						wrong = false;
+					}
+					break;
+				case's':
+				case 'S':
+					if (Game_Map.Game_Map[C.position.y + 1][C.position.x] == 1)
+					{
+						C.position.y++;
+						wrong = false;
+					}
+					break;
+				case'a':
+				case 'A':
+					if (Game_Map.Game_Map[C.position.y][C.position.x - 1] == 1)
+					{
+						C.position.x--;
+						wrong = false;
+					}
+					break;
+				case'd':
+				case 'D':
+					if (Game_Map.Game_Map[C.position.y][C.position.x + 1] == 1)
+					{
+						C.position.x++;
+						wrong = false;
+					}
+					break;
+				case'e':
+				case 'E':
+					break;
+				default:
+					cout << "Error Move!" << endl;
+					wrong = true;
+					break;
 				}
-				break;
-			case's':
-			case 'S':
-				if (Game_Map.Game_Map[C.position.y + 1][C.position.x] == 5)
-				{
-					C.position.y++;
+				if (wrong) {
+					break;
 				}
-				break;
-			case'a':
-			case 'A':
-				if (Game_Map.Game_Map[C.position.y][C.position.x - 1] == 5)
-				{
-					C.position.x--;
-				}
-				break;
-			case'd':
-			case 'D':
-				if (Game_Map.Game_Map[C.position.y][C.position.x + 1] == 5)
-				{
-					C.position.x++;
-				}
-				break;
-			case'e':
-			case 'E':
-				break;
-			default:
-				break;
+			}
+		}
+		else {
+			cout << "Error Move!" << endl;
+			wrong = true;
 		}
 	}
 }
