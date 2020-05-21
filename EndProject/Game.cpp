@@ -369,12 +369,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster, Game_Map);
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "shield" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						Character.Skill_heal(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -390,12 +393,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "shield" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
+						Character.Skill_heal(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
+						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -408,12 +414,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "shield" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
+						Character.Skill_heal(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
+						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -429,12 +438,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "shield" << endl;
 					}
-					else if (Character.Deck[card_num].MovementUp[j].Movement == "heal") {
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						Character.Skill_heal(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "heal" << endl;
 					}
-					else if (Character.Deck[card_num].MovementUp[j].Movement == "move") {
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -470,6 +482,68 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 				}
 			}
 			break;
+		}
+	}
+}
+void character_move(Character &C, int step, Map& Game_Map) {
+	string position_input;
+	Position start = C.position;
+	bool wrong = true;
+	while (wrong) {
+		C.position = start;
+		std::cin >> position_input;
+		if (position_input.size() <= step) {
+			for (int i = 0; i < position_input.size(); i++) {
+				switch (position_input[i])
+				{
+				case'w':
+				case 'W':
+					if (Game_Map.Game_Map[C.position.y - 1][C.position.x] == 1)
+					{
+						C.position.y--;
+						wrong = false;
+					}
+					break;
+				case's':
+				case 'S':
+					if (Game_Map.Game_Map[C.position.y + 1][C.position.x] == 1)
+					{
+						C.position.y++;
+						wrong = false;
+					}
+					break;
+				case'a':
+				case 'A':
+					if (Game_Map.Game_Map[C.position.y][C.position.x - 1] == 1)
+					{
+						C.position.x--;
+						wrong = false;
+					}
+					break;
+				case'd':
+				case 'D':
+					if (Game_Map.Game_Map[C.position.y][C.position.x + 1] == 1)
+					{
+						C.position.x++;
+						wrong = false;
+					}
+					break;
+				case'e':
+				case 'E':
+					break;
+				default:
+					cout << "Error Move!" << endl;
+					wrong = true;
+					break;
+				}
+				if (wrong) {
+					break;
+				}
+			}
+		}
+		else {
+			cout << "Error Move!" << endl;
+			wrong = true;
 		}
 	}
 }
