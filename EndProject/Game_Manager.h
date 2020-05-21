@@ -20,6 +20,7 @@ void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map);
 //動作
 void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map);
+void character_move(Character& C, int step, Map& Game_Map); //角色移動
 //讀檔
 void read_Character_Data(fstream& File_Character, vector<Character>& Base_Character);	//讀取角色檔案
 void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster);			//讀取怪物檔案

@@ -54,6 +54,17 @@ public:
 		this->Elite_Damage = elite_damage; 
 		this->Elite_Range = elite_range;
 	}
+	void Skill_shield(int x) {
+		this->Shield = x;
+	}
+	void Skill_heal(int x) {
+		if ((this->Hp + x) > this->Max_HP) {
+			this->Hp = this->Max_HP;
+		}
+		else {
+			this->Hp += x;
+		}
+	}
 	//Property
 	Position position;
 	//生物名子

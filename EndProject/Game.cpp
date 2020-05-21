@@ -369,12 +369,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "shield" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						Character.Skill_heal(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -390,12 +393,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "shield" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
+						Character.Skill_heal(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
+						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -408,12 +414,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "shield" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
+						Character.Skill_heal(Character.Deck[card_num].MovementDown[j].Movement_Value);
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
+						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -429,12 +438,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 						cout << "attack" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
+						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "shield" << endl;
 					}
-					else if (Character.Deck[card_num].MovementUp[j].Movement == "heal") {
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						Character.Skill_heal(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << "heal" << endl;
 					}
-					else if (Character.Deck[card_num].MovementUp[j].Movement == "move") {
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
 						cout << "move" << endl;
 					}
 				}
@@ -470,6 +482,48 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 				}
 			}
 			break;
+		}
+	}
+}
+void character_move(Character &C, int step, Map& Game_Map) {
+	char position_input;
+	for (int i = 0; i < step; i++) {
+		std::cin >> position_input;
+			switch (position_input)
+			{
+			case'w':
+			case 'W':
+				if (Game_Map.Game_Map[C.position.y - 1][C.position.x] == 1)
+				{
+					C.position.y--;
+				}
+				break;
+			case's':
+			case 'S':
+				if (Game_Map.Game_Map[C.position.y + 1][C.position.x] == 5)
+				{
+					C.position.y++;
+				}
+				break;
+			case'a':
+			case 'A':
+				if (Game_Map.Game_Map[C.position.y][C.position.x - 1] == 5)
+				{
+					C.position.x--;
+				}
+				break;
+			case'd':
+			case 'D':
+				if (Game_Map.Game_Map[C.position.y][C.position.x + 1] == 5)
+				{
+					C.position.x++;
+				}
+				break;
+			case'e':
+			case 'E':
+				break;
+			default:
+				break;
 		}
 	}
 }

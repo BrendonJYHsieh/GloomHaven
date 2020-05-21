@@ -25,6 +25,17 @@ public:
 	Character(string name,int hp,int hand):Character_name(name),Hp(hp),Hand(hand),Max_HP(hp){}
 	/*=====function=====*/
 	void Add_NewCard();
+	void Skill_shield(int x) {
+		this->Shield = x;
+	}
+	void Skill_heal(int x) {
+		if ((this->Hp + x) > this->Max_HP) {
+			this->Hp = this->Max_HP;
+		}
+		else {
+			this->Hp += x;
+		}
+	}
 	/*====¸ê°T====*/
 	//icon
 	char ID;
