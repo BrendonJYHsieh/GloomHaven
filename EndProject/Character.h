@@ -26,7 +26,7 @@ public:
 	/*=====function=====*/
 	void Add_NewCard();
 	/*====資訊====*/
-	//
+	//icon
 	char ID;
 	//位置
 	Position position;
@@ -38,8 +38,8 @@ public:
 	int Max_HP;
 	//手牌數量
 	int Hand;
-	//敏捷值
-	int Dex;
+	//兩張牌的敏捷值
+	int Dex[2];
 	//牌組
 	vector<Player_Card> Deck;
 };

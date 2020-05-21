@@ -25,11 +25,13 @@ int calculate_Discard(Character); //計算角色棄牌堆的數量
 bool IsPlayHandCard(Character&,string); //判斷是否為出牌
 bool IsCardInHand(Character &C, int card); //判斷出的牌是否在正確 and 出牌
 bool check_player_done(bool* player, int num);
+int get_Character_Dex(vector<Character> Play_Character, char name, int num);
 /*==============DEBUG_MODE================*/
 
 void get_All_Base_Character_Data(vector<Character> Base_Character);	//顯示所有角色的變數值
 void get_All_Base_Monster_Data(vector<Ethnicity> Base_Monster);		//顯示所有種族的變數值
-void get_int_Map(Map Map);
+void get_int_Map(Map Map);		//顯示int版本的地圖
+void check_all_dex(vector<Character> Play_Character, vector<Ethnicity> Monster);	//檢查此回合所有生物的敏捷值
 
 /*================UI_MODE=================*/
 void Main_Game_UI();		//UI模式

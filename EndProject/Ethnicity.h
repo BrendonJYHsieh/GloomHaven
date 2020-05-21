@@ -16,5 +16,7 @@ public:
 	string Ethnicity_Name;
 	vector<Monster_Base> Creature_List;
 	Monster_Base Ethnicity_Base_value;	//¼ÒªO
+	//¦^¦X±Ó±¶­È
+	int Dex;
 	vector<Creature_Card>Deck;
 };

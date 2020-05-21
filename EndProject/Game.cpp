@@ -51,9 +51,13 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 		for (int j = 0; j < Base_Character.size(); j++)
 		{
 			if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
-				character_number = j; break;
+			{
+				character_number = j;
+				break;
+			}
 		}
 		Character newCharacter = Base_Character[character_number];		//複製模板中的資料
+		newCharacter.ID = 'A' + i;
 		for (int j = 0; j < newCharacter.Hand; j++)
 		{
 			int active_Card_ID;
@@ -84,13 +88,14 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 		Game_Map.check_road(Game_Map.Init_Pos[i].x, Game_Map.Init_Pos[i].y);
 	}
 	Game_Map.print_Map(play_Character, Monster);
-	cin.ignore();
+	//cin.ignore();
 	for (int i = 0; i < play_Character.size(); i++) 
 	{
 		string position_input;
 		Position start_point;
 		start_point = Game_Map.Init_Pos[0];
-		getline(cin, position_input);
+		//此段似乎有bug引起輸入錯誤 而且不知道發生原因 我之後再測看看 下次測試幫我看看這裡cin會不會跳過
+		/*std::*/cin >> position_input;
 		for (int j = 0; j < position_input.size(); j++)
 		{
 			switch (position_input[j])
@@ -129,8 +134,8 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 			default:
 				break;
 			}
-			if (position_input[j] == 13)	//enter鍵結束
-				break;
+			//if (position_input[j] == 13)	//enter鍵結束
+			//	break;
 		}
 		play_Character[i].position.y = start_point.y;
 		play_Character[i].position.x = start_point.x;
@@ -166,11 +171,10 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	int round = 1;
 	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
-		
 		already_played = new bool[play_Character.size()];
 		for (int i = 0; i < play_Character.size(); i++) {
 			already_played[i] = false;
-			cout << already_played[i] << endl;
+			//cout << already_played[i] << endl;
 		}
 		do {
 			char who;
@@ -181,7 +185,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 					string command; // 若為-1 check時為指令 其他則為 出牌的第一張
 					cin >> command;
 					if (command == "-1"&&Discard_num>=2&& !already_played[i]) {
-						play_Character[i].Dex = 99;
+						play_Character[i].Dex[0] = 99;
 						already_played[i] = true;
 					}
 					else if (command=="check") {
@@ -191,6 +195,16 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 						int card2;
 						cin >> card2;
 						if (IsCardInHand(play_Character[i], card2)) {
+							for (int j = 0; j < 2; j++) 
+							{
+								for (int k = 0; k < play_Character[i].Deck.size(); k++) 
+								{
+									if (play_Character[i].Deck[k].ID == command[0] - '0')
+										play_Character[i].Dex[0] = play_Character[i].Deck[k].Dexterity_Value;
+									else if(play_Character[i].Deck[k].ID == card2)
+										play_Character[i].Dex[1] = play_Character[i].Deck[k].Dexterity_Value;
+								}
+							}
 							already_played[i] = true;
 						}
 						else {
@@ -205,7 +219,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 		} while (check_player_done(already_played, play_Character.size()));
 		delete[] already_played;
-		cout << "End" << endl;
+		//cout << "End" << endl;
 		//怪物準備
 		for (int i = 0; i < Monster.size(); i++)	//第i個種族
 		{
@@ -216,12 +230,85 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				if (Monster[i].Deck[choose].status == 0)	//確認是否在牌組中
 				{
 					Monster[i].Deck[choose].status = 2;	//改成出牌中
+					Monster[i].Dex = Monster[i].Deck[choose].Dexterity_Value;
 					finished = true;		//結束選擇
 				}
-			} while (finished == true);		//結束選擇即跳出此迴圈
+			} while (finished == false);		//結束選擇即跳出此迴圈
 		}
+		check_all_dex(play_Character,Monster);
 		//判斷出手順序
+		vector<char> attack_Sort;	//以敏捷值排序的攻擊順序
+		//先排角色
+		attack_Sort.push_back(play_Character[0].ID);	//將角色A加入排序
+		for (int i = 1; i < play_Character.size(); i++) 
+		{
+			for (int j = 0; j < attack_Sort.size(); j++) 
+			{
+				if (play_Character[i].Dex[0] < get_Character_Dex(play_Character, attack_Sort[j], 0))
+				{
+					attack_Sort.insert(attack_Sort.begin() + j, play_Character[i].ID);
+					break;
+				}
+				else if (play_Character[i].Dex[0] == get_Character_Dex(play_Character, attack_Sort[j], 0))
+				{
+					if (play_Character[i].Dex[1] < get_Character_Dex(play_Character, attack_Sort[j], 1))
+					{
+						attack_Sort.insert(attack_Sort.begin() + j, play_Character[i].ID);
+						break;
+					}
+					else if (j + 1 == attack_Sort.size()) //第二個敏捷值仍然相同或較大，由於是照角色字母順序加進排序，所以直接跳到下一位判斷，如果此位是最後一位，則直接將角色加到排序最後一位
+					{
+						attack_Sort.push_back(play_Character[i].ID);
+						break;
+					}
+					else {
+						continue;
+					}
+				}
+				else if (j + 1 == attack_Sort.size()) //排序中的最後一位
+				{
+					attack_Sort.push_back(play_Character[i].ID);
+					break;
+				}
+				else 
+				{
 
+				}
+			}
+		}
+		//再排怪物		由於怪物是以種族來排，所以序列裡我將怪物的代號以('a'+i代替)，到時候寫攻擊時要稍微注意
+		for (int i = 0; i < Monster.size(); i++) 
+		{
+			for (int j = 0; j < attack_Sort.size(); j++) 
+			{
+				if (attack_Sort[j] >= 'A' && attack_Sort[j] <= 'Z') //判斷是否是玩家角色
+				{
+					if (Monster[i].Dex < get_Character_Dex(play_Character, attack_Sort[j], 0)) 
+					{
+						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
+						break;
+					}
+				}
+				else 
+				{
+					if (Monster[i].Dex < Monster[attack_Sort[j] - 'a'].Dex) 
+					{
+						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
+						break;
+					}
+				}
+				if (j + 1 == attack_Sort.size())
+				{
+					attack_Sort.push_back('a' + i);
+					break;
+				}
+			}
+		}
+		//檢查排序
+		for (int i = 0; i < attack_Sort.size(); i++)
+		{
+			cout << attack_Sort[i] << " ";
+		}cout << endl;
 		//動作執行
 
 		//回合結算
@@ -297,7 +384,17 @@ bool check_player_done(bool* player, int num) {
 	}
 	return false;
 }
-
+//取得角色敏捷值by name
+int get_Character_Dex(vector<Character> Play_Character,char name, int num) 
+{
+	for (int i = 0; i < Play_Character.size(); i++) 
+	{
+		if (Play_Character[i].ID == name) 
+		{
+			return Play_Character[i].Dex[num];
+		}
+	}
+}
 //讀檔
 void read_Character_Data(fstream& File_Charactervector, vector<Character>& Base_Character)
 {
@@ -575,6 +672,19 @@ void get_int_Map(Map Map)
 			cout << Map.Game_Map[i][j];
 		}
 		cout << endl;
+	}
+}
+void check_all_dex(vector<Character> Play_Character, vector<Ethnicity> Monster) 
+{
+	cout << endl << "player:" << endl;
+	for (int i = 0; i < Play_Character.size(); i++) 
+	{
+		cout << "	" << Play_Character[i].ID << " : " << Play_Character[i].Dex[0] << " " << Play_Character[i].Dex[1] << endl;
+	}
+	cout << "monsters:" << endl;
+	for (int i = 0; i <Monster.size(); i++)
+	{
+		cout << "	" << Monster[i].Ethnicity_Name << " : " << Monster[i].Dex << endl;
 	}
 }
 
