@@ -410,9 +410,9 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
-						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						if (Character.Deck[card_num].MovementDown[j].range == 0)
 						{
-							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+							if (Character.Attack(Character.Deck[card_num].MovementDown[j].Movement_Value, Monster) == true)
 								Game_Map.print_Map(play_Character, Monster);
 						}
 						else
@@ -422,11 +422,11 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
 						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
-						cout << Character.ID << " shield " << Character.Deck[card_num].MovementUp[j].Movement_Value << " this turn" << endl;
+						cout << Character.ID << " shield " << Character.Deck[card_num].MovementDown[j].Movement_Value << " this turn" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
 						Character.Skill_heal(Character.Deck[card_num].MovementDown[j].Movement_Value);
-						cout << Character.ID << " heal " << Character.Deck[card_num].MovementUp[j].Movement_Value << ", now is " << Character.Hp << endl;
+						cout << Character.ID << " heal " << Character.Deck[card_num].MovementDown[j].Movement_Value << ", now is " << Character.Hp << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
 						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
@@ -440,9 +440,9 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
-						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						if (Character.Deck[card_num].MovementDown[j].range == 0)
 						{
-							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+							if (Character.Attack(Character.Deck[card_num].MovementDown[j].Movement_Value, Monster) == true)
 								Game_Map.print_Map(play_Character, Monster);
 						}
 						else
@@ -452,11 +452,11 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
 						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
-						cout << Character.ID << " shield " << Character.Deck[card_num].MovementUp[j].Movement_Value << " this turn" << endl;
+						cout << Character.ID << " shield " << Character.Deck[card_num].MovementDown[j].Movement_Value << " this turn" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "heal") {
 						Character.Skill_heal(Character.Deck[card_num].MovementDown[j].Movement_Value);
-						cout << Character.ID << " heal " << Character.Deck[card_num].MovementUp[j].Movement_Value << ", now is " << Character.Hp << endl;
+						cout << Character.ID << " heal " << Character.Deck[card_num].MovementDown[j].Movement_Value << ", now is " << Character.Hp << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
 						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
@@ -487,11 +487,11 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << Character.ID << " shield " << Character.Deck[card_num].MovementUp[j].Movement_Value << " this turn" << endl;
 					}
-					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "heal") {
 						Character.Skill_heal(Character.Deck[card_num].MovementUp[j].Movement_Value);
 						cout << Character.ID << " heal " << Character.Deck[card_num].MovementUp[j].Movement_Value << ", now is " << Character.Hp << endl;
 					}
-					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
+					else if (Character.Deck[card_num].MovementUp[j].Movement == "move") {
 						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
 						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
