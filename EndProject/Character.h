@@ -29,7 +29,7 @@ public:
 
 	void Add_NewCard();
 	bool Attack(int value,vector<Ethnicity>& Monster);
-	//void Attack(int value ,int range, vector<Ethnicity>& Monster);
+	bool Attack(int value ,int range, vector<Ethnicity>& Monster,Map map);
 	void Skill_shield(int x) {
 		this->Shield = x;
 	}

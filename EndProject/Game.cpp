@@ -384,7 +384,8 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						}
 						else 
 						{
-
+							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value,Character.Deck[card_num].MovementUp[j].range, Monster,Game_Map) == true)
+								Game_Map.print_Map(play_Character, Monster);
 						}
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
@@ -417,7 +418,8 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						}
 						else
 						{
-
+							if (Character.Attack(Character.Deck[card_num].MovementDown[j].Movement_Value, Character.Deck[card_num].MovementDown[j].range, Monster, Game_Map) == true)
+								Game_Map.print_Map(play_Character, Monster);
 						}
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
@@ -447,7 +449,8 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						}
 						else
 						{
-
+							if (Character.Attack(Character.Deck[card_num].MovementDown[j].Movement_Value, Character.Deck[card_num].MovementDown[j].range, Monster, Game_Map) == true)
+								Game_Map.print_Map(play_Character, Monster);
 						}
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
@@ -480,7 +483,8 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						}
 						else
 						{
-
+							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Character.Deck[card_num].MovementUp[j].range, Monster, Game_Map) == true)
+								Game_Map.print_Map(play_Character, Monster);
 						}
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
