@@ -78,3 +78,28 @@ bool Character::Attack(int value, int range, vector<Ethnicity>& Monster, Map map
 		cout << "error target!!!" << endl;
 	} while (1);
 }
+
+void Character::long_Rest() 
+{
+	this->Hp += 2;
+	if (this->Hp > this->Max_HP)
+		this->Hp = this->Max_HP;
+	cout << this->ID << " heal 2, now hp is " << this->Hp << endl;
+	bool remove_Complete = false;
+	do 
+	{
+		int remove;
+		cin >> remove;
+		if (this->Deck[remove].status == 2) 
+		{
+			this->Deck[remove].status = 0;
+			cout << "remove card: " << remove << endl;
+			for (int i = 0; i < this->Deck.size(); i++) 
+			{
+				if (this->Deck[i].status == 2)
+					this->Deck[i].status = 1;
+			}
+			remove_Complete = true;
+		}
+	} while (remove_Complete == false);
+}
