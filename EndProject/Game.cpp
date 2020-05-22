@@ -410,9 +410,9 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
-						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						if (Character.Deck[card_num].MovementDown[j].range == 0)
 						{
-							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+							if (Character.Attack(Character.Deck[card_num].MovementDown[j].Movement_Value, Monster) == true)
 								Game_Map.print_Map(play_Character, Monster);
 						}
 						else
@@ -440,9 +440,9 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
-						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						if (Character.Deck[card_num].MovementDown[j].range == 0)
 						{
-							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+							if (Character.Attack(Character.Deck[card_num].MovementDown[j].Movement_Value, Monster) == true)
 								Game_Map.print_Map(play_Character, Monster);
 						}
 						else
@@ -607,6 +607,77 @@ void character_move(Character& C, int step, Map& Game_Map, vector<Character> pla
 			wrong = true;
 		}
 	} while (wrong == true);
+}
+bool vision_search(Position p1, Position p2, Map Map) {
+	int xvalue, yvalue;
+	if (p1.x == p2.x) {
+		xvalue = p1.x;
+		if (p1.y > p2.y) {
+			for (int i = p1.y; i >= p2.y; i--) {
+				yvalue = i;
+				if (Map.Game_Map[yvalue][xvalue] == 0) {
+					return true;
+				}
+			}
+		}
+		else {
+			for (int i = p1.y; i <= p2.y; i++) {
+				yvalue = i;
+				if (Map.Game_Map[yvalue][xvalue] == 0) {
+					return true;
+				}
+			}
+		}
+	}
+	//斜率為正 左上到右下
+	else if (p1.x < p2.x&& p1.y <= p2.y) {
+		float tan = (p1.y - p2.y - 1) / (p1.x - p2.x - 1);
+		cout << tan << endl;
+		for (float i = p1.x; i < p2.x + 1; i += 0.0001) {
+			xvalue = floor(i);
+			yvalue = floor(i * tan) + p1.y;
+			if (Map.Game_Map[yvalue][xvalue] == 0) {
+				return true;
+			}
+		}
+	}
+	//斜率為正 右下到左上
+	else if (p1.x > p2.x && p1.y >= p2.y) {
+		float tan = (p1.y - p2.y - 1) / (p1.x - p2.x - 1);
+		cout << tan << endl;
+		for (float i = p1.x; i > p2.x; i -= 0.0001) {
+			xvalue = floor(i);
+			yvalue = floor(i * tan);
+			if (Map.Game_Map[yvalue][xvalue] == 0) {
+				return true;
+			}
+		}
+	}
+	//斜率為負 左下到右上
+	else if (p1.x < p2.x&& p1.y >= p2.y) {
+		float tan = (p1.y - p2.y + 1) / (p1.x - p2.x - 1) * -1;
+		cout << tan << endl;
+		for (float i = p1.x; i < p2.x + 1; i += 0.0001) {
+			int xvalue = floor(i);
+			int yvalue = p1.y - floor(i * tan);
+			if (Map.Game_Map[yvalue][xvalue] == 0) {
+				return true;
+			}
+		}
+	}
+	//斜率為負 右上到左下
+	else if (p1.x > p2.x && p1.y <= p2.y) {
+		float tan = (p1.y - p2.y + 1) / (p1.x - p2.x - 1) * -1;
+		cout << tan << endl;
+		for (float i = p1.x; i > p2.x; i -= 0.0001) {
+			xvalue = floor(i);
+			yvalue = p2.y - floor(i * tan);
+			if (Map.Game_Map[yvalue][xvalue] == 0) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 //計算角色棄牌堆的數量
 int calculate_Discard(Character C) {

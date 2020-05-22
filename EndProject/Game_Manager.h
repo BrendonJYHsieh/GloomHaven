@@ -36,6 +36,7 @@ void show_AttackList( vector<char> attack_Sort,vector<Character> Play_Character,
 int get_Character_Dex(vector<Character> Play_Character, char name, int num);
 int get_Monster_Dex(vector<Ethnicity> Monster, char name);
 bool find_by_step(int x1, int y1, int x2, int y2, int step);
+bool vision_search(Position, Position, Map);
 bool move_Error(int x, int y, vector<Character> play_Character, vector<Ethnicity> Monster, Map Game_Map);
 
 /*==============DEBUG_MODE================*/
