@@ -396,7 +396,7 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
-						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
+						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map, play_Character, Monster);
 						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
@@ -429,7 +429,7 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
-						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
+						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map,play_Character, Monster);
 						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
@@ -459,7 +459,7 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
-						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
+						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map, play_Character, Monster);
 						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
@@ -492,7 +492,7 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 						cout << "heal" << endl;
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
-						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
+						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map, play_Character, Monster);
 						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
@@ -532,58 +532,72 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 		}
 	}
 }
-void character_move(Character &C, int step, Map& Game_Map) {
+void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
 	string position_input;
 	Position start = C.position;
-	bool wrong = true;
-	while (wrong) {
+	bool wrong = false;
+	do{
+		wrong = false;
 		C.position = start;
 		std::cin >> position_input;
-		if (position_input.size() <= step) {
-			for (int i = 0; i < position_input.size(); i++) {
+		if (position_input.size() <= step) 
+		{
+			for (int i = 0; i < position_input.size(); i++) 
+			{
 				switch (position_input[i])
 				{
 				case'w':
 				case 'W':
-					if (Game_Map.Game_Map[C.position.y - 1][C.position.x] == 1)
+					if (move_Error(C.position.x,C.position.y-1,play_Character,Monster,Game_Map)==true)
 					{
 						C.position.y--;
-						wrong = false;
 					}
+					else
+						wrong = true;
 					break;
 				case's':
 				case 'S':
-					if (Game_Map.Game_Map[C.position.y + 1][C.position.x] == 1)
+					if (move_Error(C.position.x, C.position.y+1, play_Character, Monster, Game_Map) == true)
 					{
 						C.position.y++;
-						wrong = false;
 					}
+					else
+						wrong = true;
 					break;
 				case'a':
 				case 'A':
-					if (Game_Map.Game_Map[C.position.y][C.position.x - 1] == 1)
+					if (move_Error(C.position.x-1, C.position.y, play_Character, Monster, Game_Map) == true)
 					{
 						C.position.x--;
-						wrong = false;
 					}
+					else
+						wrong = true;
 					break;
 				case'd':
 				case 'D':
-					if (Game_Map.Game_Map[C.position.y][C.position.x + 1] == 1)
+					if (move_Error(C.position.x+1, C.position.y, play_Character, Monster, Game_Map) == true)
 					{
 						C.position.x++;
-						wrong = false;
 					}
+					else
+						wrong = true;
 					break;
 				case'e':
 				case 'E':
 					break;
-				default:
-					cout << "Error Move!" << endl;
-					wrong = true;
-					break;
+				}
+				if (i == position_input.size() - 1) 
+				{
+					for (int j = 0; j < play_Character.size(); j++) 
+					{
+						if (play_Character[j].position.x == C.position.x && play_Character[j].position.y == C.position.y) 
+						{
+							wrong = true;
+						}
+					}
 				}
 				if (wrong) {
+					cout << "Error Move!" << endl;
 					break;
 				}
 			}
@@ -592,7 +606,7 @@ void character_move(Character &C, int step, Map& Game_Map) {
 			cout << "Error Move!" << endl;
 			wrong = true;
 		}
-	}
+	} while (wrong == true);
 }
 //計算角色棄牌堆的數量
 int calculate_Discard(Character C) {
@@ -979,6 +993,25 @@ bool find_by_step(int x1, int y1, int x2, int y2, int step)
 	{
 		return false;
 	}
+}
+//確認移動路徑
+bool move_Error(int x,int y,vector<Character> play_Character, vector<Ethnicity> Monster, Map Game_Map)
+{
+	if (Game_Map.Game_Map[y][x] != 1 && Game_Map.Game_Map[y][x] != 3)
+	{
+		return false;
+	}
+	for (int i = 0; i < Monster.size(); i++) 
+	{
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++)
+		{
+			if (Monster[i].Creature_List[j].position.x == x && Monster[i].Creature_List[j].position.y == y) 
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 /*==============DEBUG_MODE================*/
