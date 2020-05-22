@@ -513,6 +513,9 @@ void players_round(vector<Character>& play_Character,Character& Character, vecto
 void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map) 
 {
 	cout << monster.icon << "'s round : ";
+	if (Monster_Ethnicity.Command == -1) {
+		return;
+	}
 	for (int i = 0; i < Monster_Ethnicity.Deck.size(); i++)
 	{
 		if (Monster_Ethnicity.Deck[i].status == 2) 
@@ -523,10 +526,12 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 					cout << "attack" << endl;
 				}
 				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "shield") {
-					cout << "shield" << endl;
+					monster.Skill_shield(Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value);
+					cout << monster.icon << " shield " << Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value << " this turn" << endl;
 				}
 				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "heal") {
-					cout << "heal" << endl;
+					monster.Skill_heal(Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value);
+					cout << monster.icon << " heal " << Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value << ", now is " << monster.Hp << endl;
 				}
 				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "move") {
 					cout << "move" << endl;
@@ -611,6 +616,10 @@ void character_move(Character& C, int step, Map& Game_Map, vector<Character> pla
 			wrong = true;
 		}
 	} while (wrong == true);
+}
+//©Çª«²¾°Ê
+void character_move() {
+
 }
 bool vision_search(Position p1, Position p2, Map Map) {
 	int xvalue, yvalue;
