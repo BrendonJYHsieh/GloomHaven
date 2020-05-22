@@ -36,7 +36,7 @@ void show_AttackList( vector<char> attack_Sort,vector<Character> Play_Character,
 int get_Character_Dex(vector<Character> Play_Character, char name, int num);
 int get_Monster_Dex(vector<Ethnicity> Monster, char name);
 bool find_by_step(int x1, int y1, int x2, int y2, int step);
-
+bool vision_search(Position,Position, Map);
 /*==============DEBUG_MODE================*/
 
 void get_All_Base_Character_Data(vector<Character> Base_Character);	//顯示所有角色的變數值
