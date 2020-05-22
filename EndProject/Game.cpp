@@ -599,7 +599,7 @@ void character_move(Character& C, int step, Map& Game_Map, vector<Character> pla
 				{
 					for (int j = 0; j < play_Character.size(); j++) 
 					{
-						if (play_Character[j].position.x == C.position.x && play_Character[j].position.y == C.position.y) 
+						if (play_Character[j].position.x == C.position.x && play_Character[j].position.y == C.position.y&&play_Character[j].ID!= C.ID)
 						{
 							wrong = true;
 						}
@@ -618,8 +618,54 @@ void character_move(Character& C, int step, Map& Game_Map, vector<Character> pla
 	} while (wrong == true);
 }
 //©Çª«²¾°Ê
-void character_move() {
-
+void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
+	Position start = C.position;
+	for (int i = 0; i < position_input.size(); i++)
+	{
+		start = C.position;
+		switch (position_input[i])
+		{
+		case'w':
+		case 'W':
+			if (move_Error_Monster(C.position.x, C.position.y - 1, play_Character, Game_Map) == true)
+			{
+				C.position.y--;
+			}
+			break;
+		case's':
+		case 'S':
+			if (move_Error_Monster(C.position.x, C.position.y + 1, play_Character, Game_Map) == true)
+			{
+				C.position.y++;
+			}
+			break;
+		case'a':
+		case 'A':
+			if (move_Error_Monster(C.position.x - 1, C.position.y, play_Character, Game_Map) == true)
+			{
+				C.position.x--;
+			}
+			break;
+		case'd':
+		case 'D':
+			if (move_Error(C.position.x + 1, C.position.y, play_Character, Monster, Game_Map) == true)
+			{
+				C.position.x++;
+			}
+		}
+		if (i == position_input.size() - 1)
+		{
+			for (int j = 0; j < Monster.size(); j++)
+			{
+				for (int k = 0; k < Monster[j].Creature_List.size(); k++) {
+					if (Monster[j].Creature_List[k].position.x == C.position.x && Monster[j].Creature_List[k].position.y == C.position.y&& Monster[j].Creature_List[k].icon!=C.icon)
+					{
+						C.position = start;
+					}
+				}
+			}
+		}
+	}
 }
 bool vision_search(Position p1, Position p2, Map Map) {
 	int xvalue, yvalue;
@@ -1097,7 +1143,21 @@ bool move_Error(int x,int y,vector<Character> play_Character, vector<Ethnicity> 
 	}
 	return true;
 }
-
+bool move_Error_Monster(int x, int y, vector<Character> play_Character, vector<Ethnicity> Monster, Map Game_Map)
+{
+	if (Game_Map.Game_Map[y][x] != 1)
+	{
+		return false;
+	}
+	for (int i = 0; i < play_Character.size(); i++)
+	{
+		if (play_Character[i].position.x == x && play_Character[i].position.y == y)
+		{
+			return false;
+		}
+	}
+	return true;
+}
 /*==============DEBUG_MODE================*/
 
 void get_All_Base_Character_Data(vector<Character> Base_Player) 
