@@ -15,8 +15,8 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 	{
 		creat_Character(Base_Character, play_Character);		//創建角色
 		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
-		get_All_Base_Character_Data(play_Character);	//檢查Character資料
-		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
+		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
 		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
@@ -172,11 +172,13 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	int round = 1;
 	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
+		cout << "round " << round << ":" << endl;
 		already_played = new bool[play_Character.size()];
 		for (int i = 0; i < play_Character.size(); i++) {
 			already_played[i] = false;
 			//cout << already_played[i] << endl;
 		}
+		//玩家角色準備
 		do {
 			char who;
 			std::cin >> who;
@@ -186,7 +188,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 					string command; // 若為-1 check時為指令 其他則為 出牌的第一張
 					std::cin >> command;
 					if (command == "-1"&&Discard_num>=2&& !already_played[i]) {
-						play_Character[i].Dex[0] = 99;
+						play_Character[i].Command[0] = -1;
 						play_Character[i].Rest = true;
 						already_played[i] = true;
 					}
@@ -202,9 +204,9 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 								for (int k = 0; k < play_Character[i].Deck.size(); k++) 
 								{
 									if (play_Character[i].Deck[k].ID == command[0] - '0')
-										play_Character[i].Dex[0] = play_Character[i].Deck[k].Dexterity_Value;
+										play_Character[i].Command[0] = play_Character[i].Deck[k].ID;
 									else if(play_Character[i].Deck[k].ID == card2)
-										play_Character[i].Dex[1] = play_Character[i].Deck[k].Dexterity_Value;
+										play_Character[i].Command[1] = play_Character[i].Deck[k].ID;
 								}
 							}
 							already_played[i] = true;
@@ -221,10 +223,20 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 		} while (check_player_done(already_played, play_Character.size()));
 		delete[] already_played;
-		//cout << "End" << endl;
 		//怪物準備
 		for (int i = 0; i < Monster.size(); i++)	//第i個種族
 		{
+			bool all_deactivate = true;
+			for (int j = 0; j < Monster[i].Creature_List.size(); j++) 
+			{
+				if (Monster[i].Creature_List[j].active == true)
+					all_deactivate = false;
+			}
+			if (all_deactivate == true) 
+			{
+				Monster[i].Command = -1;
+				continue;
+			}
 			bool finished = false;
 			do
 			{
@@ -232,12 +244,12 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				if (Monster[i].Deck[choose].status == 0)	//確認是否在牌組中
 				{
 					Monster[i].Deck[choose].status = 2;	//改成出牌中
-					Monster[i].Dex = Monster[i].Deck[choose].Dexterity_Value;
+					Monster[i].Command = choose;
 					finished = true;		//結束選擇
 				}
 			} while (finished == false);		//結束選擇即跳出此迴圈
 		}
-		check_all_dex(play_Character,Monster);
+		//check_all_dex(play_Character,Monster);	//檢查敏捷值
 		//判斷出手順序
 		vector<char> attack_Sort;	//以敏捷值排序的攻擊順序
 		//先排角色
@@ -246,14 +258,14 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		{
 			for (int j = 0; j < attack_Sort.size(); j++) 
 			{
-				if (play_Character[i].Dex[0] < get_Character_Dex(play_Character, attack_Sort[j], 0))
+				if (play_Character[i].Deck[play_Character[i].Command[0]].Dexterity_Value < get_Character_Dex(play_Character, attack_Sort[j], 0))
 				{
 					attack_Sort.insert(attack_Sort.begin() + j, play_Character[i].ID);
 					break;
 				}
-				else if (play_Character[i].Dex[0] == get_Character_Dex(play_Character, attack_Sort[j], 0))
+				else if (play_Character[i].Deck[play_Character[i].Command[0]].Dexterity_Value == get_Character_Dex(play_Character, attack_Sort[j], 0))
 				{
-					if (play_Character[i].Dex[1] < get_Character_Dex(play_Character, attack_Sort[j], 1))
+					if (play_Character[i].Deck[play_Character[i].Command[1]].Dexterity_Value < get_Character_Dex(play_Character, attack_Sort[j], 1))
 					{
 						attack_Sort.insert(attack_Sort.begin() + j, play_Character[i].ID);
 						break;
@@ -289,7 +301,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				{
 					if (attack_Sort[j] >= 'A' && attack_Sort[j] <= 'Z') //判斷是否是玩家角色
 					{
-						if (Monster[i].Dex < get_Character_Dex(play_Character, attack_Sort[j], 0))
+						if (Monster[i].Deck[Monster[i].Command].Dexterity_Value < get_Character_Dex(play_Character, attack_Sort[j], 0))
 						{
 							attack_Sort.insert(attack_Sort.begin() + j,Monster[i].Creature_List[k].icon);
 							break;
@@ -297,12 +309,12 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 					}
 					else
 					{
-						if (Monster[i].Dex < get_Monster_Dex( Monster, attack_Sort[j]))
+						if (Monster[i].Deck[Monster[i].Command].Dexterity_Value < get_Monster_Dex( Monster, attack_Sort[j]))
 						{
 							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
 							break;
 						}
-						else if (Monster[i].Dex == get_Monster_Dex(Monster, attack_Sort[j]) && Monster[i].Creature_List[k].icon < attack_Sort[j])
+						else if (Monster[i].Deck[Monster[i].Command].Dexterity_Value == get_Monster_Dex(Monster, attack_Sort[j]) && Monster[i].Creature_List[k].icon < attack_Sort[j])
 						{
 							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
 							break;
@@ -317,19 +329,18 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 		}
 		//檢查排序
-		for (int i = 0; i < attack_Sort.size(); i++)
+		show_AttackList(attack_Sort, play_Character, Monster);
+		/*for (int i = 0; i < attack_Sort.size(); i++)
 		{
 			cout << attack_Sort[i] << " ";
-		}cout << endl;
-
+		}cout << endl;*/
 
 		//動作執行
-		cout << endl << "Battle Log : " << endl;
 		for (int i = 0; i < attack_Sort.size(); i++) 
 		{
-			if (attack_Sort[i] <= 'Z' && attack_Sort[i] >= 'A')	//角色行動
+			if (attack_Sort[i] <= 'Z' && attack_Sort[i] >= 'A')		//角色行動
 			{
-				players_round(play_Character[attack_Sort[i] - 'A'], Monster, Game_Map);
+				players_round(play_Character,play_Character[attack_Sort[i] - 'A'], Monster, Game_Map);
 			}
 			else //怪物行動
 			{
@@ -348,17 +359,17 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		}
 		//回合結算
 
+		round++;
 	}
 }
 //行動
-void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_Map) 
+void players_round(vector<Character>& play_Character,Character& Character, vector<Ethnicity>& Monster, Map& Game_Map) 
 {
 	if (Character.Rest == false)
 	{
-		cout << Character.ID << "'s round : ";
+		cout << Character.ID << "'s rturn: card " << Character.Command[0] << " " << Character.Command[1] << endl;
 		int card_num; char UpOrDown;
 		cin >> card_num >> UpOrDown;
-		cout <<Character.ID << " : ";
 		if (Character.Deck[card_num].status == 4)
 		{
 			if (UpOrDown == 'u')
@@ -366,7 +377,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 				for (int j = 0; j < Character.Deck[card_num].MovementUp.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementUp[j].Movement == "attack") {
-						Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster, Game_Map);
+						if (Character.Deck[card_num].MovementUp[j].range == 0) 
+						{
+							if(Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster)==true)
+								Game_Map.print_Map(play_Character, Monster);
+						}
+						else 
+						{
+
+						}
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
 						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
@@ -378,6 +397,7 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
 						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
+						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
 				}
@@ -390,7 +410,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
-						cout << "attack" << endl;
+						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						{
+							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+								Game_Map.print_Map(play_Character, Monster);
+						}
+						else
+						{
+
+						}
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
 						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
@@ -402,6 +430,7 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
 						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
+						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
 				}
@@ -411,7 +440,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 				for (int j = 0; j < Character.Deck[card_num].MovementDown.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementDown[j].Movement == "attack") {
-						cout << "attack" << endl;
+						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						{
+							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+								Game_Map.print_Map(play_Character, Monster);
+						}
+						else
+						{
+
+						}
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "shield") {
 						Character.Skill_shield(Character.Deck[card_num].MovementDown[j].Movement_Value);
@@ -423,6 +460,7 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 					}
 					else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
 						character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map);
+						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
 				}
@@ -435,7 +473,15 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 				for (int j = 0; j < Character.Deck[card_num].MovementUp.size(); j++)
 				{
 					if (Character.Deck[card_num].MovementUp[j].Movement == "attack") {
-						cout << "attack" << endl;
+						if (Character.Deck[card_num].MovementUp[j].range == 0)
+						{
+							if (Character.Attack(Character.Deck[card_num].MovementUp[j].Movement_Value, Monster) == true)
+								Game_Map.print_Map(play_Character, Monster);
+						}
+						else
+						{
+
+						}
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "shield") {
 						Character.Skill_shield(Character.Deck[card_num].MovementUp[j].Movement_Value);
@@ -447,6 +493,7 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 					}
 					else if (Character.Deck[card_num].MovementUp[j].Movement == "") {
 						character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map);
+						Game_Map.print_Map(play_Character, Monster);
 						cout << "move" << endl;
 					}
 				}
@@ -456,7 +503,7 @@ void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_M
 	}
 	else
 	{
-		cout << Character.ID << " : Rest" << endl;
+		cout << Character.ID << "'turn: card -1" << endl;
 	}
 }
 void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map) 
@@ -616,6 +663,66 @@ bool check_player_done(bool* player, int num) {
 	}
 	return false;
 }
+//列出攻擊順序
+void show_AttackList(vector<char> attack_Sort, vector<Character> Play_Character, vector<Ethnicity> Monster)
+{
+	for (int i = 0; i < attack_Sort.size(); i++) 
+	{
+		if (attack_Sort[i] <= 'Z' && attack_Sort[i] >= 'A') 
+		{
+			for (int j = 0; j < Play_Character.size(); j++) 
+			{
+				if (Play_Character[j].ID == attack_Sort[i]) 
+				{
+					if (Play_Character[j].Command[0] != -1) 
+					{
+						cout << Play_Character[j].ID << " " << setw(2) << setfill('0') << Play_Character[j].Deck[Play_Character[j].Command[0]].Dexterity_Value << " " << Play_Character[j].Command[0] << " " << Play_Character[j].Command[1] << endl;
+					}
+					else 
+					{
+						cout << Play_Character[j].ID << " 99 -1" << endl;
+					}
+				}
+			}
+		}
+		else 
+		{
+			for (int j = 0; j < Monster.size(); j++) 
+			{
+				if (Monster[j].Command == -1)
+					continue;
+				for (int k = 0; k < Monster[j].Creature_List.size(); k++)
+				{
+					if (attack_Sort[i] == Monster[j].Creature_List[k].icon) 
+					{
+						cout << Monster[j].Ethnicity_Name << " " << setw(2) << setfill('0') << Monster[j].Deck[Monster[j].Command].Dexterity_Value<<" ";
+						for (int L = 0; L < Monster[j].Deck[Monster[j].Command].Movement.size(); L++) 
+						{
+							cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement << " ";
+							if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "attack") 
+							{
+								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " ";
+								if (Monster[j].Deck[Monster[j].Command].Movement[L].range != 0) 
+								{
+									cout << "range " << Monster[j].Deck[Monster[j].Command].Movement[L].range << " ";
+								}
+							}
+							else if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "move") 
+							{
+								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Move_Command << " ";
+							}
+							else
+							{
+								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " ";
+							}
+						}
+						cout << endl;
+					}
+				}
+			}
+		}
+	}
+}
 //取得角色敏捷值by name
 int get_Character_Dex(vector<Character> Play_Character,char name, int num) 
 {
@@ -623,7 +730,10 @@ int get_Character_Dex(vector<Character> Play_Character,char name, int num)
 	{
 		if (Play_Character[i].ID == name) 
 		{
-			return Play_Character[i].Dex[num];
+			if (Play_Character[i].Command[0] == -1)
+				return 99;
+			else
+				return Play_Character[i].Deck[Play_Character[i].Command[num]].Dexterity_Value;
 		}
 	}
 }
@@ -634,7 +744,7 @@ int get_Monster_Dex(vector<Ethnicity> Monster, char name)
 		for (int j = 0; j < Monster[i].Creature_List.size(); j++)
 		{
 			if (Monster[i].Creature_List[j].icon == name)
-				return Monster[i].Dex;
+				return Monster[i].Deck[Monster[i].Command].Dexterity_Value;
 		}
 	}
 }
@@ -958,12 +1068,19 @@ void check_all_dex(vector<Character> Play_Character, vector<Ethnicity> Monster)
 	cout << endl << "player:" << endl;
 	for (int i = 0; i < Play_Character.size(); i++) 
 	{
-		cout << "	" << Play_Character[i].ID << " : " << Play_Character[i].Dex[0] << " " << Play_Character[i].Dex[1] << endl;
+		cout << "	" << Play_Character[i].ID << " : " << Play_Character[i].Deck[Play_Character[i].Command[0]].Dexterity_Value << " " << Play_Character[i].Deck[Play_Character[i].Command[1]].Dexterity_Value << endl;
 	}
 	cout << "monsters:" << endl;
 	for (int i = 0; i <Monster.size(); i++)
 	{
-		cout << "	" << Monster[i].Ethnicity_Name << " : " << Monster[i].Dex << endl;
+		if (Monster[i].Command == -1) 
+		{
+			cout << "	" << Monster[i].Ethnicity_Name << " : deactivate." << endl;
+		}
+		else 
+		{
+			cout << "	" << Monster[i].Ethnicity_Name << " : " << Monster[i].Deck[Monster[i].Command].Dexterity_Value << endl;
+		}
 	}
 }
 

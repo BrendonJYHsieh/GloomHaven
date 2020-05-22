@@ -8,6 +8,7 @@
 #include<sstream>
 #include<algorithm>
 #include<ctime>
+#include<iomanip>
 
 /*=============main_function==============*/
 //遊戲主程式
@@ -18,7 +19,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 void check(Character C);
 void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map);
 //動作
-void players_round(Character& Character, vector<Ethnicity>& Monster, Map& Game_Map);
+void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map);
 void character_move(Character& C, int step, Map& Game_Map); //角色移動
 //讀檔
@@ -31,6 +32,7 @@ int calculate_Discard(Character); //計算角色棄牌堆的數量
 bool IsPlayHandCard(Character&,string); //判斷是否為出牌
 bool IsCardInHand(Character &C, int card); //判斷出的牌是否在正確 and 出牌
 bool check_player_done(bool* player, int num);
+void show_AttackList( vector<char> attack_Sort,vector<Character> Play_Character,vector<Ethnicity> Monster);
 int get_Character_Dex(vector<Character> Play_Character, char name, int num);
 int get_Monster_Dex(vector<Ethnicity> Monster, char name);
 bool find_by_step(int x1, int y1, int x2, int y2, int step);

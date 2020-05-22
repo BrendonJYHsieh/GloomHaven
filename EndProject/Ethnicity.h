@@ -16,7 +16,7 @@ public:
 	string Ethnicity_Name;
 	vector<Monster_Base> Creature_List;
 	Monster_Base Ethnicity_Base_value;	//模板
-	//回合敏捷值
-	int Dex;
+	//這回合抽到的卡
+	int Command;
 	vector<Creature_Card>Deck;
 };

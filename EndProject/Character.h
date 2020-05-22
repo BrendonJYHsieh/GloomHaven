@@ -28,9 +28,19 @@ public:
 	/*=====function=====*/
 
 	void Add_NewCard();
-	void Attack(int value,vector<Ethnicity>& Monster);
-	void Attack(int value ,int range, vector<Ethnicity>& Monster);
-
+	bool Attack(int value,vector<Ethnicity>& Monster);
+	//void Attack(int value ,int range, vector<Ethnicity>& Monster);
+	void Skill_shield(int x) {
+		this->Shield = x;
+	}
+	void Skill_heal(int x) {
+		if ((this->Hp + x) > this->Max_HP) {
+			this->Hp = this->Max_HP;
+		}
+		else {
+			this->Hp += x;
+		}
+	}
 	/*====資訊====*/
 	//icon
 	char ID;
@@ -46,8 +56,8 @@ public:
 	int Shield;
 	//手牌數量
 	int Hand;
-	//兩張牌的敏捷值
-	int Dex[2] = {0,0};
+	//要打出的兩張牌
+	int Command[2] = {0,0};
 	//是否為長休狀態
 	bool Rest = false;
 	//牌組
