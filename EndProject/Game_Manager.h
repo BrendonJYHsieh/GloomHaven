@@ -18,6 +18,7 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void check(Character C);
 void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map);
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);
 
 //°Ê§@
 void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map);

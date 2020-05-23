@@ -3,7 +3,7 @@
 void Map::check_road(int x,int y) 
 {
 	int in_map = Game_Map[y][x];
-	if (Game_Map[y][x] == 4) 
+	if (Game_Map[y][x] == 4 || Game_Map[y][x] == 1) 
 	{
 		Game_Map[y][x] = 1;
 		if (Game_Map[y - 1][x] == 4 || Game_Map[y - 1][x] == 2 || Game_Map[y - 1][x] == 5)

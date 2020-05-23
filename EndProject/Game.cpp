@@ -170,7 +170,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	bool* already_played = nullptr;
 	srand(time(NULL));
 	int round = 1;
-	while(1)	//結束遊戲條件 1.角色數量 怪物數量 門數量
+	while(end_Game(play_Character,Monster,Game_Map))	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
 		cout << "round " << round << ":" << endl;
 		already_played = new bool[play_Character.size()];
@@ -390,6 +390,39 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		end_round(play_Character, Monster, Game_Map);
 		round++;
 	}
+}
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map) 
+{
+	if (play_Character.size() == 0) 
+	{
+		cout << "monster win~" << endl;
+		return false;
+	}
+	bool all_Monsters_Dead = true;
+	for (int i = 0; i < Monster.size(); i++) 
+	{
+		if (Monster[i].Creature_List.size() != 0) 
+		{
+			all_Monsters_Dead = false;
+		}
+	}
+	bool all_Door_open = true;
+	for (int i = 0; i < Map.High; i++) 
+	{
+		for (int j = 0; j < Map.Width; j++) 
+		{
+			if (Map.Game_Map[i][j] == 3) 
+			{
+				all_Door_open = false;
+			}
+		}
+	}
+	if (all_Monsters_Dead == true && all_Door_open ==true) 
+	{
+		cout << "character win~" << endl;
+		return false;
+	}
+	return true;
 }
 //行動
 void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map)
@@ -616,17 +649,38 @@ void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Ma
 			Monster[i].Shuffle_Mark = false;
 		}
 	}
-	//判斷角色有沒有在門上和判斷有沒有剩餘怪物 開門
-	if (no_monster) {
-		for (int i = 0; i < play_Character.size(); i++) {
-			if (Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] == 3) {
-				Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] = 1;
-			}
+	//判斷角色有沒有在門上和判斷有沒有剩餘怪物 開門 and 重置角色長休狀態
+	bool open_Door = false;
+	for (int i = 0; i < play_Character.size(); i++) 
+	{
+		play_Character[i].Rest = false;
+		if (Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] == 3 && no_monster == true) {
+			Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] = 1;
+			open_Door = true;
 		}
 	}
 	//等所有門都開完再重新探視野
-
-
+	
+	if (open_Door == true) 
+	{
+		for (int i = 0; i < play_Character.size(); i++)
+		{
+			Map.check_road(play_Character[i].position.x, play_Character[i].position.y);
+		}
+		Map.print_Map(play_Character, Monster);
+	}
+	for (int i = 0; i < Monster.size(); i++) 
+	{
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++)
+		{
+			int x = Monster[i].Creature_List[j].position.x;
+			int y = Monster[i].Creature_List[j].position.y;
+			if (Map.Game_Map[y][x] == 1) 
+			{
+				Monster[i].Creature_List[j].active = true;
+			}
+		}
+	}
 }
 void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
 	string position_input;
