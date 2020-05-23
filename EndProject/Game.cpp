@@ -252,6 +252,9 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				{
 					Monster[i].Deck[choose].status = 2;	//改成出牌中
 					Monster[i].Command = choose;
+					if (Monster[i].Deck[choose].Shuffle_Mark) {
+						Monster[i].Shuffle_Mark = true;
+					}
 					finished = true;		//結束選擇
 				}
 			} while (finished == false);		//結束選擇即跳出此迴圈
@@ -383,7 +386,8 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 		}
 		//回合結算
-
+		attack_Sort.clear();
+		end_round(play_Character, Monster, Game_Map);
 		round++;
 	}
 }
@@ -589,10 +593,40 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 		}
 	}
 }
-void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) {
+void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map) {
+	bool no_monster = true;
+	//護甲歸0
 	for (int i = 0; i < play_Character.size(); i++) {
-
+		play_Character[i].Shield = 0;
 	}
+	for (int i = 0; i < Monster.size(); i++) {
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++) {
+			Monster[i].Creature_List[j].Shield = 0;
+			if (Monster[i].Creature_List[j].active) {
+				no_monster = false;
+			}
+		}
+		//怪物判斷是否有重洗
+		if (Monster[i].Shuffle_Mark) {
+			for (int j = 0; j < Monster[i].Deck.size(); j++) {
+				if (Monster[i].Deck[j].status == 1) {
+					Monster[i].Deck[j].status = 0;
+				}
+			}
+			Monster[i].Shuffle_Mark = false;
+		}
+	}
+	//判斷角色有沒有在門上和判斷有沒有剩餘怪物 開門
+	if (no_monster) {
+		for (int i = 0; i < play_Character.size(); i++) {
+			if (Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] == 3) {
+				Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] = 1;
+			}
+		}
+	}
+	//等所有門都開完再重新探視野
+
+
 }
 void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
 	string position_input;

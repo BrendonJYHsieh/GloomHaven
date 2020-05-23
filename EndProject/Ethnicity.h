@@ -19,4 +19,6 @@ public:
 	//這回合抽到的卡
 	int Command;
 	vector<Creature_Card>Deck;
+	//重洗
+	bool Shuffle_Mark = false;
 };

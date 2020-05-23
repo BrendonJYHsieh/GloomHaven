@@ -81,9 +81,7 @@ bool Character::Attack(int value, int range, vector<Ethnicity>& Monster, Map map
 
 void Character::long_Rest() 
 {
-	this->Hp += 2;
-	if (this->Hp > this->Max_HP)
-		this->Hp = this->Max_HP;
+	this->Skill_heal(2);
 	cout << this->ID << " heal 2, now hp is " << this->Hp << endl;
 	bool remove_Complete = false;
 	do 
