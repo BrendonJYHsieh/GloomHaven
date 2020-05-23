@@ -810,9 +810,18 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 	int distance = abs(M.position.x - play_Character[final_Target].position.x) + abs(M.position.y - play_Character[final_Target].position.y);
 	cout << M.icon << " lock " << play_Character[final_Target].ID << " in distance " << distance << endl;
 	//b attack A 3 damage, A shield 1, A remain 12 hp
-	cout << M.icon << " attack " << play_Character[final_Target].ID << " " << value << " damage, " << play_Character[final_Target].ID << " shield " << play_Character[final_Target].Shield << ", " << play_Character[final_Target].ID << " remain ";
-	play_Character[final_Target].Hp -= (value - play_Character[final_Target].Shield);
-	play_Character[final_Target].Shield = 0;
+	cout << M.icon << " attack " << play_Character[final_Target].ID << " " << (M.Damage +value) << " damage, " << play_Character[final_Target].ID << " shield " << play_Character[final_Target].Shield << ", " << play_Character[final_Target].ID << " remain ";
+	if (play_Character[final_Target].Shield < M.Damage + value) 
+	{
+		play_Character[final_Target].Hp -= ((M.Damage + value) - play_Character[final_Target].Shield);
+		play_Character[final_Target].Shield = 0;
+	}
+	else 
+	{
+		play_Character[final_Target].Shield -= (M.Damage + value);
+		if (play_Character[final_Target].Shield < 0)
+			play_Character[final_Target].Shield = 0;
+	}
 	cout << play_Character[final_Target].Hp << " hp" << endl;
 	if (play_Character[final_Target].Hp <= 0) 
 	{
