@@ -18,9 +18,11 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void check(Character C);
 void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map);
+
 //動作
 void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort);
+void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);
 void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster); //角色移動
 void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster);
 bool monster_Attack(Monster_Base& M, int value, int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map);
