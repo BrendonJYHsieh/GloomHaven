@@ -41,6 +41,8 @@ bool find_by_step(int x1, int y1, int x2, int y2, int step);
 bool vision_search(Position, Position, Map);
 bool move_Error(int x, int y, vector<Character> play_Character, vector<Ethnicity> Monster, Map Game_Map);
 bool move_Error_Monster(int x, int y, vector<Character> play_Character, Map Game_Map);
+void print_character_sort_onActive_monster(vector<Ethnicity> Monster,vector<Character>); //©Çª««ö·Ó¶¶§Ç±Æ and print 
+bool abcSort(Monster_Base a, Monster_Base b);
 
 /*==============DEBUG_MODE================*/
 
