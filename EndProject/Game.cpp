@@ -588,6 +588,11 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 		}
 	}
 }
+void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) {
+	for (int i = 0; i < play_Character.size(); i++) {
+
+	}
+}
 void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
 	string position_input;
 	Position start = C.position;
