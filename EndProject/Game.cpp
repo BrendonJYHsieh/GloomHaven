@@ -556,7 +556,6 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 }
 void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map,vector<Ethnicity>& Monster, vector<char> attack_Sort)
 {
-	cout << monster.icon << "'s round : ";
 	if (Monster_Ethnicity.Command == -1) {
 		return;
 	}
@@ -567,7 +566,10 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 			for (int j = 0; j < Monster_Ethnicity.Deck[i].Movement.size(); j++) 
 			{
 				if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "attack") {
-					monster_Attack(monster, Monster_Ethnicity.Deck[i].Movement[j].Movement_Value, Monster_Ethnicity.Deck[i].Movement[j].range, attack_Sort, Monster, play_Character, Game_Map);
+					if (monster_Attack(monster, Monster_Ethnicity.Deck[i].Movement[j].Movement_Value, Monster_Ethnicity.Deck[i].Movement[j].range, attack_Sort, Monster, play_Character, Game_Map) == true)
+					{
+						Game_Map.print_Map(play_Character, Monster);
+					}
 					//cout << "attack" << endl;
 				}
 				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "shield") {
@@ -579,9 +581,8 @@ void monsters_round(vector<Character>& play_Character, Ethnicity& Monster_Ethnic
 					cout << monster.icon << " heal " << Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value << ", now is " << monster.Hp << endl;
 				}
 				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "move") {
-					//monster_move(monster, Monster_Ethnicity.Deck[i].Movement[j].Move_Command, Game_Map, play_Character, Monster);
+					monster_move(monster, Monster_Ethnicity.Deck[i].Movement[j].Move_Command, Game_Map, play_Character, Monster);
 					Game_Map.print_Map(play_Character, Monster);
-					cout << "move" << endl;
 				}
 			}
 			break;
@@ -772,7 +773,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 	}
 	return false;
 }
-void monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character> play_Character, Map& Game_Map)
+bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map)
 {
 	vector<int> target_List;
 	for (int i = 0; i < play_Character.size(); i++) 
@@ -808,10 +809,31 @@ void monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 	}
 	if (final_Target == 99) 
 	{
-		return;
+		cout << "no one lock" << endl;
+		return false;
 	}
 	int distance = abs(M.position.x - play_Character[final_Target].position.x) + abs(M.position.y - play_Character[final_Target].position.y);
 	cout << M.icon << " lock " << play_Character[final_Target].ID << " in distance " << distance << endl;
+	//b attack A 3 damage, A shield 1, A remain 12 hp
+	cout << M.icon << " attack " << play_Character[final_Target].ID << " " << (M.Damage +value) << " damage, " << play_Character[final_Target].ID << " shield " << play_Character[final_Target].Shield << ", " << play_Character[final_Target].ID << " remain ";
+	if (play_Character[final_Target].Shield < M.Damage + value) 
+	{
+		play_Character[final_Target].Hp -= ((M.Damage + value) - play_Character[final_Target].Shield);
+		play_Character[final_Target].Shield = 0;
+	}
+	else 
+	{
+		play_Character[final_Target].Shield -= (M.Damage + value);
+		if (play_Character[final_Target].Shield < 0)
+			play_Character[final_Target].Shield = 0;
+	}
+	cout << play_Character[final_Target].Hp << " hp" << endl;
+	if (play_Character[final_Target].Hp <= 0) 
+	{
+		cout << play_Character[final_Target].ID << " is killed!!" << endl;
+		play_Character.erase(play_Character.begin() + final_Target);
+	}
+	return false;
 }
 //計算角色棄牌堆的數量
 int calculate_Discard(Character C) {
@@ -1258,10 +1280,10 @@ void print_character_sort_onActive_monster(vector<Ethnicity> Monster, vector<Cha
 bool abcSort(Monster_Base a,Monster_Base b) {
 	if (a.icon > b.icon)
 	{
-		return true;
+		return false;
 	}
 	else {
-		return false;
+		return true;
 	}
 }
 /*==============DEBUG_MODE================*/
