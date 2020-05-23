@@ -717,6 +717,12 @@ void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<
 }
 bool vision_search(Position p1, Position p2, Map Map) {
 	int xvalue, yvalue;
+	if (p1.x > p2.x&& p1.y >= p2.y) {
+		swap(p1, p2);
+	}
+	else if (p1.x > p2.x&& p1.y <= p2.y) {
+		swap(p1, p2);
+	}
 	if (p1.x == p2.x) {
 		xvalue = p1.x;
 		if (p1.y > p2.y) {
@@ -737,49 +743,25 @@ bool vision_search(Position p1, Position p2, Map Map) {
 		}
 	}
 	//斜率為正 左上到右下
-	else if (p1.x < p2.x&& p1.y <= p2.y) {
-		float tan = (p1.y - p2.y - 1) / (p1.x - p2.x - 1);
+	else if (p1.x < p2.x && p2.y >= p1.y) {
+		float tan = (p1.y - p2.y) / (p1.x - p2.x);
 		cout << tan << endl;
-		for (float i = p1.x; i < p2.x + 1; i += 0.0001) {
-			xvalue = floor(i);
-			yvalue = floor(i * tan) + p1.y;
-			if (Map.Game_Map[yvalue][xvalue] == 0) {
-				return true;
-			}
-		}
-	}
-	//斜率為正 右下到左上
-	else if (p1.x > p2.x && p1.y >= p2.y) {
-		float tan = (p1.y - p2.y - 1) / (p1.x - p2.x - 1);
-		cout << tan << endl;
-		for (float i = p1.x; i > p2.x; i -= 0.0001) {
-			xvalue = floor(i);
-			yvalue = floor(i * tan);
-			if (Map.Game_Map[yvalue][xvalue] == 0) {
+		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
+			xvalue = floor(i + p1.x + 0.5);
+			yvalue = floor(i * tan + p1.y + 0.5);
+			if (Map.Game_Map[yvalue][xvalue] = 0) {
 				return true;
 			}
 		}
 	}
 	//斜率為負 左下到右上
-	else if (p1.x < p2.x&& p1.y >= p2.y) {
-		float tan = (p1.y - p2.y + 1) / (p1.x - p2.x - 1) * -1;
+	else if (p1.x < p2.x && p1.y >= p2.y) {
+		float tan = (p1.y - p2.y) / (p1.x - p2.x) * -1;
 		cout << tan << endl;
-		for (float i = p1.x; i < p2.x + 1; i += 0.0001) {
-			int xvalue = floor(i);
-			int yvalue = p1.y - floor(i * tan);
-			if (Map.Game_Map[yvalue][xvalue] == 0) {
-				return true;
-			}
-		}
-	}
-	//斜率為負 右上到左下
-	else if (p1.x > p2.x && p1.y <= p2.y) {
-		float tan = (p1.y - p2.y + 1) / (p1.x - p2.x - 1) * -1;
-		cout << tan << endl;
-		for (float i = p1.x; i > p2.x; i -= 0.0001) {
-			xvalue = floor(i);
-			yvalue = p2.y - floor(i * tan);
-			if (Map.Game_Map[yvalue][xvalue] == 0) {
+		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
+			xvalue = floor(i + 0.5 + p1.x);
+			yvalue = floor(p1.y + 0.5 - i * tan);
+			if (Map.Game_Map[yvalue][xvalue] = 0) {
 				return true;
 			}
 		}
