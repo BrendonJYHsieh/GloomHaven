@@ -12,10 +12,10 @@
 
 /*=============main_function==============*/
 //遊戲主程式
-void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map);			//主程式
+void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map,int DEBUG_MODE);			//主程式
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);	//創建角色
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);	//選擇起始位置
-void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
+void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE);
 void check(Character C);
 void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map);
 bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);

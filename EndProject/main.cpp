@@ -23,10 +23,10 @@ void main(int argc, char* argv[])
 	switch (DEBUG_MODE)
 	{
 	case 0:
-		Main_Game(File_Character, File_Monster, File_Map);
+		Main_Game(File_Character, File_Monster, File_Map,DEBUG_MODE);
 		break;
 	case 1:
-
+		Main_Game(File_Character, File_Monster, File_Map, DEBUG_MODE);
 		break;
 	case 2:
 		Main_Game_UI();

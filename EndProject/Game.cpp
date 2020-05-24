@@ -2,7 +2,7 @@
 /*=============main_function==============*/
 
 //遊戲主程式
-void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
+void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, int DEBUG_MODE)
 {
 	vector<Character> Base_Character;	//角色模板，，用於之後創建角色清單時從裡面複製角色資料
 	vector<Ethnicity> Monster;			//所有種族
@@ -16,12 +16,12 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map)
 		creat_Character(Base_Character, play_Character);		//創建角色
 		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
-		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
 		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
 		//開始遊戲主流程
-		main_Battle(play_Character, Monster, GameMap);
+		main_Battle(play_Character, Monster, GameMap,DEBUG_MODE);
 		play_Character.clear();
 		for (int i = 0; i < Monster.size(); i++) 
 		{
@@ -165,13 +165,14 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 	}
 	Game_Map.print_Map(play_Character, Monster);
 }
-void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
+void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE)
 {
 	bool* already_played = nullptr;
 	srand(time(NULL));
 	int round = 1;
 	while(end_Game(play_Character,Monster,Game_Map))	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
+		//get_All_Base_Monster_Data(Monster);
 		cout << "round " << round << ":" << endl;
 		already_played = new bool[play_Character.size()];
 		for (int i = 0; i < play_Character.size(); i++) {
@@ -244,20 +245,38 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				Monster[i].Command = -1;
 				continue;
 			}
-			bool finished = false;
-			do
+			if (DEBUG_MODE == 0) 
 			{
-				int choose = rand() % (Monster[i].Deck.size());
-				if (Monster[i].Deck[choose].status == 0)	//確認是否在牌組中
+				bool finished = false;
+				do
 				{
-					Monster[i].Deck[choose].status = 2;	//改成出牌中
-					Monster[i].Command = choose;
-					if (Monster[i].Deck[choose].Shuffle_Mark) {
-						Monster[i].Shuffle_Mark = true;
+					int choose = rand() % (Monster[i].Deck.size());
+					if (Monster[i].Deck[choose].status == 0)	//確認是否在牌組中
+					{
+						Monster[i].Deck[choose].status = 2;	//改成出牌中
+						Monster[i].Command = choose;
+						if (Monster[i].Deck[choose].Shuffle_Mark) {
+							Monster[i].Shuffle_Mark = true;
+						}
+						finished = true;		//結束選擇
 					}
-					finished = true;		//結束選擇
+				} while (finished == false);		//結束選擇即跳出此迴圈
+			}
+			else 
+			{
+				for (int j = 0; j < Monster[i].Deck.size(); j++) 
+				{
+					if (Monster[i].Deck[j].status == 0) 
+					{
+						Monster[i].Deck[j].status = 2;	//改成出牌中
+						Monster[i].Command = j;
+						if (Monster[i].Deck[j].Shuffle_Mark) {
+							Monster[i].Shuffle_Mark = true;
+						}
+						break;
+					}
 				}
-			} while (finished == false);		//結束選擇即跳出此迴圈
+			}
 		}
 		//check_all_dex(play_Character,Monster);	//檢查敏捷值
 		//判斷出手順序
@@ -633,6 +652,10 @@ void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Ma
 		play_Character[i].Shield = 0;
 	}
 	for (int i = 0; i < Monster.size(); i++) {
+		if (Monster[i].Command != -1) 
+		{
+			Monster[i].Deck[Monster[i].Command].status = 1;
+		}
 		for (int j = 0; j < Monster[i].Creature_List.size(); j++) {
 			Monster[i].Creature_List[j].Shield = 0;
 			if (Monster[i].Creature_List[j].active) {
@@ -864,8 +887,11 @@ bool vision_search(Position p1, Position p2, Map Map) {
 bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map)
 {
 	vector<int> target_List;
+	int min_Distance = -1;
 	for (int i = 0; i < play_Character.size(); i++) 
 	{
+		if (min_Distance == -1)
+			min_Distance = abs(M.position.x - play_Character[i].position.x) + abs(M.position.y - play_Character[i].position.y);
 		int distance = abs(M.position.x - play_Character[i].position.x) + abs(M.position.y - play_Character[i].position.y);
 		if (range + M.Range == 0) 
 		{
@@ -881,6 +907,13 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 				target_List.push_back(i);
 			}
 		}
+		if (distance < min_Distance)
+			min_Distance = distance;
+	}
+	for (int i = target_List.size() - 1; i >= 0; i--) 
+	{
+		if ((abs(M.position.x - play_Character[target_List[i]].position.x) + abs(M.position.y - play_Character[target_List[i]].position.y)) > min_Distance)
+			target_List.erase(target_List.begin() + i);
 	}
 	int final_Target = 99;
 	for (int i = 0; i < attack_Sort.size(); i++) 
@@ -889,7 +922,7 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 		{
 			if (play_Character[target_List[j]].ID == attack_Sort[i]) 
 			{
-				final_Target = j;
+				final_Target = target_List[j];
 			}
 		}
 		if (final_Target != 99)
@@ -1030,11 +1063,7 @@ void show_AttackList(vector<char> attack_Sort, vector<Character> Play_Character,
 							cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement << " ";
 							if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "attack") 
 							{
-								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " ";
-								if (Monster[j].Deck[Monster[j].Command].Movement[L].range != 0) 
-								{
-									cout << "range " << Monster[j].Deck[Monster[j].Command].Movement[L].range << " ";
-								}
+								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " " << "range " << Monster[j].Deck[Monster[j].Command].Movement[L].range << " ";
 							}
 							else if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "move") 
 							{
@@ -1251,6 +1280,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 			{
 				Monster_temp.Damage = Monster[j].Ethnicity_Base_value.Damage;
 				Monster_temp.Hp = Monster[j].Ethnicity_Base_value.Hp;
+				Monster_temp.Max_HP = Monster[j].Ethnicity_Base_value.Hp;
 				Monster_temp.Name = Monster[j].Ethnicity_Base_value.Name;
 				Monster_temp.Range = Monster[j].Ethnicity_Base_value.Range;
 				Monster_temp.mode = mode;
@@ -1262,6 +1292,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 			{
 				Monster_temp.Damage = Monster[j].Ethnicity_Base_value.Elite_Damage;
 				Monster_temp.Hp = Monster[j].Ethnicity_Base_value.Elite_Hp;
+				Monster_temp.Max_HP = Monster[j].Ethnicity_Base_value.Elite_Hp;
 				Monster_temp.Name = Monster[j].Ethnicity_Base_value.Name;
 				Monster_temp.Range = Monster[j].Ethnicity_Base_value.Elite_Range;
 				Monster_temp.mode = mode;
