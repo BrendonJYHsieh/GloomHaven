@@ -401,10 +401,6 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		}
 		//檢查排序
 		show_AttackList(attack_Sort, play_Character, Monster);
-		/*for (int i = 0; i < attack_Sort.size(); i++)
-		{
-			cout << attack_Sort[i] << " ";
-		}cout << endl;*/
 
 		//動作執行
 		for (int i = 0; i < attack_Sort.size(); i++)
@@ -518,7 +514,6 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 						else if (Character.Deck[card_num].MovementUp[j].Movement == "move") {
 							character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map, play_Character, Monster);
 							Game_Map.print_Map(play_Character, Monster);
-							cout << "move" << endl;
 						}
 					}
 					Character.Deck[card_num].status = 2;
@@ -553,7 +548,6 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 						else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
 							character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map, play_Character, Monster);
 							Game_Map.print_Map(play_Character, Monster);
-							cout << "move" << endl;
 						}
 					}
 					Character.Deck[card_num].status = 2;
@@ -586,7 +580,6 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 						else if (Character.Deck[card_num].MovementDown[j].Movement == "move") {
 							character_move(Character, Character.Deck[card_num].MovementDown[j].Movement_Value, Game_Map, play_Character, Monster);
 							Game_Map.print_Map(play_Character, Monster);
-							cout << "move" << endl;
 						}
 					}
 					Character.Deck[card_num].status = 2;
@@ -621,7 +614,6 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 						else if (Character.Deck[card_num].MovementUp[j].Movement == "move") {
 							character_move(Character, Character.Deck[card_num].MovementUp[j].Movement_Value, Game_Map, play_Character, Monster);
 							Game_Map.print_Map(play_Character, Monster);
-							cout << "move" << endl;
 						}
 					}
 					Character.Deck[card_num].status = 2;
@@ -1038,14 +1030,7 @@ void check(Character C) {
 			cout << C.Deck[i].ID << " ";
 		}
 	}
-	cout << "NowPlay:";
-	for (int i = 0; i < C.Deck.size(); i++) {
-		if (C.Deck[i].status == 4) {
-			cout << C.Deck[i].ID << " ";
-		}
-	}
 	cout << endl;
-
 }
 bool check_player_done(bool* player, int num) {
 	for (int i = 0; i < num; i++) {
@@ -1068,7 +1053,7 @@ void show_AttackList(vector<char> attack_Sort, vector<Character> Play_Character,
 				{
 					if (Play_Character[j].Command[0] != -1) 
 					{
-						cout << Play_Character[j].ID << " " << setw(2) << setfill('0') << Play_Character[j].Deck[Play_Character[j].Command[0]].Dexterity_Value << " " << Play_Character[j].Command[0] << " " << Play_Character[j].Command[1] << endl;
+						cout<<"角色:" << Play_Character[j].ID << " " << setw(2) << setfill('0')<<"敏捷值:"<< Play_Character[j].Deck[Play_Character[j].Command[0]].Dexterity_Value << " 卡片一:" << Play_Character[j].Command[0] << " 卡片二:" << Play_Character[j].Command[1] << endl;
 					}
 					else 
 					{
