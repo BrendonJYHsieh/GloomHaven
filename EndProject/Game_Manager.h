@@ -15,13 +15,13 @@
 void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map,int DEBUG_MODE);			//主程式
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);	//創建角色
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);	//選擇起始位置
-void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE);
-void check(Character C);
-void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map);
-bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);
+void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE); //回合開始
+void check(Character C); //狀態輸出
+
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map); 
 
 //動作
-void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map);
+void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map); 
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort);
 void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);
 void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster); //角色移動
@@ -36,6 +36,7 @@ void read_Map_Data(fstream& File_Map,Map& Game_Map, vector<Ethnicity>& Base_Mons
 int calculate_Discard(Character); //計算角色棄牌堆的數量
 bool IsPlayHandCard(Character&,string); //判斷是否為出牌
 bool IsCardInHand(Character &C, int card); //判斷出的牌是否在正確 and 出牌
+void check_Monsters_Active(vector<Ethnicity>& Monster, Map Game_Map); //檢查怪物是否現身
 bool check_player_done(bool* player, int num);
 void show_AttackList( vector<char> attack_Sort,vector<Character> Play_Character,vector<Ethnicity> Monster);
 int get_Character_Dex(vector<Character> Play_Character, char name, int num);
