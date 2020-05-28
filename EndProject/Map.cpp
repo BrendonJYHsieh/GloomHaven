@@ -6,24 +6,24 @@ void Map::check_road(int x,int y)
 	if (Game_Map[y][x] == 4 || Game_Map[y][x] == 1) 
 	{
 		Game_Map[y][x] = 1;
-		if (Game_Map[y - 1][x] == 4 || Game_Map[y - 1][x] == 2 || Game_Map[y - 1][x] == 5)
+		if (Game_Map[y - 1][x] == 4 || Game_Map[y - 1][x] == 2 || Game_Map[y - 1][x] == 5 || Game_Map[y - 1][x] == 6)
 		{
 			this->check_road(x, y - 1);
 		}
-		if (Game_Map[y + 1][x] == 4 || Game_Map[y + 1][x] == 2 || Game_Map[y + 1][x] == 5)
+		if (Game_Map[y + 1][x] == 4 || Game_Map[y + 1][x] == 2 || Game_Map[y + 1][x] == 5 || Game_Map[y - 1][x] == 6)
 		{
 			this->check_road(x, y + 1);
 		}
-		if (Game_Map[y][x - 1] == 4 || Game_Map[y][x - 1] == 2 || Game_Map[y][x - 1] == 5)
+		if (Game_Map[y][x - 1] == 4 || Game_Map[y][x - 1] == 2 || Game_Map[y][x - 1] == 5 || Game_Map[y - 1][x] == 6)
 		{
 			this->check_road(x - 1, y);
 		}
-		if (Game_Map[y][x + 1] == 4 || Game_Map[y][x + 1] == 2 || Game_Map[y][x + 1] == 5)
+		if (Game_Map[y][x + 1] == 4 || Game_Map[y][x + 1] == 2 || Game_Map[y][x + 1] == 5 || Game_Map[y - 1][x] == 6)
 		{
 			this->check_road(x + 1, y);
 		}
 	}
-	else if (Game_Map[y][x] == 2 || Game_Map[y][x] == 5) 
+	else if (Game_Map[y][x] == 5) 
 	{
 		if (Game_Map[y - 1][x] == 4)
 		{
@@ -42,7 +42,26 @@ void Map::check_road(int x,int y)
 			this->check_road(x + 1, y);
 		}
 	}
-	
+	else if (Game_Map[y][x] == 6) 
+	{
+		Game_Map[y][x] = 2;
+		if (Game_Map[y - 1][x] == 4)
+		{
+			this->check_road(x, y - 1);
+		}
+		if (Game_Map[y + 1][x] == 4)
+		{
+			this->check_road(x, y + 1);
+		}
+		if (Game_Map[y][x - 1] == 4)
+		{
+			this->check_road(x - 1, y);
+		}
+		if (Game_Map[y][x + 1] == 4)
+		{
+			this->check_road(x + 1, y);
+		}
+	}
 }
 
 void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
@@ -74,7 +93,7 @@ void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
 			}
 			if (check_Continue == true)
 				continue;
-			if (Game_Map[i][j] == 0 || Game_Map[i][j] ==4)
+			if (Game_Map[i][j] == 0 || Game_Map[i][j] ==4 || Game_Map[i][j] ==6)
 			{
 				cout << " ";
 			}

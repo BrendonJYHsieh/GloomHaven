@@ -14,9 +14,10 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 	while (1) 
 	{
 		creat_Character(Base_Character, play_Character);		//創建角色
+		cout << endl;
 		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
-		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
 		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
@@ -38,35 +39,64 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 }
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character)
 {
-	int character_count;
+	char character_count;
 	do {
-		cout << "請輸入出場角色數量:" << endl;	//輸入角色數量
+		cout << "請輸入出場角色數量(請輸入2~4的正整數，我拜託你了):";	//輸入角色數量
 		std::cin >> character_count;
-		if (character_count < 2 || character_count>4)
+		if ((character_count - '0') < 2 || (character_count - '0') > 4)
 			cout << "數量錯誤!" << endl;
-	} while (character_count < 2 || character_count>4);
-	for (int i = 0; i < character_count; i++)
+	} while ((character_count - '0') < 2 || (character_count - '0') > 4);
+	for (int i = 0; i < character_count - '0'; i++)
 	{
-		int character_number = 0; string character_name;
-		std::cin >> character_name;
-		for (int j = 0; j < Base_Character.size(); j++)
-		{
-			if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
+		cout << "請輸入第"<< i + 1 << "隻角色：";
+		int character_number = 0;
+		bool right_Character = false;
+		do
+		{	
+			string character_name;
+			std::cin >> character_name;
+			for (int j = 0; j < Base_Character.size(); j++)
 			{
-				character_number = j;
-				break;
+				if (character_name == Base_Character[j].Character_name)		//找到模板中的角色
+				{
+					right_Character = true;
+					character_number = j;
+					break;
+				}
 			}
-		}
+			if (right_Character == false) 
+			{
+				cout << "找不到此角色，請重新輸入..." << endl;
+			}
+		} while (right_Character == false);
+
 		Character newCharacter = Base_Character[character_number];		//複製模板中的資料
 		newCharacter.ID = 'A' + i;
 		for (int j = 0; j < newCharacter.Hand; j++)
 		{
+			bool wrong_Input = false;
 			int active_Card_ID;
 			do {
+				cout << "請輸入第" << j + 1 << "張卡片：";
+				wrong_Input = false;
 				std::cin >> active_Card_ID;
-				if (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1)
+				if (active_Card_ID >= newCharacter.Deck.size() || active_Card_ID < 0) 
+				{
+					wrong_Input = true;
+				}
+				else 
+				{
+					if (newCharacter.Deck[active_Card_ID].status == 1)
+					{
+						wrong_Input = true;
+					}
+				}
+				if (wrong_Input) 
+				{
 					cout << "輸入錯誤!" << endl;
-			} while (active_Card_ID < 0 || character_count > newCharacter.Deck.size() - 1);
+				}
+					
+			} while (wrong_Input);
 			newCharacter.Deck[active_Card_ID].status = 1;	//設定起始的手牌
 		}
 		play_Character.push_back(newCharacter);
@@ -1208,9 +1238,15 @@ void read_Monster_Data(fstream& File_Monster, vector<Ethnicity>& Base_Monster)
 void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int Player_num)
 {
 	string File_Name;	
-	//cin >> File_Name;	//輸入地圖檔名
-	//File_Map.open(File_Name, ios::in);	//正式用
-	File_Map.open("map1.txt", ios::in);		//測試用
+	do 
+	{
+		cout << "請輸入地圖位址：";
+		cin >> File_Name;	//輸入地圖檔名
+		File_Map.open(File_Name, ios::in);	//正式用
+		if (!File_Map)
+			cout << "找不到位址檔案" << endl;
+	} while (!File_Map);
+	//File_Map.open("map1.txt", ios::in);		//測試用
 	File_Map >> Map.High >> Map.Width;
 	vector<int>temp;
 	for (int i = 0; i < Map.High; i++) 
@@ -1223,6 +1259,10 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 			if (temp_num==1) 
 			{
 				temp_num = 4;
+			}
+			else if (temp_num == 2) 
+			{
+				temp_num = 6;
 			}
 			temp.push_back(temp_num);
 		}
