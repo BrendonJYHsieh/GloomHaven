@@ -19,6 +19,7 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
 		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
+		cout<<endl<< "***請輸入起始位置***:";
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
 		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
 		//開始遊戲主流程
@@ -48,7 +49,7 @@ void creat_Character(vector<Character>& Base_Character, vector<Character>& play_
 	} while ((character_count - '0') < 2 || (character_count - '0') > 4);
 	for (int i = 0; i < character_count - '0'; i++)
 	{
-		cout << "請輸入第"<< i + 1 << "隻角色：";
+		cout << "***請輸入第"<< i + 1 << "隻角色***：";
 		int character_number = 0;
 		bool right_Character = false;
 		do
