@@ -12,7 +12,6 @@ public:
 	}
 
 	void add_newMonster(string name, int hp, int atk, int range, int elite_hp, int elite_damage, int elite_range);
-
 	string Ethnicity_Name;
 	vector<Monster_Base> Creature_List;
 	Monster_Base Ethnicity_Base_value;	//¼ÒªO

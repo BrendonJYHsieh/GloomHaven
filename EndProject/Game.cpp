@@ -6,18 +6,18 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 {
 	vector<Character> Base_Character;	//角色模板，，用於之後創建角色清單時從裡面複製角色資料
 	vector<Ethnicity> Monster;			//所有種族
-	Map GameMap; //所有Map
 	vector<Character> play_Character;	//玩家選擇的角色列表
 
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
 	read_Monster_Data(File_Monster, Monster);			//Monster讀檔
 	while (1) 
 	{
+		Map GameMap; //所有Map
 		creat_Character(Base_Character, play_Character);		//創建角色
 		cout << endl;
 		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
-		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
 		cout<<endl<< "***請輸入起始位置***:";
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
@@ -28,13 +28,17 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 		for (int i = 0; i < Monster.size(); i++) 
 		{
 			Monster[i].Creature_List.clear();
+			Monster[i].Shuffle_Mark = false;
+			for (int j = 0; j < Monster[i].Deck.size(); j++) 
+				Monster[i].Deck[j].status = 0;
 		}
-		GameMap.Game_Map.clear();
-		GameMap.Init_Pos.clear();
-		char again;
-		cout << "是否選擇再遊玩一次？(y/n)";
-		std::cin >> again;
-		if (again == 'n')
+		GameMap.~Map();
+		string again;
+		do {
+			cout << "是否選擇再遊玩一次？(y/exit)";
+			std::cin >> again;
+		} while (again != "y" && again != "Y" && again != "exit");
+		if (again == "exit")
 			break;
 	}
 }
@@ -963,13 +967,10 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 	if (play_Character[final_Target].Shield < M.Damage + value) 
 	{
 		play_Character[final_Target].Hp -= ((M.Damage + value) - play_Character[final_Target].Shield);
-		play_Character[final_Target].Shield = 0;
 	}
 	else 
 	{
 		play_Character[final_Target].Shield -= (M.Damage + value);
-		if (play_Character[final_Target].Shield < 0)
-			play_Character[final_Target].Shield = 0;
 	}
 	cout << play_Character[final_Target].Hp << " hp" << endl;
 	if (play_Character[final_Target].Hp <= 0) 
@@ -1250,22 +1251,22 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 	//File_Map.open("map1.txt", ios::in);		//測試用
 	File_Map >> Map.High >> Map.Width;
 	vector<int>temp;
-	for (int i = 0; i < Map.High; i++) 
+	for (int i = 0; i < Map.High; i++)
 	{
-		for (int j = 0; j < Map.Width; j++) 
+		for (int j = 0; j < Map.Width; j++)
 		{
 			char temp_num;
 			File_Map >> temp_num;
-			temp_num -= 48;
-			if (temp_num==1) 
+			int temp_num_int = temp_num - '0';
+			if (temp_num_int == 1)
 			{
-				temp_num = 4;
+				temp_num_int = 4;
 			}
-			else if (temp_num == 2) 
+			else if (temp_num == 2)
 			{
-				temp_num = 6;
+				temp_num_int = 6;
 			}
-			temp.push_back(temp_num);
+			temp.push_back(temp_num_int);
 		}
 		Map.Game_Map.push_back(temp);
 		temp.clear();
@@ -1281,6 +1282,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 		Map.Init_Pos.push_back(temp);
 	}
 	File_Map >> Map.Monster_Count;
+	int a = Monster.size();
 	for (int i = 0; i < Map.Monster_Count; i++) 
 	{
 		string Monster_Type;

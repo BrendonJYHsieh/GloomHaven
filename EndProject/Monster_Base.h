@@ -54,6 +54,21 @@ public:
 		this->Elite_Damage = elite_damage; 
 		this->Elite_Range = elite_range;
 	}
+	~Monster_Base() {
+		Name = " ";
+		Hp = 0;
+		Max_HP = 0;
+		Damage = 0;
+		Range = 0;
+		Elite_Hp = 0;
+		Elite_Damage = 0;
+		Elite_Range = 0;
+		mode = 0;
+		Shield = 0;
+		Dex = 0;
+		icon = ' ';
+		active = false;
+	}
 	void Skill_shield(int x) {
 		this->Shield = x;
 	}
@@ -70,27 +85,27 @@ public:
 	//生物名子
 	string Name;
 	//生物目前生命
-	int Hp;
+	int Hp=0;
 	//最大生命
-	int Max_HP;
+	int Max_HP=0;
 	//生物傷害
-	int Damage;
+	int Damage=0;
 	//生物範圍
-	int Range;
+	int Range=0;
 	//菁英生物生命
-	int Elite_Hp;
+	int Elite_Hp=0;
 	//菁英生物傷害
-	int Elite_Damage;
+	int Elite_Damage=0;
 	//菁英生物範圍
-	int Elite_Range;
+	int Elite_Range=0;
 	//怪物狀態 0:隱藏1:普通	2:菁英
 	int mode = 0;
 	//能量護盾
 	int Shield=0;
 	//敏捷值
-	int Dex;
+	int Dex=0;
 	//icon
-	char icon;
+	char icon=' ';
 	//判斷是否在可視範圍內，如果不在，就不會進行任何動作
 	bool active=false;
 };

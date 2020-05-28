@@ -25,7 +25,6 @@ bool Character::Attack(int value, vector<Ethnicity>& Monster)
 					{
 						cout << this->ID << " attack " << target << " " << value << " damage, " << Monster[i].Creature_List[j].icon << " shield " << Monster[i].Creature_List[j].Shield << ", ";
 						Monster[i].Creature_List[j].Hp -= (value-Monster[i].Creature_List[j].Shield);
-						Monster[i].Creature_List[j].Shield = 0;
 						cout <<Monster[i].Creature_List[j].icon<<" remain "<< Monster[i].Creature_List[j].Hp <<" hp"<< endl;
 						if (Monster[i].Creature_List[j].Hp <= 0) 
 						{
@@ -62,7 +61,6 @@ bool Character::Attack(int value, int range, vector<Ethnicity>& Monster, Map map
 					{
 						cout << this->ID << " attack " << target << " " << value << " damage, " << Monster[i].Creature_List[j].icon << " shield " << Monster[i].Creature_List[j].Shield << ", ";
 						Monster[i].Creature_List[j].Hp -= (value - Monster[i].Creature_List[j].Shield);
-						Monster[i].Creature_List[j].Shield = 0;
 						cout << Monster[i].Creature_List[j].icon << " remain " << Monster[i].Creature_List[j].Hp << " hp" << endl;
 						if (Monster[i].Creature_List[j].Hp <= 0)
 						{
