@@ -14,14 +14,14 @@
 void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map,int DEBUG_MODE); //主程式
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);	//創建角色 - 已防呆
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);	//選擇起始位置 - 已防呆
-void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE); //回合開始
+void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE); //回合開始 - 已防呆
 bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map); //判斷是否結束遊戲
 /*==============Movement================*/
-void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map); //角色回合 
+void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map); //角色回合 - 已防呆
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort); //怪物回合
 void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map); //回合結算 
 void check(Character C); //狀態輸出
-void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster); //角色移動
+void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster); //角色移動 - 已防呆
 void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster); //怪物移動
 bool monster_Attack(Monster_Base& M, int value, int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map); //怪物攻擊
 /*==============ReadFile================*/
