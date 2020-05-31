@@ -8,6 +8,7 @@ void Character::Add_NewCard()
 bool Character::Attack(int value, vector<Ethnicity>& Monster) 
 {
 	do {
+		cout << "請輸入攻擊目標(距離:1):";
 		char target;
 		cin >> target;
 		if (target == '0')
@@ -44,6 +45,7 @@ bool Character::Attack(int value, vector<Ethnicity>& Monster)
 bool Character::Attack(int value, int range, vector<Ethnicity>& Monster, Map map)
 {
 	do {
+		cout << "請輸入攻擊目標(距離:" << range << "):";
 		char target;
 		cin >> target;
 		if (target == '0')

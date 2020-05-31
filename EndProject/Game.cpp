@@ -19,7 +19,6 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
 		get_All_Base_Monster_Data(Monster);				//檢查Monster資料
 		//get_int_Map(GameMap);	//檢查地圖資料
-		cout<<endl<< "***請輸入起始位置***:";
 		choose_Start_Position(play_Character, Monster, GameMap);	//選擇起始位置
 		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
 		//開始遊戲主流程
@@ -127,6 +126,7 @@ void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>&
 	//cin.ignore();
 	for (int i = 0; i < play_Character.size(); i++) 
 	{
+		cout << endl << "***請輸入"<< play_Character[i].ID << "的起始位置***(請輸入wasd以選擇):";
 		string position_input;
 		Position start_point;
 		start_point = Game_Map.Init_Pos[0];
@@ -208,7 +208,8 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	while(end_Game(play_Character,Monster,Game_Map))	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
 		//get_All_Base_Monster_Data(Monster);
-		cout << "round " << round << ":" << endl;
+		cout << "*************round " << round << "************" << endl << endl;
+		cout << "請選擇角色手牌:" << endl;
 		already_played = new bool[play_Character.size()];
 		for (int i = 0; i < play_Character.size(); i++) {
 			already_played[i] = false;
@@ -405,8 +406,9 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 		}
 		//檢查排序
+		cout << endl << "*******攻擊排序*******" << endl << endl;
 		show_AttackList(attack_Sort, play_Character, Monster);
-
+		cout << endl << "*****動作執行階段*****" << endl;
 		//動作執行
 		for (int i = 0; i < attack_Sort.size(); i++)
 		{
@@ -479,9 +481,37 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 {
 	if (Character.Rest == false)
 	{
-		cout << Character.ID << "'s rturn: card " << Character.Command[0] << " " << Character.Command[1] << endl;
+		cout << endl << Character.ID << "'s rturn: " << endl << "card " << Character.Command[0] << "	上：";
+		for (int k = 0; k < Character.Deck[Character.Command[0]].MovementUp.size(); k++)
+		{
+			cout << Character.Deck[Character.Command[0]].MovementUp[k].Movement << " " << Character.Deck[Character.Command[0]].MovementUp[k].Movement_Value << " ";
+			if (Character.Deck[Character.Command[0]].MovementUp[k].Movement == "attack")
+				cout << "range " << Character.Deck[Character.Command[0]].MovementUp[k].range << " ";
+		}
+		cout << " | 下：";
+		for (int k = 0; k < Character.Deck[Character.Command[0]].MovementDown.size(); k++)
+		{
+			cout << Character.Deck[Character.Command[0]].MovementDown[k].Movement << " " << Character.Deck[Character.Command[0]].MovementDown[k].Movement_Value << " ";
+			if (Character.Deck[Character.Command[0]].MovementDown[k].Movement == "attack")
+				cout << "range " << Character.Deck[Character.Command[0]].MovementDown[k].range << " ";
+		} 
+		cout << endl << "card " << Character.Command[1] << "	上：";
+		for (int k = 0; k < Character.Deck[Character.Command[1]].MovementUp.size(); k++)
+		{
+			cout << Character.Deck[Character.Command[1]].MovementUp[k].Movement << " " << Character.Deck[Character.Command[1]].MovementUp[k].Movement_Value << " ";
+			if (Character.Deck[Character.Command[1]].MovementUp[k].Movement == "attack")
+				cout << "range " << Character.Deck[Character.Command[1]].MovementUp[k].range << " ";
+		}
+		cout << " | 下：";
+		for (int k = 0; k < Character.Deck[Character.Command[1]].MovementDown.size(); k++)
+		{
+			cout << Character.Deck[Character.Command[1]].MovementDown[k].Movement << " " << Character.Deck[Character.Command[1]].MovementDown[k].Movement_Value << " ";
+			if (Character.Deck[Character.Command[1]].MovementDown[k].Movement == "attack")
+				cout << "range " << Character.Deck[Character.Command[1]].MovementDown[k].range << " ";
+		}cout << endl;
 		int card_num=0; char UpOrDown=' ';
 		string temp;
+		cout << endl << "請輸入動作指令:";
 		while (cin >> temp) {
 			if (temp.size() == 2) {
 				card_num = temp[0] - 48;
@@ -739,6 +769,7 @@ void character_move(Character& C, int step, Map& Game_Map, vector<Character> pla
 	do{
 		wrong = false;
 		C.position = start;
+		cout << "請輸入移動指令:";
 		std::cin >> position_input;
 		if (position_input.size() <= step) 
 		{
