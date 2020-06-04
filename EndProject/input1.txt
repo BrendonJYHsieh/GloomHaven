@@ -2,7 +2,7 @@
 2
 brute 0 1 2 3 4 5
 brute 2 3 4 5 6 7
-D:\資料備份區\物件導向程式設計\期末專案\OOP-Project\EndProject\EndProject\map1.txt
+C:\Users\Aero\Desktop\EndProject\EndProject\map1.txt
 wsa
 sd
 B 2 3
@@ -60,4 +60,4 @@ b
 e
 0
 0
-exit
+y

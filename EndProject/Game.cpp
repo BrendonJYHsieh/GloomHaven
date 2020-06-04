@@ -1053,7 +1053,7 @@ bool IsCardInHand(Character &C,int card) {
 void check(Character C) {
 	cout << "HandCard:";
 	for (int i = 0; i < C.Deck.size(); i++) {
-		if (C.Deck[i].status == 1) {
+		if (C.Deck[i].status == 1||C.Deck[i].status==4) {
 			cout << C.Deck[i].ID << " ";
 		}
 	}
