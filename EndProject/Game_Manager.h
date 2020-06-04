@@ -50,8 +50,10 @@ void get_All_Base_Monster_Data(vector<Ethnicity> Base_Monster);		//Åã¥Ü©Ò¦³ºØ±Úª
 void get_int_Map(Map Map);		//Åã¥Üintª©¥»ªº¦a¹Ï
 void check_all_dex(vector<Character> Play_Character, vector<Ethnicity> Monster);	//ÀË¬d¦¹¦^¦X©Ò¦³¥Íª«ªº±Ó±¶­È
 /*================UI_MODE=================*/
-void Main_Game_UI();		//UI¼Ò¦¡
+void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_Map);		//UI¼Ò¦¡
 int Project_Start_UI();		//¶}©l¤¶­±
+void chooseCharacter(vector<Character>& Base_Character, vector<Character>& play_Character);
+char keyBoard(char input);
 /*=============Windows.hªºfunction==============*/
 void setPrintPosition(int x, int y);	//§ïÅÜPrintªº°_©l¦ì¸m
 void SetColor(int color);				//§ïÅÜÃC¦â
