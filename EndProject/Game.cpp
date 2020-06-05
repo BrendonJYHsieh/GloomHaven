@@ -1028,7 +1028,7 @@ bool IsPlayHandCard(Character &C,string command ) {
 	}
 	else if (command.size() == 1 && command[0] >= 48 && command[0] <= 57) {
 		for (int i = 0; i < C.Deck.size(); i++) {
-			if (C.Deck[i].ID == (command[0] - '0')) {
+			if (C.Deck[i].ID == (command[0] - '0')&&C.Deck[i].status==1) {
 				C.Deck[i].status = 4;
 				return true;
 			}
@@ -1042,7 +1042,7 @@ bool IsPlayHandCard(Character &C,string command ) {
 //判斷是否為手牌 若是的話狀態改為出牌
 bool IsCardInHand(Character &C,int card) {
 	for (int i = 0; i < C.Deck.size(); i++) {
-		if (C.Deck[i].ID == card) {
+		if (C.Deck[i].ID == card && C.Deck[i].status == 1) {
 			C.Deck[i].status = 4;
 			return true;
 		}
