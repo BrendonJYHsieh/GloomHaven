@@ -370,40 +370,42 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		{
 			if (Monster[i].Command == -1)
 				continue;
+			/*bool all_active = true;
 			for (int k = 0; k < Monster[i].Creature_List.size(); k++)
 			{
 				if (Monster[i].Creature_List[k].active == false)
-					continue;
-				for (int j = 0; j < attack_Sort.size(); j++)
+					all_active = false;
+			}*/
+			for (int j = 0; j < attack_Sort.size(); j++)
+			{
+				if (attack_Sort[j] >= 'A' && attack_Sort[j] <= 'Z') //判斷是否是玩家角色
 				{
-					if (attack_Sort[j] >= 'A' && attack_Sort[j] <= 'Z') //判斷是否是玩家角色
+					if (Monster[i].Deck[Monster[i].Command].Dexterity_Value < get_Character_Dex(play_Character, attack_Sort[j], 0))
 					{
-						if (Monster[i].Deck[Monster[i].Command].Dexterity_Value < get_Character_Dex(play_Character, attack_Sort[j], 0))
-						{
-							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
-							break;
-						}
-					}
-					else
-					{
-						if (Monster[i].Deck[Monster[i].Command].Dexterity_Value < get_Monster_Dex(Monster, attack_Sort[j]))
-						{
-							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
-							break;
-						}
-						else if (Monster[i].Deck[Monster[i].Command].Dexterity_Value == get_Monster_Dex(Monster, attack_Sort[j]) && Monster[i].Creature_List[k].icon < attack_Sort[j])
-						{
-							attack_Sort.insert(attack_Sort.begin() + j, Monster[i].Creature_List[k].icon);
-							break;
-						}
-					}
-					if (j + 1 == attack_Sort.size())
-					{
-						attack_Sort.push_back(Monster[i].Creature_List[k].icon);
+						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
 						break;
 					}
 				}
+				else
+				{
+					if (Monster[i].Deck[Monster[i].Command].Dexterity_Value < get_Monster_Dex(Monster, attack_Sort[j]))
+					{
+						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
+						break;
+					}
+					else if (Monster[i].Deck[Monster[i].Command].Dexterity_Value == get_Monster_Dex(Monster, attack_Sort[j]) && 'a' + i < attack_Sort[j])
+					{
+						attack_Sort.insert(attack_Sort.begin() + j, 'a' + i);
+						break;
+					}
+				}
+				if (j + 1 == attack_Sort.size())
+				{
+					attack_Sort.push_back('a' + i);
+					break;
+				}
 			}
+			//}
 		}
 		//檢查排序
 		cout << endl << "*******攻擊排序*******" << endl << endl;
@@ -424,16 +426,10 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			}
 			else //怪物行動
 			{
-				for (int j = 0; j < Monster.size(); j++)
+				for (int k = 0; k < Monster[attack_Sort[i]-'a'].Creature_List.size(); k++)
 				{
-					for (int k = 0; k < Monster[j].Creature_List.size(); k++)
-					{
-						if (attack_Sort[i] == Monster[j].Creature_List[k].icon)
-						{
-							monsters_round(play_Character, Monster[j], Monster[j].Creature_List[k], Game_Map,Monster,attack_Sort);
-							break;
-						}
-					}
+					monsters_round(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map,Monster,attack_Sort);
+					break;
 				}
 			}
 		}
@@ -1101,30 +1097,26 @@ void show_AttackList(vector<char> attack_Sort, vector<Character> Play_Character,
 			{
 				if (Monster[j].Command == -1)
 					continue;
-				for (int k = 0; k < Monster[j].Creature_List.size(); k++)
+				cout << Monster[j].Ethnicity_Name << " " << setw(2) << setfill('0') << Monster[j].Deck[Monster[j].Command].Dexterity_Value<<" ";
+				for (int L = 0; L < Monster[j].Deck[Monster[j].Command].Movement.size(); L++) 
 				{
-					if (attack_Sort[i] == Monster[j].Creature_List[k].icon) 
+					cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement << " ";
+					if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "attack") 
 					{
-						cout << Monster[j].Ethnicity_Name << " " << setw(2) << setfill('0') << Monster[j].Deck[Monster[j].Command].Dexterity_Value<<" ";
-						for (int L = 0; L < Monster[j].Deck[Monster[j].Command].Movement.size(); L++) 
-						{
-							cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement << " ";
-							if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "attack") 
-							{
-								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " " << "range " << Monster[j].Deck[Monster[j].Command].Movement[L].range << " ";
-							}
-							else if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "move") 
-							{
-								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Move_Command << " ";
-							}
-							else
-							{
-								cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " ";
-							}
-						}
-						cout << endl;
+						cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " " << "range " << Monster[j].Deck[Monster[j].Command].Movement[L].range << " ";
+					}
+					else if (Monster[j].Deck[Monster[j].Command].Movement[L].Movement == "move") 
+					{
+						cout << Monster[j].Deck[Monster[j].Command].Movement[L].Move_Command << " ";
+					}
+					else
+					{
+						cout << Monster[j].Deck[Monster[j].Command].Movement[L].Movement_Value << " ";
 					}
 				}
+				cout << endl;
+					
+				
 			}
 		}
 	}
