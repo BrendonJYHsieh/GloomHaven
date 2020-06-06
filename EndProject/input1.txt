@@ -2,7 +2,7 @@
 2
 brute 0 1 2 3 4 5
 brute 2 3 4 5 6 7
-C:\Users\Aero\Desktop\EndProject\EndProject\map1.txt
+map1.txt
 wsa
 sd
 B 2 3

@@ -52,7 +52,8 @@ void check_all_dex(vector<Character> Play_Character, vector<Ethnicity> Monster);
 /*================UI_MODE=================*/
 void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_Map);		//UI模式
 int Project_Start_UI();		//開始介面
-void chooseCharacter(vector<Character>& Base_Character, vector<Character>& play_Character);
+void creat_Character_UI(vector<Character>& Base_Character, vector<Character>& play_Character);
+void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
 char keyBoard(char input);
 /*=============Windows.h的function==============*/
 void setPrintPosition(int x, int y);	//改變Print的起始位置

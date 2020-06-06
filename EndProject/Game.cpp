@@ -1582,8 +1582,24 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 	{
 		system("cls");
 		Map GameMap; //所有Map
-		chooseCharacter(Base_Character,play_Character);
+		creat_Character_UI(Base_Character,play_Character);
+		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
+		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
+		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
+
+
+
 		system("pause");
+		//重置
+		play_Character.clear();
+		for (int i = 0; i < Monster.size(); i++)
+		{
+			Monster[i].Creature_List.clear();
+			Monster[i].Shuffle_Mark = false;
+			for (int j = 0; j < Monster[i].Deck.size(); j++)
+				Monster[i].Deck[j].status = 0;
+		}
+		GameMap.~Map();
 	}
 
 	
@@ -1600,6 +1616,7 @@ int Project_Start_UI()
 	cout << "=================" << endl << endl << endl;
 	int mode = 0;			//選擇要開始遊戲或是離開
 	char keyBoard_Input;	//鍵盤輸入
+	setPrintPosition(0, 49);
 	while (1) 
 	{
 		keyBoard_Input = _getch();
@@ -1643,12 +1660,12 @@ int Project_Start_UI()
 			setPrintPosition(7, 3);
 			SetColor(240); cout << "開始";
 		}
-		setPrintPosition(0, 30);	SetColor(7);	//重置 print點 和 顏色 (若要使用setPrintPosition 或是 SetColor 使用後，請使用這段重置他們的設定)
+		setPrintPosition(0, 49);	SetColor(7);	//重置 print點 和 顏色 (若要使用setPrintPosition 或是 SetColor 使用後，請使用這段重置他們的設定)
 		if (keyBoard_Input == 13)		//Enter鍵 回傳mode;
 			return mode;
 	}
 }
-void chooseCharacter(vector<Character>& Base_Character, vector<Character>& play_Character)
+void creat_Character_UI(vector<Character>& Base_Character, vector<Character>& play_Character)
 {
 	cout << "======請選擇角色數量======" << endl;
 	cout << "==■■■  ■■■  ■  ■==" << endl;
@@ -1819,10 +1836,196 @@ void chooseCharacter(vector<Character>& Base_Character, vector<Character>& play_
 				}
 			}
 		}
-
+		setPrintPosition(0, finalCharacter + 10);
+		chooseComplete = false;
+		vector<int> chooseCard;
+		int nowCard = 0, card = 1;
+		cout << "=======選擇卡牌(" << chooseCard.size() << "/" << Base_Character[character].Hand << ")=======" << endl;
+		for (j = 0; j < 6 + Base_Character[character].Deck.size(); j++)
+		{
+			cout << "                                                                                                                         " << endl;
+		}
+		for (j = 0; j < Base_Character[character].Deck.size(); j++) 
+		{
+			setPrintPosition(j * 5, finalCharacter + 12);	cout << "╔══╗";
+			setPrintPosition(j * 5, finalCharacter + 13);	cout << "║" << setw(2) << j << "║";
+			setPrintPosition(j * 5, finalCharacter + 14);	cout << "╚══╝";
+		}
+		setPrintPosition(0, 49);
+		while (chooseComplete == false)
+		{
+			setPrintPosition(0, finalCharacter + 10);
+			cout << "=======選擇卡牌(" << chooseCard.size() << "/" << Base_Character[character].Hand << ")=======" << endl;
+			for (int k = 0; k < chooseCard.size(); k++) 
+			{
+				SetColor(10);
+				setPrintPosition(chooseCard[k] * 5, finalCharacter + 12);	cout << "╔══╗";
+				setPrintPosition(chooseCard[k] * 5, finalCharacter + 13);	cout << "║" << setw(2) << chooseCard[k] << "║";
+				setPrintPosition(chooseCard[k] * 5, finalCharacter + 14);	cout << "╚══╝";
+			}
+			SetColor(14);
+			setPrintPosition(nowCard * 5, finalCharacter + 12);	cout << "╔══╗";
+			setPrintPosition(nowCard * 5, finalCharacter + 13);	cout << "║" << setw(2) << nowCard << "║";
+			setPrintPosition(nowCard * 5, finalCharacter + 14);	cout << "╚══╝";
+			SetColor(7);
+			setPrintPosition(0, 49);
+			if (nowCard != card)
+			{
+				SetColor(7);
+				setPrintPosition(card * 5, finalCharacter + 12);	cout << "╔══╗";
+				setPrintPosition(card * 5, finalCharacter + 13);	cout << "║" << setw(2) << card << "║";
+				setPrintPosition(card * 5, finalCharacter + 14);	cout << "╚══╝";
+				SetColor(14);
+				setPrintPosition(nowCard * 5, finalCharacter + 12);	cout << "╔══╗";
+				setPrintPosition(nowCard * 5, finalCharacter + 13);	cout << "║" << setw(2) << nowCard << "║";
+				setPrintPosition(nowCard * 5, finalCharacter + 14);	cout << "╚══╝";
+				setPrintPosition(0, finalCharacter + 16);
+				SetColor(7); 
+				cout << "                                                                                                                         " << endl;
+				setPrintPosition(0, finalCharacter + 16);
+				cout << "編號：	" << Base_Character[character].Deck[nowCard].ID << "	敏捷值：" << Base_Character[character].Deck[nowCard].Dexterity_Value << "	上：";
+				for (int k = 0; k < Base_Character[nowCharacter].Deck[nowCard].MovementUp.size(); k++)
+				{
+					cout << Base_Character[character].Deck[nowCard].MovementUp[k].Movement << " " << Base_Character[character].Deck[nowCard].MovementUp[k].Movement_Value << " ";
+					if (Base_Character[character].Deck[nowCard].MovementUp[k].Movement == "attack")
+						cout << "range " << Base_Character[character].Deck[nowCard].MovementUp[k].range << " ";
+				}
+				cout << " | 下：";
+				for (int k = 0; k < Base_Character[character].Deck[nowCard].MovementDown.size(); k++)
+				{
+					cout << Base_Character[character].Deck[nowCard].MovementDown[k].Movement << " " << Base_Character[character].Deck[nowCard].MovementDown[k].Movement_Value << " ";
+					if (Base_Character[character].Deck[nowCard].MovementDown[k].Movement == "attack")
+						cout << "range " << Base_Character[character].Deck[nowCard].MovementDown[k].range << " ";
+				}
+				setPrintPosition(0, 49);
+				card = nowCard;
+			}
+			else
+			{
+				switch (keyBoard(_getch()))
+				{
+				case 'a':
+					nowCard--;
+					if (nowCard < 0)
+						nowCard = Base_Character[character].Deck.size() - 1;
+					break;
+				case 'd':
+					nowCard++;
+					if (nowCard == Base_Character[character].Deck.size())
+						nowCard = 0;
+					break;
+				case 13:
+					//跳出
+					vector<int> ::iterator in;
+					if ((in = find(chooseCard.begin(), chooseCard.end(), nowCard)) != chooseCard.end())
+						chooseCard.erase(in);
+					else
+						chooseCard.push_back(nowCard);
+					if (chooseCard.size() == Base_Character[character].Hand)
+					{
+						setPrintPosition(0, finalCharacter + 10);
+						for (int k = 0; k < 7; k++)
+						{
+							cout << "                                                                                                                         " << endl;
+						}
+						setPrintPosition(0, finalCharacter + 10);
+						cout << "╔══════════════════════════════╗" << endl;
+						cout << "║確定選擇這些卡牌來進行遊戲嗎？║" << endl;
+						cout << "╚══════════════════════════════╝" << endl << endl;
+						cout << "確定	取消";
+						bool doubleCheck = false, doubleChoose = false, nowDoubleChoose = true;
+						while (doubleCheck == false)
+						{
+							if (nowDoubleChoose != doubleChoose)
+							{
+								if (nowDoubleChoose == true)
+								{
+									setPrintPosition(0, finalCharacter + 14);
+									SetColor(240);	cout << "確定";
+									SetColor(7);	cout << "	取消";
+								}
+								else
+								{
+									setPrintPosition(0, finalCharacter + 14);
+									SetColor(7);	cout << "確定	";
+									SetColor(240);	cout << "取消";
+								}
+								SetColor(7); setPrintPosition(0, 49);
+								doubleChoose = nowDoubleChoose;
+							}
+							else
+							{
+								switch (keyBoard(_getch()))
+								{
+								case'a':
+								case'd':
+									if (doubleChoose == true)
+										nowDoubleChoose = false;
+									else
+										nowDoubleChoose = true;
+									break;
+								case 13:
+									doubleCheck = true;
+									if (nowDoubleChoose == true)
+									{
+										//選擇完畢
+										Character newCharacter = Base_Character[character];
+										newCharacter.ID = 'A' + i;
+										for (int k = 0; k < chooseCard.size(); k++) 
+										{
+											newCharacter.Deck[chooseCard[k]].status = 1;
+										}
+										play_Character.push_back(newCharacter);
+										chooseComplete = true;
+									}
+									else
+									{
+										chooseCard.erase(in = find(chooseCard.begin(), chooseCard.end(), nowCard));
+										setPrintPosition(0, finalCharacter + 10);
+										for (j = 0; j < 7 + Base_Character[character].Deck.size(); j++)
+										{
+											cout << "                                                                                                                         " << endl;
+										}
+										setPrintPosition(0, finalCharacter + 10);
+										cout << "=======選擇卡牌(" << chooseCard.size() << "/" << Base_Character[character].Hand << ")=======" << endl;
+										for (j = 0; j < Base_Character[character].Deck.size(); j++)
+										{
+											setPrintPosition(j * 5, finalCharacter + 12);	cout << "╔══╗";
+											setPrintPosition(j * 5, finalCharacter + 13);	cout << "║" << setw(2) << j << "║";
+											setPrintPosition(j * 5, finalCharacter + 14);	cout << "╚══╝";
+										}
+										cout << endl << endl << "編號：	" << Base_Character[character].Deck[nowCard].ID << "	敏捷值：" << Base_Character[character].Deck[nowCard].Dexterity_Value << "	上：";
+										for (int k = 0; k < Base_Character[nowCharacter].Deck[nowCard].MovementUp.size(); k++)
+										{
+											cout << Base_Character[character].Deck[nowCard].MovementUp[k].Movement << " " << Base_Character[character].Deck[nowCard].MovementUp[k].Movement_Value << " ";
+											if (Base_Character[character].Deck[nowCard].MovementUp[k].Movement == "attack")
+												cout << "range " << Base_Character[character].Deck[nowCard].MovementUp[k].range << " ";
+										}
+										cout << " | 下：";
+										for (int k = 0; k < Base_Character[character].Deck[nowCard].MovementDown.size(); k++)
+										{
+											cout << Base_Character[character].Deck[nowCard].MovementDown[k].Movement << " " << Base_Character[character].Deck[nowCard].MovementDown[k].Movement_Value << " ";
+											if (Base_Character[character].Deck[nowCard].MovementDown[k].Movement == "attack")
+												cout << "range " << Base_Character[character].Deck[nowCard].MovementDown[k].range << " ";
+										}
+										setPrintPosition(0, 49);
+									}
+									break;
+								}
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
 		system("cls");
 	}
 	
+}
+void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
+{
+
 }
 char keyBoard(char input) 
 {
