@@ -10,15 +10,15 @@ void Map::check_road(int x,int y)
 		{
 			this->check_road(x, y - 1);
 		}
-		if (Game_Map[y + 1][x] == 4 || Game_Map[y + 1][x] == 2 || Game_Map[y + 1][x] == 5 || Game_Map[y - 1][x] == 6)
+		if (Game_Map[y + 1][x] == 4 || Game_Map[y + 1][x] == 2 || Game_Map[y + 1][x] == 5 || Game_Map[y + 1][x] == 6)
 		{
 			this->check_road(x, y + 1);
 		}
-		if (Game_Map[y][x - 1] == 4 || Game_Map[y][x - 1] == 2 || Game_Map[y][x - 1] == 5 || Game_Map[y - 1][x] == 6)
+		if (Game_Map[y][x - 1] == 4 || Game_Map[y][x - 1] == 2 || Game_Map[y][x - 1] == 5 || Game_Map[y][x - 1] == 6)
 		{
 			this->check_road(x - 1, y);
 		}
-		if (Game_Map[y][x + 1] == 4 || Game_Map[y][x + 1] == 2 || Game_Map[y][x + 1] == 5 || Game_Map[y - 1][x] == 6)
+		if (Game_Map[y][x + 1] == 4 || Game_Map[y][x + 1] == 2 || Game_Map[y][x + 1] == 5 || Game_Map[y][x + 1] == 6)
 		{
 			this->check_road(x + 1, y);
 		}

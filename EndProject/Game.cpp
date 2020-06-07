@@ -1,6 +1,5 @@
 #include"Game_Manager.h"
 /*=============main_function==============*/
-
 //¹CÀ¸¥Dµ{¦¡
 void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, int DEBUG_MODE)
 {
@@ -205,7 +204,7 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	bool* already_played = nullptr;
 	srand(time(NULL));
 	int round = 1;
-	while(end_Game(play_Character,Monster,Game_Map))	//µ²§ô¹CÀ¸±ø¥ó 1.¨¤¦â¼Æ¶q ©Çª«¼Æ¶q ªù¼Æ¶q
+	while(end_Game(play_Character,Monster,Game_Map,false))	//µ²§ô¹CÀ¸±ø¥ó 1.¨¤¦â¼Æ¶q ©Çª«¼Æ¶q ªù¼Æ¶q
 	{
 		//get_All_Base_Monster_Data(Monster);
 		cout << "*************round " << round << "************" << endl << endl;
@@ -439,11 +438,12 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		round++;
 	}
 }
-bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map) 
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map,bool UI_mode) 
 {
 	if (play_Character.size() == 0) 
 	{
-		cout << "monster win~" << endl;
+		if(UI_mode == false)
+			cout << "monster win~" << endl;
 		return false;
 	}
 	bool all_Monsters_Dead = true;
@@ -467,7 +467,8 @@ bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map
 	}
 	if (all_Monsters_Dead == true && all_Door_open ==true) 
 	{
-		cout << "character win~" << endl;
+		if(UI_mode == false)
+			cout << "character win~" << endl;
 		return false;
 	}
 	return true;
@@ -1596,7 +1597,7 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 		//get_All_Base_Monster_Data(Monster);				//ÀË¬dMonster¸ê®Æ
 		choose_Start_Position_UI(play_Character, Monster, GameMap);		//¿ï¾Ü°_©l¦ì¸m
 		check_Monsters_Active(Monster, GameMap);	//ÀË¬d©Çª«ª¬ºA
-
+		main_Battle_UI(play_Character, Monster, GameMap);
 
 		system("pause");
 		//­«¸m
@@ -2101,6 +2102,9 @@ void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicit
 		}
 		setPrintPosition((nowx + 1) * 2, nowy);
 		SetColor(10);	cout << "p" << play_Character[i].ID;	SetColor(7);
+		setPrintPosition(0, Game_Map.High + 4);
+		for (int k = 0; k < 3; k++)
+			cout << "                                                                                                                         " << endl;
 		setPrintPosition(0, 49);
 	}
 	for (int i = 0; i < Game_Map.High; i++)
@@ -2115,6 +2119,470 @@ void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicit
 				setPrintPosition(0, 49);
 			}
 
+		}
+	}
+}
+void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
+{
+	bool* already_played = nullptr;
+	srand(time(NULL));
+	int round = 1;
+	vector<string> game_Massage_string;
+	while (end_Game(play_Character, Monster, Game_Map, true))
+	{
+		setPrintPosition(0, Game_Map.High + 4);
+		cout << "========²Ä" << round << "¦^¦X========" << endl << endl;
+		cout << "¦æ°Ê¶¶§Ç¡G" << endl << endl;
+		cout << "======¨¤¦â·Ç³Æ¶¥¬q======" << endl << endl;
+		already_played = new bool[play_Character.size()];
+		for (int i = 0; i < play_Character.size(); i++) 
+		{
+			already_played[i] = false;
+		}
+		cout << "¨¤¦â¡G";
+		for (int i = 0; i < play_Character.size(); i++)
+			cout << "  " << play_Character[i].ID;
+		bool chooseComplete = false;
+		int Character = 1, nowCharacter = 0;
+		while (chooseComplete == false) 
+		{
+			if (Character != nowCharacter) 
+			{
+				setPrintPosition(8 + 3 * Character, Game_Map.High + 10); SetColor(7);
+				cout << play_Character[Character].ID;
+				setPrintPosition(8 + 3 * nowCharacter, Game_Map.High + 10); SetColor(240);
+				cout << play_Character[nowCharacter].ID;
+				setPrintPosition(0, 49); SetColor(7);
+				Character = nowCharacter;
+			}
+			else 
+			{
+				switch (keyBoard(_getch())) 
+				{
+				case 'a':
+					nowCharacter--;
+					if (nowCharacter < 0)
+						nowCharacter = play_Character.size() - 1;
+					break;
+				case 'd':
+					nowCharacter++;
+					if (nowCharacter > play_Character.size() - 1)
+						nowCharacter = 0;
+					break;
+				case 13:
+					int hand = 0, dedeck = 0;
+					for (int i = 0; i < play_Character[nowCharacter].Deck.size(); i++) 
+					{
+						if (play_Character[nowCharacter].Deck[i].status == 1)
+							hand++;
+						else if (play_Character[nowCharacter].Deck[i].status == 2)
+							dedeck++;
+					}
+					setPrintPosition(0, Game_Map.High + 12);
+					cout << "ùÝùùùùùùùùùùùùùùùùùùùùùùùùùùùùùß" << endl;
+					cout << "ùø  ¡÷"; if (hand < 2 || already_played[nowCharacter])SetColor(8); cout << "¥XµP"; SetColor(7); cout << "      ùø" << endl;
+					cout << "ùø    "; if (dedeck < 2 || already_played[nowCharacter])SetColor(8); cout << "ªø¥ð"; SetColor(7); cout << "      ùø" << endl;
+					cout << "ùø    ÀË¬d¤âµP  ùø" << endl;
+					cout << "ùø    ³õ­±ª¬ºA  ùø" << endl;
+					cout << "ùãùùùùùùùùùùùùùùùùùùùùùùùùùùùùùå" << endl << endl;
+					bool chooseComplete2 = false; int nowChoose = 0, Choose = 0;
+					while (chooseComplete2 == false) 
+					{
+						if (nowChoose != Choose) 
+						{
+							setPrintPosition(3, Game_Map.High + 13 + Choose);		cout << "  ";
+							setPrintPosition(3, Game_Map.High + 13 + nowChoose);	cout << "¡÷";
+							setPrintPosition(0, 49);
+							Choose = nowChoose;
+						}
+						else 
+						{
+							switch (keyBoard(_getch()))
+							{
+							case 'w':
+								nowChoose--;
+								if (nowChoose < 0)
+									nowChoose = 3;
+								break;
+							case 's':
+								nowChoose++;
+								if (nowChoose > 3)
+									nowChoose = 0;
+								break;
+							case 13:
+								switch (nowChoose) 
+								{
+								case 0:
+									if (hand > 1 && !already_played[nowCharacter])
+									{
+										setPrintPosition(0, Game_Map.High + 12);
+										for (int i = 0; i < 6; i++)
+										{
+											cout << "                                                                                                                         " << endl;
+										}
+										setPrintPosition(0, Game_Map.High + 12);
+										player_Use_Card_UI(play_Character, nowCharacter, Game_Map.High + 12);
+										already_played[nowCharacter] = true;
+										chooseComplete2 = true;
+										setPrintPosition(0, Game_Map.High + 12);
+										for (int i = 0; i < 10; i++)
+										{
+											cout << "                                                                                                                         " << endl;
+										}
+										setPrintPosition(0, 49);
+									}
+									break;
+								case 1:
+									if (dedeck > 1 && !already_played[nowCharacter])
+									{
+										play_Character[nowCharacter].Command[0] = -1;
+										play_Character[nowCharacter].Rest = true;
+										already_played[nowCharacter] = true;
+										chooseComplete2 = true;
+										setPrintPosition(0, Game_Map.High + 12);
+										for (int i = 0; i < 6; i++)
+										{
+											cout << "                                                                                                                         " << endl;
+										}
+										setPrintPosition(0, 49);
+									}
+									break;
+								case 2:
+									setPrintPosition(0, Game_Map.High + 12);
+									for (int i = 0; i < 6; i++)
+									{
+										cout << "                                                                                                                         " << endl;
+									}
+									setPrintPosition(0, Game_Map.High + 12);
+									check_hand_UI(play_Character, nowCharacter, Game_Map.High + 12);
+									setPrintPosition(0, Game_Map.High + 12);
+									for (int i = 0; i < 10; i++)
+									{
+										cout << "                                                                                                                         " << endl;
+									}
+									setPrintPosition(0, Game_Map.High + 12);
+									cout << "ùÝùùùùùùùùùùùùùùùùùùùùùùùùùùùùùß" << endl;
+									cout << "ùø    "; if (hand < 2 || already_played[nowCharacter])SetColor(8); cout << "¥XµP"; SetColor(7); cout << "      ùø" << endl;
+									cout << "ùø    "; if (dedeck < 2 || already_played[nowCharacter])SetColor(8); cout << "ªø¥ð"; SetColor(7); cout << "      ùø" << endl;
+									cout << "ùø    ÀË¬d¤âµP  ùø" << endl;
+									cout << "ùø    ³õ­±ª¬ºA  ùø" << endl;
+									cout << "ùãùùùùùùùùùùùùùùùùùùùùùùùùùùùùùå" << endl << endl;
+									setPrintPosition(3, Game_Map.High + 13 + nowChoose); cout << "¡÷";
+									setPrintPosition(0, 49);
+									break;
+								case 3:
+									setPrintPosition(0,Game_Map.High + 12);
+									for (int i = 0; i < 6; i++)
+									{
+										cout << "                                                                                                                         " << endl;
+									}
+									int clean = game_Massage(play_Character, Monster, Game_Map, game_Massage_string);
+									cout << endl;
+									setPrintPosition(0, Game_Map.High + 12 + clean + 2);
+									system("pause");
+									setPrintPosition(0, Game_Map.High + 12);
+									for (int i = 0; i < clean + 4; i++) 
+									{
+										cout << "                                                                                                                         " << endl;
+									}
+									setPrintPosition(0, Game_Map.High + 12);
+									cout << "ùÝùùùùùùùùùùùùùùùùùùùùùùùùùùùùùß" << endl;
+									cout << "ùø    "; if (hand < 2 || already_played[nowCharacter])SetColor(8); cout << "¥XµP"; SetColor(7); cout << "      ùø" << endl;
+									cout << "ùø    "; if (dedeck < 2 || already_played[nowCharacter])SetColor(8); cout << "ªø¥ð"; SetColor(7); cout << "      ùø" << endl;
+									cout << "ùø    ÀË¬d¤âµP  ùø" << endl;
+									cout << "ùø    ³õ­±ª¬ºA  ùø" << endl;
+									cout << "ùãùùùùùùùùùùùùùùùùùùùùùùùùùùùùùå" << endl << endl;
+									setPrintPosition(3, Game_Map.High + 13 + nowChoose); cout << "¡÷";
+									setPrintPosition(0, 0);
+									setPrintPosition(0, 49);
+									break;
+								}
+								break;
+							case 27:
+								chooseComplete2 = true;
+								setPrintPosition(0, Game_Map.High + 12);
+								for (int i = 0; i < 6; i++) 
+								{
+									cout << "                                                                                                                         " << endl;
+								}
+								setPrintPosition(0, 49);
+								break;
+							}
+						}
+					}
+					break;
+				}
+			}
+			bool all_Complete = true;
+			for (int i = 0; i < play_Character.size(); i++) 
+			{
+				if (already_played[i] == false)
+					all_Complete = false;
+			}
+			if (all_Complete == true) 
+			{
+				chooseComplete = true;
+				delete[] already_played;
+			}
+		}
+		for (int i = 0; i < play_Character.size(); i++) 
+		{
+			cout << play_Character[i].ID << "¡G" << play_Character[i].Command[0] << play_Character[i].Command[1] << "\t";
+		}
+
+
+
+
+		round++;
+	}
+}
+int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, vector<string> game_Massage_string)
+{
+	setPrintPosition(0, Game_Map.High + 12);
+	cout << "======¹CÀ¸¸ê°T======" << endl << endl;
+	cout << "======ª±®a¸ê°T======            ======¼Ä¤è¸ê°T======            ======¦æ°Ê¾ú¥v======";
+	for (int i = 0; i < play_Character.size(); i++) 
+	{
+		cout << endl << endl << "¨¤¦â" << play_Character[i].ID << "¡G" << endl;
+		cout << setw(10) << "¦WºÙ¡G" << play_Character[i].Character_name << endl;
+		cout << setw(10) << "¦å¶q¡G" << play_Character[i].Hp << endl;
+		cout << setw(10) << "Å@¬Þ¡G" << play_Character[i].Shield << endl;
+		int onHand = 0, used = 0;
+		for (int j = 0; j < play_Character[i].Deck.size(); j++) 
+		{
+			if (play_Character[i].Deck[j].status == 1)
+				onHand++;
+			else if (play_Character[i].Deck[j].status == 2)
+				used++;
+		}
+		cout << setw(10) << "¤âµP¼Æ¡G" << onHand << endl;
+		cout << setw(10) << "±óµP¼Æ¡G" << used;
+	}
+	int printPoint = Game_Map.High + 16, allPoint = 0;
+	for (int i = 0; i < Monster.size(); i++)
+	{
+		bool all_unactive = true;
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++) 
+		{
+			if (Monster[i].Creature_List[j].active == true)
+				all_unactive = false;
+		}
+		if (all_unactive == true)
+			continue;
+		setPrintPosition(32, printPoint); cout << "ºØ±Ú¦W¡G" << Monster[i].Ethnicity_Name;
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++) 
+		{
+			if (Monster[i].Creature_List[j].active == false)
+				continue;
+			setPrintPosition(32, printPoint + 1); cout << setw(10) << "¦WºÙ¡G" << Monster[i].Creature_List[j].icon;
+			setPrintPosition(32, printPoint + 2); cout << setw(14) << "¦å¶q¡G" << Monster[i].Creature_List[j].Hp;
+			setPrintPosition(32, printPoint + 3); cout << setw(14) << "Å@¬Þ¡G" << Monster[i].Creature_List[j].Shield;
+			setPrintPosition(32, printPoint + 4); cout << setw(14) << "§ðÀ»¤O¡G" << Monster[i].Creature_List[j].Damage;
+			setPrintPosition(32, printPoint + 5); cout << setw(14) << "§ðÀ»½d³ò¡G" << Monster[i].Creature_List[j].Range;
+			printPoint += 6;
+		}
+		int inDeck = 0, used = 0;
+		for (int j = 0; j < Monster[i].Deck.size(); j++)
+		{
+			if (Monster[i].Deck[j].status == 0)
+				inDeck++;
+			else if (Monster[i].Deck[j].status == 1)
+				used++;
+		}
+		setPrintPosition(32, printPoint); cout << setw(10) << "µP°ï¡G" << inDeck;
+		setPrintPosition(32, printPoint + 1); cout << setw(10) << "±óµP¼Æ¡G" << used;
+		printPoint += 2;
+	}
+	allPoint = printPoint - (Game_Map.High + 12);
+	printPoint = Game_Map.High + 12;
+	for (int i = 0; i < game_Massage_string.size(); i++) 
+	{
+		setPrintPosition(64, printPoint + i);	cout << game_Massage_string[i];
+	}
+	if (allPoint > 20)
+		return allPoint;
+	else 
+		return 20;
+}
+void check_hand_UI(vector<Character>& play_Character,int character,int printPoint) 
+{
+	for (int i = 0; i < play_Character[character].Deck.size(); i++)
+	{
+		if (play_Character[character].Deck[i].status == 1)
+			SetColor(7);
+		else if (play_Character[character].Deck[i].status == 2)
+			SetColor(12);
+		else
+			SetColor(8);
+		setPrintPosition(i * 5, printPoint + 1);	cout << "ùÝùùùùùß";
+		setPrintPosition(i * 5, printPoint + 2);	cout << "ùø" << setw(2) << play_Character[character].Deck[i].ID << "ùø";
+		setPrintPosition(i * 5, printPoint + 3);	cout << "ùãùùùùùå";
+	}
+	SetColor(7); setPrintPosition(0, printPoint + 7);	cout << "¡°¥d¤ùª¬ºA¡G	¥Õ¦â->¤â¤W	¬õ¦â->±óµP°Ï	¦Ç¦â->³õ¥~" << endl;
+	cout << "¡°«ö¤UEnterÁäªð¦^";
+	bool checkComplete = false;
+	int nowCard = 0, card = 1;
+	setPrintPosition(0, 49);
+	while (checkComplete == false)
+	{
+		if (nowCard != card)
+		{
+			if (play_Character[character].Deck[card].status == 1)
+				SetColor(7);
+			else if (play_Character[character].Deck[card].status == 2)
+				SetColor(12);
+			else
+				SetColor(8);
+			setPrintPosition(card * 5, printPoint + 1);	cout << "ùÝùùùùùß";
+			setPrintPosition(card * 5, printPoint + 2);	cout << "ùø" << setw(2) << card << "ùø";
+			setPrintPosition(card * 5, printPoint + 3);	cout << "ùãùùùùùå";
+			SetColor(14);
+			setPrintPosition(nowCard * 5, printPoint + 1);	cout << "ùÝùùùùùß";
+			setPrintPosition(nowCard * 5, printPoint + 2);	cout << "ùø" << setw(2) << nowCard << "ùø";
+			setPrintPosition(nowCard * 5, printPoint + 3);	cout << "ùãùùùùùå";
+			setPrintPosition(0, printPoint + 5);
+			SetColor(7);
+			cout << "                                                                                                                         " << endl;
+			setPrintPosition(0, printPoint + 5);
+			cout << "½s¸¹¡G	" << play_Character[character].Deck[nowCard].ID << "	±Ó±¶­È¡G" << play_Character[character].Deck[nowCard].Dexterity_Value << "	¤W¡G";
+			for (int k = 0; k < play_Character[character].Deck[nowCard].MovementUp.size(); k++)
+			{
+				cout << play_Character[character].Deck[nowCard].MovementUp[k].Movement << " " << play_Character[character].Deck[nowCard].MovementUp[k].Movement_Value << " ";
+				if (play_Character[character].Deck[nowCard].MovementUp[k].Movement == "attack")
+					cout << "range " << play_Character[character].Deck[nowCard].MovementUp[k].range << " ";
+			}
+			cout << " | ¤U¡G";
+			for (int k = 0; k < play_Character[character].Deck[nowCard].MovementDown.size(); k++)
+			{
+				cout << play_Character[character].Deck[nowCard].MovementDown[k].Movement << " " << play_Character[character].Deck[nowCard].MovementDown[k].Movement_Value << " ";
+				if (play_Character[character].Deck[nowCard].MovementDown[k].Movement == "attack")
+					cout << "range " << play_Character[character].Deck[nowCard].MovementDown[k].range << " ";
+			}
+			setPrintPosition(0, 49);
+			card = nowCard;
+		}
+		else
+		{
+			switch (keyBoard(_getch()))
+			{
+			case 'a':
+				nowCard--;
+				if (nowCard < 0)
+					nowCard = play_Character[character].Deck.size() - 1;
+				break;
+			case 'd':
+				nowCard++;
+				if (nowCard == play_Character[character].Deck.size())
+					nowCard = 0;
+				break;
+			case 13:
+				return;
+				break;
+			}
+		}
+	}
+}
+void player_Use_Card_UI(vector<Character>& play_Character, int character, int printPoint)
+{
+	cout << "====½Ð¿ï¾Ü­n¥XªºµP====";
+	vector<int> can_Use_Card;
+	for (int i = 0; i < play_Character[character].Deck.size(); i++)
+	{
+		if (play_Character[character].Deck[i].status == 1)
+			can_Use_Card.push_back(i);
+	}
+	for (int i = 0; i < can_Use_Card.size(); i++)
+	{
+		SetColor(7);
+		setPrintPosition(i * 5, printPoint + 2);	cout << "ùÝùùùùùß";
+		setPrintPosition(i * 5, printPoint + 3);	cout << "ùø" << setw(2) << play_Character[character].Deck[can_Use_Card[i]].ID << "ùø";
+		setPrintPosition(i * 5, printPoint + 4);	cout << "ùãùùùùùå";
+	}
+	SetColor(7); setPrintPosition(0, printPoint + 8);
+	cout << "¡°w¡G¿ï¾Ü	s¡G¨ú®ø	Enter¡G½T»{";
+	bool checkComplete = false;
+	int nowCard = 0, card = 1;
+	vector<int> use_card;
+	vector<int>::iterator in;
+	setPrintPosition(0, 49);
+	while (checkComplete == false)
+	{
+		for (int i = 0; i < use_card.size(); i++) 
+		{
+			setPrintPosition(use_card[i] * 5, printPoint + 1);
+			cout << " /" << i + 1 << "\\";
+			setPrintPosition(0, 49);
+		}
+		if (nowCard != card)
+		{
+			SetColor(7);
+			setPrintPosition(card * 5, printPoint + 2);	cout << "ùÝùùùùùß";
+			setPrintPosition(card * 5, printPoint + 3);	cout << "ùø" << setw(2) << can_Use_Card[card] << "ùø";
+			setPrintPosition(card * 5, printPoint + 4);	cout << "ùãùùùùùå";
+			SetColor(14);
+			setPrintPosition(nowCard * 5, printPoint + 2);	cout << "ùÝùùùùùß";
+			setPrintPosition(nowCard * 5, printPoint + 3);	cout << "ùø" << setw(2) << can_Use_Card[nowCard] << "ùø";
+			setPrintPosition(nowCard * 5, printPoint + 4);	cout << "ùãùùùùùå";
+			setPrintPosition(0, printPoint + 6);
+			SetColor(7);
+			cout << "                                                                                                                         " << endl;
+			setPrintPosition(0, printPoint + 6);
+			cout << "½s¸¹¡G	" << play_Character[character].Deck[nowCard].ID << "	±Ó±¶­È¡G" << play_Character[character].Deck[nowCard].Dexterity_Value << "	¤W¡G";
+			for (int k = 0; k < play_Character[character].Deck[nowCard].MovementUp.size(); k++)
+			{
+				cout << play_Character[character].Deck[nowCard].MovementUp[k].Movement << " " << play_Character[character].Deck[nowCard].MovementUp[k].Movement_Value << " ";
+				if (play_Character[character].Deck[nowCard].MovementUp[k].Movement == "attack")
+					cout << "range " << play_Character[character].Deck[nowCard].MovementUp[k].range << " ";
+			}
+			cout << " | ¤U¡G";
+			for (int k = 0; k < play_Character[character].Deck[nowCard].MovementDown.size(); k++)
+			{
+				cout << play_Character[character].Deck[nowCard].MovementDown[k].Movement << " " << play_Character[character].Deck[nowCard].MovementDown[k].Movement_Value << " ";
+				if (play_Character[character].Deck[nowCard].MovementDown[k].Movement == "attack")
+					cout << "range " << play_Character[character].Deck[nowCard].MovementDown[k].range << " ";
+			}
+			setPrintPosition(0, 49);
+			card = nowCard;
+		}
+		else
+		{
+			switch (keyBoard(_getch()))
+			{
+			case 'a':
+				nowCard--;
+				if (nowCard < 0)
+					nowCard = can_Use_Card.size() - 1;
+				break;
+			case 'd':
+				nowCard++;
+				if (nowCard == can_Use_Card.size())
+					nowCard = 0;
+				break;
+			case 'w':
+				if (use_card.size() < 2) 
+				{
+					use_card.push_back(nowCard);
+				}
+				break;
+			case 's':
+				if (find(use_card.begin(),use_card.end(),nowCard)!=use_card.end())
+				{
+					setPrintPosition(nowCard * 5, printPoint + 1);
+					cout << "     ";
+					setPrintPosition(0, 49);
+					use_card.erase(in = find(use_card.begin(), use_card.end(), nowCard));
+				}
+				break;
+			case 13:
+				//§¹¦¨¿ï¾Ü
+				if (use_card.size() == 2) 
+				{
+					play_Character[character].Command[0] = use_card[0];
+					play_Character[character].Command[1] = use_card[1];
+					return;
+				}
+				break;
+			}
 		}
 	}
 }
@@ -2140,6 +2608,9 @@ char keyBoard(char input)
 		break;
 	case 13:
 		return 13;
+		break;
+	case 27:
+		return 27;
 		break;
 	}
 }

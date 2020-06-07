@@ -15,7 +15,7 @@ void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map,
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);	//創建角色 - 已防呆
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);	//選擇起始位置 - 已防呆
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE); //回合開始 - 已防呆
-bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map); //判斷是否結束遊戲
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map, bool UI_mode); //判斷是否結束遊戲
 /*==============Movement================*/
 void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map); //角色回合 - 已防呆
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort); //怪物回合
@@ -54,6 +54,10 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 int Project_Start_UI();		//開始介面
 void creat_Character_UI(vector<Character>& Base_Character, vector<Character>& play_Character);
 void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
+void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
+void check_hand_UI(vector<Character>& play_Character, int character, int printPoint);
+int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map,vector<string> game_Massage_string);
+void player_Use_Card_UI(vector<Character>& play_Character, int character, int printPoint);
 char keyBoard(char input);
 /*=============Windows.h的function==============*/
 void setPrintPosition(int x, int y);	//改變Print的起始位置
