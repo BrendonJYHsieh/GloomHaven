@@ -18,6 +18,7 @@ public:
 	/*===fuction===*/
 	void check_road(int x,int y);
 	void print_Map(vector<Character> player, vector<Ethnicity> Monster);
+	void print_Map_UI(vector<Character> player, vector<Ethnicity> Monster);
 	/*====value====*/
 	int Monster_Count = 0;
 	int Width = 0;	//¼e

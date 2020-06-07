@@ -919,7 +919,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
 			xvalue = floor(i + p1.x + 0.5);
 			yvalue = floor(i * tan + p1.y + 0.5);
-			if (Map.Game_Map[yvalue][xvalue] = 0) {
+			if (Map.Game_Map[yvalue][xvalue] == 0) {
 				return true;
 			}
 		}
@@ -931,7 +931,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
 			xvalue = floor(i + 0.5 + p1.x);
 			yvalue = floor(p1.y + 0.5 - i * tan);
-			if (Map.Game_Map[yvalue][xvalue] = 0) {
+			if (Map.Game_Map[yvalue][xvalue] == 0) {
 				return true;
 			}
 		}
@@ -1285,7 +1285,7 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 			{
 				temp_num_int = 4;
 			}
-			else if (temp_num == 2)
+			else if (temp_num_int == 2)
 			{
 				temp_num_int = 6;
 			}
@@ -1294,6 +1294,14 @@ void read_Map_Data(fstream& File_Map, Map& Map, vector<Ethnicity>& Monster,int P
 		Map.Game_Map.push_back(temp);
 		temp.clear();
 	}
+	/*for (int i = 0; i < Map.High; i++) 
+	{
+		for (int j = 0; j < Map.Width; j++)
+		{
+			cout << Map.Game_Map[i][j];
+		}
+		cout << endl;
+	}*/
 	int x, y;
 	for (int i = 0; i < 4; i++) 
 	{
@@ -1586,7 +1594,8 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 		read_Map_Data(File_Map, GameMap, Monster, play_Character.size()); //Map讀檔
 		//get_All_Base_Character_Data(play_Character);	//檢查Character資料
 		//get_All_Base_Monster_Data(Monster);				//檢查Monster資料
-
+		choose_Start_Position_UI(play_Character, Monster, GameMap);		//選擇起始位置
+		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
 
 
 		system("pause");
@@ -2025,7 +2034,89 @@ void creat_Character_UI(vector<Character>& Base_Character, vector<Character>& pl
 }
 void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map) 
 {
+	sort(Game_Map.Init_Pos.begin(), Game_Map.Init_Pos.end(), compare);
+	for (int i = 0; i < Game_Map.Init_Pos.size(); i++)
+	{
+		Game_Map.check_road(Game_Map.Init_Pos[i].x, Game_Map.Init_Pos[i].y);
+	}
+	Game_Map.print_Map_UI(play_Character, Monster);
+	for (int i = 0; i < play_Character.size(); i++) 
+	{
+		setPrintPosition(0, Game_Map.High + 4);
+		cout << "======請選擇角色起始位置======" << endl << endl;
+		cout << "※使用鍵盤wasd移動＊在"; SetColor(170); cout << "  "; SetColor(7); cout << "區域選擇起始位置，並按下Enter鍵確認";
+		setPrintPosition(0, 49);
+		bool chooseComplete = false;
+		int x = Game_Map.Init_Pos[0].x, y = Game_Map.Init_Pos[0].y, nowx = Game_Map.Init_Pos[0].x, nowy = Game_Map.Init_Pos[0].y;
+		setPrintPosition((nowx + 1) * 2, nowy);
+		SetColor(160);	cout << "＊";	SetColor(7);
+		setPrintPosition(0, 49);
+		while (chooseComplete == false) 
+		{
+			if (x != nowx || y != nowy) 
+			{
+				setPrintPosition((x + 1) * 2, y);
+				SetColor(170);	cout << "  "; 
+				setPrintPosition((nowx + 1) * 2, nowy);
+				SetColor(160);	cout << "＊";	SetColor(7);
+				setPrintPosition(0, 49);
+				x = nowx; y = nowy;
+			}
+			else 
+			{
+				switch (keyBoard(_getch())) 
+				{
+				case 'w':
+					if (Game_Map.Game_Map[nowy - 1][nowx] == 5)
+						nowy--;
+					break;
+				case 's':
+					if (Game_Map.Game_Map[nowy + 1][nowx] == 5)
+						nowy++;
+					break;
+				case 'a':
+					if (Game_Map.Game_Map[nowy][nowx - 1] == 5)
+						nowx--;
+					break;
+				case 'd':
+					if (Game_Map.Game_Map[nowy][nowx + 1] == 5)
+						nowx++;
+					break;
+				case 13:
+					//完成選擇
+					play_Character[i].position.y = nowy;
+					play_Character[i].position.x = nowx;
+					Game_Map.Game_Map[nowy][nowx] = 1;
+					for (int j = 0; j < Game_Map.Init_Pos.size(); j++)
+					{
+						if (Game_Map.Init_Pos[j].x == nowx && Game_Map.Init_Pos[j].y == nowy)
+						{
+							Game_Map.Init_Pos.erase(Game_Map.Init_Pos.begin() + j);
+						}
+					}
+					chooseComplete = true;
+					break;
+				}
+			}
+		}
+		setPrintPosition((nowx + 1) * 2, nowy);
+		SetColor(10);	cout << "p" << play_Character[i].ID;	SetColor(7);
+		setPrintPosition(0, 49);
+	}
+	for (int i = 0; i < Game_Map.High; i++)
+	{
+		for (int j = 0; j < Game_Map.Width; j++)
+		{
+			if (Game_Map.Game_Map[i][j] == 5)
+			{
+				Game_Map.Game_Map[i][j] = 1;
+				setPrintPosition((j + 1) * 2, i);
+				cout << "□";
+				setPrintPosition(0, 49);
+			}
 
+		}
+	}
 }
 char keyBoard(char input) 
 {
