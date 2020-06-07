@@ -29,7 +29,7 @@ void main(int argc, char* argv[])
 		Main_Game(File_Character, File_Monster, File_Map, DEBUG_MODE);
 		break;
 	case 2:
-		Main_Game_UI();
+		Main_Game_UI(File_Character, File_Monster, File_Map);
 		break;
 	}
 	
