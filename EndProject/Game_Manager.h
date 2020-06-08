@@ -56,8 +56,10 @@ void creat_Character_UI(vector<Character>& Base_Character, vector<Character>& pl
 void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);
 void check_hand_UI(vector<Character>& play_Character, int character, int printPoint);
-int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map,vector<string> game_Massage_string);
+int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map,vector<string>& game_Massage_string);
 void player_Use_Card_UI(vector<Character>& play_Character, int character, int printPoint);
+void players_round_UI(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map, int printPoint,vector<string>& game_Massage_string); //角色回合 - 已防呆
+void monsters_round_UI(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort, int printPoint, vector<string>& game_Massage_string); //怪物回合
 char keyBoard(char input);
 /*=============Windows.h的function==============*/
 void setPrintPosition(int x, int y);	//改變Print的起始位置

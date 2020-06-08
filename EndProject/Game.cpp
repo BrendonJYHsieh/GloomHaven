@@ -428,7 +428,6 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				for (int k = 0; k < Monster[attack_Sort[i]-'a'].Creature_List.size(); k++)
 				{
 					monsters_round(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map,Monster,attack_Sort);
-					break;
 				}
 			}
 		}
@@ -1454,7 +1453,6 @@ void print_character_sort_onActive_monster(vector<Ethnicity> Monster, vector<Cha
 	for (int i = 0; i < temp.size(); i++) {
 		cout << temp[i].icon << "-hp:" << temp[i].Hp << ", shield: " << temp[i].Shield << endl;
 	}
-
 }
 bool abcSort(Monster_Base a,Monster_Base b) {
 	if (a.icon > b.icon)
@@ -2378,9 +2376,9 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 		}
 		setPrintPosition(0, Game_Map.High + 8);
 		cout << "======¦æ°Ê±Æ§Ç¶¥¬q======" << endl << endl;
+		vector<char> attack_Sort;	//¥H±Ó±¶­È±Æ§Çªº§ðÀ»¶¶§Ç
 		{
-			vector<char> attack_Sort;	//¥H±Ó±¶­È±Æ§Çªº§ðÀ»¶¶§Ç
-		//¥ý±Æ¨¤¦â
+			//¥ý±Æ¨¤¦â
 			attack_Sort.push_back(play_Character[0].ID);	//±N¨¤¦âA¥[¤J±Æ§Ç
 			for (int i = 1; i < play_Character.size(); i++)
 			{
@@ -2473,16 +2471,43 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 			//ÀË¬d±Æ§Ç
 			setPrintPosition(0, Game_Map.High + 6);
 			cout << "¦æ°Ê¶¶§Ç¡G";
-			for (int i = 0; i < attack_Sort.size(); i++) 
+			for (int i = 0; i < attack_Sort.size(); i++)
 			{
 				cout << "<<";
-				if (attack_Sort[i] >= 'A' && attack_Sort[i] <= 'Z') 
+				if (attack_Sort[i] >= 'A' && attack_Sort[i] <= 'Z')
 				{
 					cout << play_Character[attack_Sort[i] - 'A'].ID << "(" << play_Character[attack_Sort[i] - 'A'].Command[0] << "/" << play_Character[attack_Sort[i] - 'A'].Command[1] << ")";
 				}
-				else 
+				else
 				{
 					cout << Monster[attack_Sort[i] - 'a'].Ethnicity_Name << "(" << Monster[attack_Sort[i] - 'a'].Command << ")";
+				}
+			}
+		}
+		//¾Ô°«³¡¤À
+		{
+			for (int i = 0; i < attack_Sort.size(); i++)
+			{
+				if (attack_Sort[i] <= 'Z' && attack_Sort[i] >= 'A')		//¨¤¦â¦æ°Ê
+				{
+					for (int j = 0; j < play_Character.size(); j++)
+					{
+						if (play_Character[j].ID == attack_Sort[i])
+						{
+							setPrintPosition(0, Game_Map.High + 8);
+							cout << "======ª±®a¦æ°Ê¶¥¬q======" << endl << endl;
+							players_round_UI(play_Character, play_Character[j], Monster, Game_Map, Game_Map.High + 10,game_Massage_string);
+						}
+					}
+				}
+				else //©Çª«¦æ°Ê
+				{
+					for (int k = 0; k < Monster[attack_Sort[i] - 'a'].Creature_List.size(); k++)
+					{
+						setPrintPosition(0, Game_Map.High + 8);
+						cout << "======¼Ä¤H¦æ°Ê¶¥¬q======" << endl << endl;
+						monsters_round_UI(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map, Monster, attack_Sort, Game_Map.High + 8,game_Massage_string);
+					}
 				}
 			}
 		}
@@ -2492,7 +2517,7 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 		round++;
 	}
 }
-int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, vector<string> game_Massage_string)
+int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, vector<string>& game_Massage_string)
 {
 	setPrintPosition(0, Game_Map.High + 12);
 	cout << "======¹CÀ¸¸ê°T======" << endl << endl;
@@ -2501,7 +2526,7 @@ int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	{
 		cout << endl << endl << "¨¤¦â" << play_Character[i].ID << "¡G" << endl;
 		cout << setw(10) << "¦WºÙ¡G" << play_Character[i].Character_name << endl;
-		cout << setw(10) << "¦å¶q¡G" << play_Character[i].Hp << endl;
+		cout << setw(10) << "¦å¶q¡G(" << play_Character[i].Hp << "/" << play_Character[i].Max_HP << ")" << endl;
 		cout << setw(10) << "Å@¬Þ¡G" << play_Character[i].Shield << endl;
 		int onHand = 0, used = 0;
 		for (int j = 0; j < play_Character[i].Deck.size(); j++) 
@@ -2531,7 +2556,7 @@ int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			if (Monster[i].Creature_List[j].active == false)
 				continue;
 			setPrintPosition(32, printPoint + 1); cout << setw(10) << "¦WºÙ¡G" << Monster[i].Creature_List[j].icon;
-			setPrintPosition(32, printPoint + 2); cout << setw(14) << "¦å¶q¡G" << Monster[i].Creature_List[j].Hp;
+			setPrintPosition(32, printPoint + 2); cout << setw(14) << "¦å¶q¡G(" << Monster[i].Creature_List[j].Hp << "/" << Monster[i].Creature_List[j].Max_HP << ")";
 			setPrintPosition(32, printPoint + 3); cout << setw(14) << "Å@¬Þ¡G" << Monster[i].Creature_List[j].Shield;
 			setPrintPosition(32, printPoint + 4); cout << setw(14) << "§ðÀ»¤O¡G" << Monster[i].Creature_List[j].Damage;
 			setPrintPosition(32, printPoint + 5); cout << setw(14) << "§ðÀ»½d³ò¡G" << Monster[i].Creature_List[j].Range;
@@ -2739,12 +2764,508 @@ void player_Use_Card_UI(vector<Character>& play_Character, int character, int pr
 				{
 					play_Character[character].Command[0] = use_card[0];
 					play_Character[character].Command[1] = use_card[1];
+					play_Character[character].Deck[use_card[0]].status = 4;
+					play_Character[character].Deck[use_card[1]].status = 4;
 					return;
 				}
 				break;
 			}
 		}
 	}
+}
+void players_round_UI(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map, int printPoint, vector<string>& game_Massage_string) //¨¤¦â¦^¦X - ¤w¨¾§b
+{
+	if (Character.Rest == false)
+	{
+		cout << "====½Ð¿ï¾Ü" << Character.ID << "ªº¥dµP«ü¥O====" << endl;
+		cout << "¨¤¦â¡G" << Character.Character_name << "	[hp¡G(" << Character.Hp << "/" << Character.Max_HP << ")][shield¡G" << Character.Shield << "]" << endl;
+		bool chooseComplete = false;
+		int card = 1, movement = 1, now_card = 0, now_movement = 0;
+		for (int i = 0; i < 2; i++)
+		{
+			SetColor(7);
+			setPrintPosition(i * 6, printPoint + 2);	cout << "ùÝùùùùùùùß";
+			setPrintPosition(i * 6, printPoint + 3);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[i]].ID << "ùø";
+			setPrintPosition(i * 6, printPoint + 4);	cout << "ùø ¤Wùø";
+			setPrintPosition(i * 6, printPoint + 6);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[i]].ID << "ùø";
+			setPrintPosition(i * 6, printPoint + 7);	cout << "ùø ¤Uùø";
+			setPrintPosition(i * 6, printPoint + 8);	cout << "ùãùùùùùùùå";
+		}
+		setPrintPosition(2 * 6, printPoint + 4);	cout << "ùÝùùùùùùùß";
+		setPrintPosition(2 * 6, printPoint + 5);	cout << "ùø ¢Ñùø";
+		setPrintPosition(2 * 6, printPoint + 6);	cout << "ùãùùùùùùùå";
+		bool check_now = true;
+		while (chooseComplete == false) 
+		{
+			if (now_card == 2 && check_now == true)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					SetColor(7);
+					setPrintPosition(i * 6, printPoint + 2);	cout << "ùÝùùùùùùùß";
+					setPrintPosition(i * 6, printPoint + 3);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[i]].ID << "ùø";
+					setPrintPosition(i * 6, printPoint + 4);	cout << "ùø ¤Wùø";
+					setPrintPosition(i * 6, printPoint + 6);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[i]].ID << "ùø";
+					setPrintPosition(i * 6, printPoint + 7);	cout << "ùø ¤Uùø";
+					setPrintPosition(i * 6, printPoint + 8);	cout << "ùãùùùùùùùå";
+				}
+				SetColor(14);
+				setPrintPosition(2 * 6, printPoint + 4);	cout << "ùÝùùùùùùùß";
+				setPrintPosition(2 * 6, printPoint + 5);	cout << "ùø ¢Ñùø";
+				setPrintPosition(2 * 6, printPoint + 6);	cout << "ùãùùùùùùùå";
+				setPrintPosition(0, printPoint + 10);
+				SetColor(7);
+				cout << "                                                                                                                         " << endl;
+				setPrintPosition(0, 49);
+				card = now_card;
+				check_now = false;
+			}
+			else if (now_card != 2 && (now_card != card || now_movement != movement))
+			{
+				if (card == 2 && now_card == 0)
+					card = 1;
+				else if (card == 2 && now_card == 1)
+					card = 0;
+				SetColor(7);
+				setPrintPosition(2 * 6, printPoint + 4);	cout << "ùÝùùùùùùùß";
+				setPrintPosition(2 * 6, printPoint + 5);	cout << "ùø ¢Ñùø";
+				setPrintPosition(2 * 6, printPoint + 6);	cout << "ùãùùùùùùùå";
+				if (movement == 0) 
+				{
+					setPrintPosition(card * 6, printPoint + 2);	cout << "ùÝùùùùùùùß";
+					setPrintPosition(card * 6, printPoint + 3);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[card]].ID << "ùø";
+					setPrintPosition(card * 6, printPoint + 4);	cout << "ùø ¤Wùø";
+				}
+				else 
+				{
+					setPrintPosition(card * 6, printPoint + 6);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[card]].ID << "ùø";
+					setPrintPosition(card * 6, printPoint + 7);	cout << "ùø ¤Uùø";
+					setPrintPosition(card * 6, printPoint + 8);	cout << "ùãùùùùùùùå";
+				}
+				SetColor(14);
+				if (now_movement == 0)
+				{
+					setPrintPosition(now_card * 6, printPoint + 2);	cout << "ùÝùùùùùùùß";
+					setPrintPosition(now_card * 6, printPoint + 3);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[now_card]].ID << "ùø";
+					setPrintPosition(now_card * 6, printPoint + 4);	cout << "ùø ¤Wùø";
+				}
+				else
+				{
+					setPrintPosition(now_card * 6, printPoint + 6);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[now_card]].ID << "ùø";
+					setPrintPosition(now_card * 6, printPoint + 7);	cout << "ùø ¤Uùø";
+					setPrintPosition(now_card * 6, printPoint + 8);	cout << "ùãùùùùùùùå";
+				}
+				setPrintPosition(0, printPoint + 10);
+				SetColor(7);
+				cout << "                                                                                                                         " << endl;
+				setPrintPosition(0, printPoint + 10);
+				cout << "§ðÀ»«ü¥O -> ";
+				if (now_movement == 0) 
+				{
+					for (int k = 0; k < Character.Deck[Character.Command[now_card]].MovementUp.size(); k++)
+					{
+						cout << Character.Deck[Character.Command[now_card]].MovementUp[k].Movement << " " << Character.Deck[Character.Command[now_card]].MovementUp[k].Movement_Value << " ";
+						if (Character.Deck[Character.Command[now_card]].MovementUp[k].Movement == "attack")
+							cout << "range " << Character.Deck[Character.Command[now_card]].MovementUp[k].range << " ";
+					}
+					if (now_card == 0)
+						card = 1;
+					else
+						card = 0;
+					cout << "	+	";
+					for (int k = 0; k < Character.Deck[Character.Command[card]].MovementDown.size(); k++)
+					{
+						cout << Character.Deck[Character.Command[card]].MovementDown[k].Movement << " " << Character.Deck[Character.Command[card]].MovementDown[k].Movement_Value << " ";
+						if (Character.Deck[Character.Command[card]].MovementDown[k].Movement == "attack")
+							cout << "range " << Character.Deck[Character.Command[card]].MovementDown[k].range << " ";
+					}
+				}
+				else 
+				{
+					for (int k = 0; k < Character.Deck[Character.Command[now_card]].MovementDown.size(); k++)
+					{
+						cout << Character.Deck[Character.Command[now_card]].MovementDown[k].Movement << " " << Character.Deck[Character.Command[now_card]].MovementDown[k].Movement_Value << " ";
+						if (Character.Deck[Character.Command[now_card]].MovementDown[k].Movement == "attack")
+							cout << "range " << Character.Deck[Character.Command[now_card]].MovementDown[k].range << " ";
+					}
+					if (now_card == 0)
+						card = 1;
+					else
+						card = 0;
+					cout << "	+	";
+					for (int k = 0; k < Character.Deck[Character.Command[card]].MovementUp.size(); k++)
+					{
+						cout << Character.Deck[Character.Command[card]].MovementUp[k].Movement << " " << Character.Deck[Character.Command[card]].MovementUp[k].Movement_Value << " ";
+						if (Character.Deck[Character.Command[card]].MovementUp[k].Movement == "attack")
+							cout << "range " << Character.Deck[Character.Command[card]].MovementUp[k].range << " ";
+					}
+				}
+				setPrintPosition(0, 49);
+				card = now_card;
+				movement = now_movement;
+			}
+			else 
+			{
+				switch (keyBoard(_getch()))
+				{
+				case 'w':
+				case 's':
+					if (now_movement == 1)
+						now_movement = 0;
+					else
+						now_movement = 1;
+					break;
+				case 'a':
+					check_now = true;
+					now_card--;
+					if (now_card <0)
+						now_card = 2;
+					break;
+				case 'd':
+					now_card++;
+					check_now = true;
+					if (now_card == 3)
+						now_card = 0;
+					break;
+				case 13:
+					//§¹¦¨¿ï¾Ü
+					if (now_card == 2) 
+					{
+						setPrintPosition(0, printPoint);
+						for (int i = 0; i < 20; i++) 
+						{
+							cout << "                                                                                                                         " << endl;
+						}
+						int clean = game_Massage(play_Character, Monster, Game_Map, game_Massage_string);
+						setPrintPosition(0, printPoint + clean + 3);
+						system("pause");
+						setPrintPosition(0, printPoint);
+						for (int i = 0; i < clean + 4; i++)
+						{
+							cout << "                                                                                                                         " << endl;
+						}
+						setPrintPosition(0, printPoint);
+						cout << "====½Ð¿ï¾Ü" << Character.ID << "ªº¥dµP«ü¥O====" << endl;
+						cout << "¨¤¦â¡G" << Character.Character_name << "	[hp¡G(" << Character.Hp << "/" << Character.Max_HP << ")][shield¡G" << Character.Shield << "]" << endl;
+						for (int i = 0; i < 2; i++)
+						{
+							SetColor(7);
+							setPrintPosition(i * 6, printPoint + 2);	cout << "ùÝùùùùùùùß";
+							setPrintPosition(i * 6, printPoint + 3);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[i]].ID << "ùø";
+							setPrintPosition(i * 6, printPoint + 4);	cout << "ùø ¤Wùø";
+							setPrintPosition(i * 6, printPoint + 6);	cout << "ùø " << setw(2) << Character.Deck[Character.Command[i]].ID << "ùø";
+							setPrintPosition(i * 6, printPoint + 7);	cout << "ùø ¤Uùø";
+							setPrintPosition(i * 6, printPoint + 8);	cout << "ùãùùùùùùùå";
+						}
+						SetColor(14);
+						setPrintPosition(2 * 6, printPoint + 4);	cout << "ùÝùùùùùùùß";
+						setPrintPosition(2 * 6, printPoint + 5);	cout << "ùø ¢Ñùø";
+						setPrintPosition(2 * 6, printPoint + 6);	cout << "ùãùùùùùùùå";
+						setPrintPosition(0, printPoint + 10);
+						SetColor(7);
+						cout << "                                                                                                                         " << endl;
+						setPrintPosition(0, 49);
+					}
+					else 
+					{
+						setPrintPosition(0, printPoint + 2);
+						for (int i = 0; i < 9; i++)
+						{
+							cout << "                                                                                                                         " << endl;
+						}
+						setPrintPosition(0, printPoint + 3);
+						cout << "§ðÀ»«ü¥O -> ";
+						if (now_movement == 0)
+						{
+							for (int k = 0; k < Character.Deck[Character.Command[now_card]].MovementUp.size(); k++)
+							{
+								cout << Character.Deck[Character.Command[now_card]].MovementUp[k].Movement << " " << Character.Deck[Character.Command[now_card]].MovementUp[k].Movement_Value << " ";
+								if (Character.Deck[Character.Command[now_card]].MovementUp[k].Movement == "attack")
+									cout << "range " << Character.Deck[Character.Command[now_card]].MovementUp[k].range << " ";
+							}
+							if (now_card == 0)
+								card = 1;
+							else
+								card = 0;
+							for (int k = 0; k < Character.Deck[Character.Command[card]].MovementDown.size(); k++)
+							{
+								cout << Character.Deck[Character.Command[card]].MovementDown[k].Movement << " " << Character.Deck[Character.Command[card]].MovementDown[k].Movement_Value << " ";
+								if (Character.Deck[Character.Command[card]].MovementDown[k].Movement == "attack")
+									cout << "range " << Character.Deck[Character.Command[card]].MovementDown[k].range << " ";
+							}
+						}
+						else
+						{
+							for (int k = 0; k < Character.Deck[Character.Command[now_card]].MovementDown.size(); k++)
+							{
+								cout << Character.Deck[Character.Command[now_card]].MovementDown[k].Movement << " " << Character.Deck[Character.Command[now_card]].MovementDown[k].Movement_Value << " ";
+								if (Character.Deck[Character.Command[now_card]].MovementDown[k].Movement == "attack")
+									cout << "range " << Character.Deck[Character.Command[now_card]].MovementDown[k].range << " ";
+							}
+							if (now_card == 0)
+								card = 1;
+							else
+								card = 0;
+							cout << "	+	";
+							for (int k = 0; k < Character.Deck[Character.Command[card]].MovementUp.size(); k++)
+							{
+								cout << Character.Deck[Character.Command[card]].MovementUp[k].Movement << " " << Character.Deck[Character.Command[card]].MovementUp[k].Movement_Value << " ";
+								if (Character.Deck[Character.Command[card]].MovementUp[k].Movement == "attack")
+									cout << "range " << Character.Deck[Character.Command[card]].MovementUp[k].range << " ";
+							}
+						}
+						setPrintPosition(0, 49);
+						if (now_card == 0)
+							card = 1;
+						else
+							card = 0;
+						if (now_movement == 0)
+							movement = 1;
+						else
+							movement = 0;
+						chooseComplete = true;
+					}
+					break;
+				}
+			}
+		}
+		//¿ï¾Ü§¹²¦ ¶i¦æ§ðÀ»
+		if (now_movement == 0) 
+		{
+			for (int j = 0; j < Character.Deck[Character.Command[now_card]].MovementUp.size(); j++)
+			{
+				string output_log;
+				if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "attack") {
+					if (Character.Deck[Character.Command[now_card]].MovementUp[j].range == 0)
+					{
+						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Monster) == true)
+							//¿é¥Xattack
+							;
+					}
+					else
+					{
+						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map) == true)
+							//¿é¥Xattack
+							;
+					}
+				}
+				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "shield") {
+					Character.Skill_shield(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
+					//¿é¥Xshield
+					output_log = Character.ID + "Àò±o¤F" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "ÂIÅ@¥Ò­È";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log;
+				}
+				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "heal") {
+					Character.Skill_heal(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
+					//¿é¥Xheal
+					output_log = Character.ID + "Àò±o¤F" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "ÂI¥Í©R­È";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log;
+				}
+				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "move") {
+					//¿é¥Xmove
+				}
+				game_Massage_string.push_back(output_log);
+			}
+			
+			for (int j = 0; j < Character.Deck[Character.Command[card]].MovementDown.size(); j++)
+			{
+				string output_log;
+				if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "attack") {
+					if (Character.Deck[Character.Command[card]].MovementDown[j].range == 0)
+					{
+						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Monster) == true)
+							//¿é¥Xattack
+							;
+					}
+					else
+					{
+						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Character.Deck[Character.Command[card]].MovementDown[j].range, Monster, Game_Map) == true)
+							//¿é¥Xattack
+							;
+					}
+				}
+				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "shield") {
+					Character.Skill_shield(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
+					//¿é¥Xshield
+					output_log = Character.ID + "Àò±o¤F" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "ÂIÅ@¥Ò­È";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log;
+				}
+				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "heal") {
+					Character.Skill_heal(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
+					//¿é¥Xheal
+					output_log = Character.ID + "Àò±o¤F" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "ÂI¥Í©R­È";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log;
+				}
+				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "move") {
+					//¿é¥Xmove
+				}
+				game_Massage_string.push_back(output_log);
+			}
+		}
+		else 
+		{
+			for (int j = 0; j < Character.Deck[Character.Command[now_card]].MovementUp.size(); j++)
+			{
+				if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "attack") {
+					if (Character.Deck[Character.Command[now_card]].MovementUp[j].range == 0)
+					{
+						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Monster) == true)
+							//¿é¥Xattack
+							;
+					}
+					else
+					{
+						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map) == true)
+							//¿é¥Xattack
+							;
+					}
+				}
+				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "shield") {
+					Character.Skill_shield(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
+					//¿é¥Xshield
+				}
+				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "heal") {
+					Character.Skill_heal(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
+					//¿é¥Xheal
+				}
+				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "move") {
+					//¿é¥Xmove
+				}
+			}
+
+			for (int j = 0; j < Character.Deck[Character.Command[card]].MovementDown.size(); j++)
+			{
+				if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "attack") {
+					if (Character.Deck[Character.Command[card]].MovementDown[j].range == 0)
+					{
+						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Monster) == true)
+							//¿é¥Xattack
+							;
+					}
+					else
+					{
+						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Character.Deck[Character.Command[card]].MovementDown[j].range, Monster, Game_Map) == true)
+							//¿é¥Xattack
+							;
+					}
+				}
+				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "shield") {
+					Character.Skill_shield(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
+					//¿é¥Xshield
+				}
+				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "heal") {
+					Character.Skill_heal(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
+					//¿é¥Xheal
+				}
+				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "move") {
+					//¿é¥Xmove
+				}
+			}
+		}
+
+		Character.Deck[Character.Command[0]].status = 2;
+		Character.Deck[Character.Command[1]].status = 2;
+	}
+	else
+	{
+		cout << "====ªø¥ð====" << endl << endl;
+		cout << "½Ð¿ï¾Ü­n¥á±óªºµP";
+		vector<int> can_throw_Card;
+		for (int i = 0; i < Character.Deck.size(); i++)
+		{
+			if (Character.Deck[i].status == 2)
+				can_throw_Card.push_back(i);
+		}
+		for (int i = 0; i < can_throw_Card.size(); i++)
+		{
+			SetColor(7);
+			setPrintPosition(i * 5, printPoint + 4);	cout << "ùÝùùùùùß";
+			setPrintPosition(i * 5, printPoint + 5);	cout << "ùø" << setw(2) << Character.Deck[can_throw_Card[i]].ID << "ùø";
+			setPrintPosition(i * 5, printPoint + 6);	cout << "ùãùùùùùå";
+		}
+		SetColor(7); setPrintPosition(0, printPoint + 10);
+		cout << "¡° Enter¡G½T»{";
+		bool checkComplete = false;
+		int nowCard = 0, card = 1;
+		setPrintPosition(0, 49);
+		while (checkComplete == false)
+		{
+			if (nowCard != card)
+			{
+				SetColor(7);
+				setPrintPosition(card * 5, printPoint + 4);	cout << "ùÝùùùùùß";
+				setPrintPosition(card * 5, printPoint + 5);	cout << "ùø" << setw(2) << can_throw_Card[card] << "ùø";
+				setPrintPosition(card * 5, printPoint + 6);	cout << "ùãùùùùùå";
+				SetColor(14);
+				setPrintPosition(nowCard * 5, printPoint + 4);	cout << "ùÝùùùùùß";
+				setPrintPosition(nowCard * 5, printPoint + 5);	cout << "ùø" << setw(2) << can_throw_Card[nowCard] << "ùø";
+				setPrintPosition(nowCard * 5, printPoint + 6);	cout << "ùãùùùùùå";
+				setPrintPosition(0, printPoint + 8);
+				SetColor(7);
+				cout << "                                                                                                                         " << endl;
+				setPrintPosition(0, printPoint + 8);
+				cout << "½s¸¹¡G	" << Character.Deck[nowCard].ID << "	±Ó±¶­È¡G" << Character.Deck[nowCard].Dexterity_Value << "	¤W¡G";
+				for (int k = 0; k < Character.Deck[nowCard].MovementUp.size(); k++)
+				{
+					cout << Character.Deck[nowCard].MovementUp[k].Movement << " " << Character.Deck[nowCard].MovementUp[k].Movement_Value << " ";
+					if (Character.Deck[nowCard].MovementUp[k].Movement == "attack")
+						cout << "range " << Character.Deck[nowCard].MovementUp[k].range << " ";
+				}
+				cout << " | ¤U¡G";
+				for (int k = 0; k < Character.Deck[nowCard].MovementDown.size(); k++)
+				{
+					cout << Character.Deck[nowCard].MovementDown[k].Movement << " " << Character.Deck[nowCard].MovementDown[k].Movement_Value << " ";
+					if (Character.Deck[nowCard].MovementDown[k].Movement == "attack")
+						cout << "range " << Character.Deck[nowCard].MovementDown[k].range << " ";
+				}
+				setPrintPosition(0, 49);
+				card = nowCard;
+			}
+			else
+			{
+				switch (keyBoard(_getch()))
+				{
+				case 'a':
+					nowCard--;
+					if (nowCard < 0)
+						nowCard = can_throw_Card.size() - 1;
+					break;
+				case 'd':
+					nowCard++;
+					if (nowCard == can_throw_Card.size())
+						nowCard = 0;
+					break;
+				case 13:
+					//§¹¦¨¿ï¾Ü
+					Character.Deck[nowCard].status = 3;
+					for (int i = 0; i < Character.Deck.size(); i++) 
+					{
+						if (Character.Deck[i].status == 2)
+							Character.Deck[i].status = 1;
+					}
+					Character.Skill_heal(2);
+					checkComplete = true;
+					break;
+				}
+			}
+		}
+	}
+}
+void monsters_round_UI(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort, int printPoint, vector<string>& game_Massage_string) //©Çª«¦^¦X
+{
+
 }
 char keyBoard(char input) 
 {
