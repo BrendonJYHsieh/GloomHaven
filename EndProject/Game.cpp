@@ -439,6 +439,36 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 }
 bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map,bool UI_mode,int round) 
 {
+	bool all_Monsters_Dead = true;
+	for (int i = 0; i < Monster.size(); i++)
+	{
+		if (Monster[i].Creature_List.size() != 0)
+		{
+			all_Monsters_Dead = false;
+		}
+	}
+	bool all_Door_open = true;
+	for (int i = 0; i < Map.High; i++)
+	{
+		for (int j = 0; j < Map.Width; j++)
+		{
+			if (Map.Game_Map[i][j] == 3)
+			{
+				all_Door_open = false;
+			}
+		}
+	}
+	if (all_Monsters_Dead == true && all_Door_open == true)
+	{
+		if (UI_mode == false)
+			cout << "character win~" << endl;
+		else
+		{
+			system("cls");
+			cout << "character win~" << endl;
+		}
+		return false;
+	}
 	cout << "*************round " << round << "************" << endl << endl;
 	for (int i = play_Character.size() - 1; i >= 0; i--)
 	{
@@ -465,36 +495,6 @@ bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map
 		{
 			system("cls");
 			cout << "monster win~" << endl;
-		}
-		return false;
-	}
-	bool all_Monsters_Dead = true;
-	for (int i = 0; i < Monster.size(); i++) 
-	{
-		if (Monster[i].Creature_List.size() != 0) 
-		{
-			all_Monsters_Dead = false;
-		}
-	}
-	bool all_Door_open = true;
-	for (int i = 0; i < Map.High; i++) 
-	{
-		for (int j = 0; j < Map.Width; j++) 
-		{
-			if (Map.Game_Map[i][j] == 3) 
-			{
-				all_Door_open = false;
-			}
-		}
-	}
-	if (all_Monsters_Dead == true && all_Door_open ==true) 
-	{
-		if(UI_mode == false)
-			cout << "character win~" << endl;
-		else 
-		{
-			system("cls");
-			cout << "character win~" << endl;
 		}
 		return false;
 	}

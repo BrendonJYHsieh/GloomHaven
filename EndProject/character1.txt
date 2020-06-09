@@ -1,5 +1,5 @@
 2
-brute 14 2
+brute 14 6
 8
 0 05 attack 4 - shield 2
 1 14 attack 3 range 3 - move 3
