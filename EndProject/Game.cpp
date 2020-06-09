@@ -1794,9 +1794,41 @@ void creat_Character_UI(vector<Character>& Base_Character, vector<Character>& pl
 			setPrintPosition(0, 2 + j); cout << "=   " << Base_Character[j].Character_name; setPrintPosition(6 + maxNameLength, 2 + j); cout << "= ";
 		}
 		chooseComplete = false;
-		int character = 1, nowCharacter = 0, finalCharacter = j - 1;
+		int character = 0, nowCharacter = 0, finalCharacter = j - 1;
 		setPrintPosition(0, finalCharacter + 4);
 		cout << "========角色資訊========";
+		setPrintPosition(1, character + 2); cout << "  ";
+		setPrintPosition(1, nowCharacter + 2); cout << "→";
+		setPrintPosition(0, finalCharacter + 6);
+		for (j = 0; j < 6 + Base_Character[character].Deck.size(); j++)
+		{
+			cout << "                                                                                                                         " << endl;
+		}
+		setPrintPosition(0, finalCharacter + 6);
+		cout << "角色名稱: " << Base_Character[nowCharacter].Character_name << endl;
+		cout << "角色血量: " << Base_Character[nowCharacter].Hp << endl;
+		cout << "起始手排數量: " << Base_Character[nowCharacter].Hand << endl << endl;
+		cout << "=====角色可選擇卡牌=====" << endl;
+		for (j = 0; j < Base_Character[nowCharacter].Deck.size(); j++)
+		{
+			cout << "編號：	" << Base_Character[nowCharacter].Deck[j].ID << "	敏捷值：" << Base_Character[nowCharacter].Deck[j].Dexterity_Value << "	上：";
+			for (int k = 0; k < Base_Character[nowCharacter].Deck[j].MovementUp.size(); k++)
+			{
+				cout << Base_Character[nowCharacter].Deck[j].MovementUp[k].Movement << " " << Base_Character[nowCharacter].Deck[j].MovementUp[k].Movement_Value << " ";
+				if (Base_Character[nowCharacter].Deck[j].MovementUp[k].Movement == "attack")
+					cout << "range " << Base_Character[nowCharacter].Deck[j].MovementUp[k].range << " ";
+			}
+			cout << " | 下：";
+			for (int k = 0; k < Base_Character[nowCharacter].Deck[j].MovementDown.size(); k++)
+			{
+				cout << Base_Character[nowCharacter].Deck[j].MovementDown[k].Movement << " " << Base_Character[nowCharacter].Deck[j].MovementDown[k].Movement_Value << " ";
+				if (Base_Character[nowCharacter].Deck[j].MovementDown[k].Movement == "attack")
+					cout << "range " << Base_Character[nowCharacter].Deck[j].MovementDown[k].range << " ";
+			}
+			cout << endl;
+		}
+		character = nowCharacter;
+		setPrintPosition(0, 49);
 		while (chooseComplete == false) 
 		{
 			if (character != nowCharacter) 
@@ -2159,7 +2191,13 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 			for (int i = 0; i < play_Character.size(); i++)
 				cout << "  " << play_Character[i].ID;
 			bool chooseComplete = false;
-			int Character = 1, nowCharacter = 0;
+			int Character = 0, nowCharacter = 0;
+			setPrintPosition(8 + 3 * Character, Game_Map.High + 10); SetColor(7);
+			cout << play_Character[Character].ID;
+			setPrintPosition(8 + 3 * nowCharacter, Game_Map.High + 10); SetColor(240);
+			cout << play_Character[nowCharacter].ID;
+			setPrintPosition(0, 49); SetColor(7);
+			Character = nowCharacter;
 			while (chooseComplete == false)
 			{
 				if (Character != nowCharacter)
@@ -2491,7 +2529,13 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 				cout << "<<";
 				if (attack_Sort[i] >= 'A' && attack_Sort[i] <= 'Z')
 				{
-					cout << play_Character[attack_Sort[i] - 'A'].ID << "(" << play_Character[attack_Sort[i] - 'A'].Command[0] << "/" << play_Character[attack_Sort[i] - 'A'].Command[1] << ")";
+					for (int j = 0; j < play_Character.size(); j++) 
+					{
+						if (play_Character[j].ID == attack_Sort[i]) 
+						{
+							cout << play_Character[j].ID << "(" << play_Character[j].Command[0] << "/" << play_Character[j].Command[1] << ")";
+						}
+					}
 				}
 				else
 				{
@@ -2702,9 +2746,37 @@ void player_Use_Card_UI(vector<Character>& play_Character, int character, int pr
 	SetColor(7); setPrintPosition(0, printPoint + 8);
 	cout << "※w：選擇	s：取消	Enter：確認";
 	bool checkComplete = false;
-	int nowCard = 0, card = 1;
+	int nowCard = 0, card = 0;
 	vector<int> use_card;
 	vector<int>::iterator in;
+	SetColor(7);
+	setPrintPosition(card * 5, printPoint + 2);	cout << "╔══╗";
+	setPrintPosition(card * 5, printPoint + 3);	cout << "║" << setw(2) << can_Use_Card[card] << "║";
+	setPrintPosition(card * 5, printPoint + 4);	cout << "╚══╝";
+	SetColor(14);
+	setPrintPosition(nowCard * 5, printPoint + 2);	cout << "╔══╗";
+	setPrintPosition(nowCard * 5, printPoint + 3);	cout << "║" << setw(2) << can_Use_Card[nowCard] << "║";
+	setPrintPosition(nowCard * 5, printPoint + 4);	cout << "╚══╝";
+	setPrintPosition(0, printPoint + 6);
+	SetColor(7);
+	cout << "                                                                                                                         " << endl;
+	setPrintPosition(0, printPoint + 6);
+	cout << "編號：	" << play_Character[character].Deck[nowCard].ID << "	敏捷值：" << play_Character[character].Deck[nowCard].Dexterity_Value << "	上：";
+	for (int k = 0; k < play_Character[character].Deck[nowCard].MovementUp.size(); k++)
+	{
+		cout << play_Character[character].Deck[nowCard].MovementUp[k].Movement << " " << play_Character[character].Deck[nowCard].MovementUp[k].Movement_Value << " ";
+		if (play_Character[character].Deck[nowCard].MovementUp[k].Movement == "attack")
+			cout << "range " << play_Character[character].Deck[nowCard].MovementUp[k].range << " ";
+	}
+	cout << " | 下：";
+	for (int k = 0; k < play_Character[character].Deck[nowCard].MovementDown.size(); k++)
+	{
+		cout << play_Character[character].Deck[nowCard].MovementDown[k].Movement << " " << play_Character[character].Deck[nowCard].MovementDown[k].Movement_Value << " ";
+		if (play_Character[character].Deck[nowCard].MovementDown[k].Movement == "attack")
+			cout << "range " << play_Character[character].Deck[nowCard].MovementDown[k].range << " ";
+	}
+	setPrintPosition(0, 49);
+	card = nowCard;
 	setPrintPosition(0, 49);
 	while (checkComplete == false)
 	{
@@ -2801,7 +2873,7 @@ void players_round_UI(vector<Character>& play_Character, Character& Character, v
 		cout << "====請選擇" << Character.ID << "的卡牌指令====" << endl;
 		cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
 		bool chooseComplete = false;
-		int card = 1, movement = 1, now_card = 0, now_movement = 0;
+		int card = 0, movement = 0, now_card = 0, now_movement = 0;
 		for (int i = 0; i < 2; i++)
 		{
 			SetColor(7);
@@ -2815,6 +2887,12 @@ void players_round_UI(vector<Character>& play_Character, Character& Character, v
 		setPrintPosition(2 * 6, printPoint + 4);	cout << "╔═══╗";
 		setPrintPosition(2 * 6, printPoint + 5);	cout << "║ Ｃ║";
 		setPrintPosition(2 * 6, printPoint + 6);	cout << "╚═══╝";
+		SetColor(14);
+		setPrintPosition(now_card * 6, printPoint + 2);	cout << "╔═══╗";
+		setPrintPosition(now_card * 6, printPoint + 3);	cout << "║ " << setw(2) << Character.Deck[Character.Command[now_card]].ID << "║";
+		setPrintPosition(now_card * 6, printPoint + 4);	cout << "║ 上║";
+		SetColor(7);
+		setPrintPosition(0, 49);
 		bool check_now = true;
 		while (chooseComplete == false) 
 		{
@@ -3437,7 +3515,7 @@ void players_round_UI(vector<Character>& play_Character, Character& Character, v
 					break;
 				case 13:
 					//完成選擇
-					Character.Deck[nowCard].status = 3;
+					Character.Deck[can_throw_Card[nowCard]].status = 3;
 					for (int i = 0; i < Character.Deck.size(); i++) 
 					{
 						if (Character.Deck[i].status == 2)
@@ -3983,6 +4061,9 @@ void monster_Attack_UI(Monster_Base& M, int value, int range, vector<char> attac
 	if (play_Character[final_Target].Hp <= 0)
 	{
 		output_log.push_back(play_Character[final_Target].ID); output_log += " 死亡";
+		setPrintPosition((play_Character[final_Target].position.x + 1) * 2, play_Character[final_Target].position.y);
+		cout << "□";
+		setPrintPosition(0, 49);
 		play_Character.erase(play_Character.begin() + final_Target);
 	}
 	else 
@@ -4056,6 +4137,21 @@ void end_round_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster,
 			{
 				Monster[i].Creature_List[j].active = true;
 			}
+		}
+	}
+	int can_use_card = 0, can_throw_card = 0;
+	for (int i = play_Character.size() - 1; i >= 0; i--)
+	{
+		for (int j = 0; j < play_Character[i].Deck.size(); j++) 
+		{
+			if (play_Character[i].Deck[j].status == 1)
+				can_use_card++;
+			if (play_Character[i].Deck[j].status == 2)
+				can_throw_card++;
+		}
+		if (can_use_card < 2 && can_throw_card <2) 
+		{
+			play_Character.erase(play_Character.begin() + i);
 		}
 	}
 }
