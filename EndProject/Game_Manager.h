@@ -15,7 +15,7 @@ void Main_Game(fstream& File_Character,fstream& File_Monster, fstream& File_Map,
 void creat_Character(vector<Character>& Base_Character, vector<Character>& play_Character);	//創建角色 - 已防呆
 void choose_Start_Position(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map);	//選擇起始位置 - 已防呆
 void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, int DEBUG_MODE); //回合開始 - 已防呆
-bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map, bool UI_mode); //判斷是否結束遊戲
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map, bool UI_mode,int round); //判斷是否結束遊戲
 /*==============Movement================*/
 void players_round(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map); //角色回合 - 已防呆
 void monsters_round(vector<Character>& play_Character,Ethnicity& Monster_Ethnicity,Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort); //怪物回合
@@ -38,6 +38,7 @@ void show_AttackList( vector<char> attack_Sort,vector<Character> Play_Character,
 int get_Character_Dex(vector<Character> Play_Character, char name, int num); //取得特定名稱的敏捷值
 int get_Monster_Dex(vector<Ethnicity> Monster, char name); //取得特定名稱的敏捷值
 bool find_by_step(int x1, int y1, int x2, int y2, int step); //遞迴判斷可以走的路
+bool find_by_step_2(int x1, int y1, int x2, int y2, int step, int& distance, Map game_map);
 bool vision_search(Position, Position, Map); //線性插值法
 bool move_Error(int x, int y, vector<Character> play_Character, vector<Ethnicity> Monster, Map Game_Map); //判斷角色是否移動正確
 bool move_Error_Monster(int x, int y, vector<Character> play_Character, Map Game_Map); //判斷怪物是否移動正確
@@ -66,6 +67,7 @@ bool samePositionMonster(int x, int y, vector<Ethnicity> Monster);
 int samePositionCharacter(int x, int y, Character C , vector<Character> play_Character);
 void monster_Attack_UI(Monster_Base& M, int value, int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map, int printPoint, vector<string>& game_Massage_string);
 void end_round_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);
+bool end_Game_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map, bool UI_mode);
 char keyBoard(char input);
 /*=============Windows.h的function==============*/
 void setPrintPosition(int x, int y);	//改變Print的起始位置

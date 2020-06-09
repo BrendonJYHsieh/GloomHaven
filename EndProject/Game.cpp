@@ -204,10 +204,9 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	bool* already_played = nullptr;
 	srand(time(NULL));
 	int round = 1;
-	while(end_Game(play_Character,Monster,Game_Map,false))	//結束遊戲條件 1.角色數量 怪物數量 門數量
+	while(end_Game(play_Character,Monster,Game_Map,false,round))	//結束遊戲條件 1.角色數量 怪物數量 門數量
 	{
 		//get_All_Base_Monster_Data(Monster);
-		cout << "*************round " << round << "************" << endl << endl;
 		cout << "請選擇角色手牌:" << endl;
 		already_played = new bool[play_Character.size()];
 		for (int i = 0; i < play_Character.size(); i++) {
@@ -427,7 +426,8 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 			{
 				for (int k = 0; k < Monster[attack_Sort[i]-'a'].Creature_List.size(); k++)
 				{
-					monsters_round(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map,Monster,attack_Sort);
+					if(Monster[attack_Sort[i]-'a'].Creature_List[k].active == true)
+						monsters_round(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map,Monster,attack_Sort);
 				}
 			}
 		}
@@ -437,8 +437,26 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		round++;
 	}
 }
-bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map,bool UI_mode) 
+bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map,bool UI_mode,int round) 
 {
+	cout << "*************round " << round << "************" << endl << endl;
+	for (int i = play_Character.size() - 1; i >= 0; i--)
+	{
+		int can_use_card = 0, can_throw_card = 0;
+		for (int j = 0; j < play_Character[i].Deck.size(); j++)
+		{
+			if (play_Character[i].Deck[j].status == 1)
+				can_use_card++;
+			if (play_Character[i].Deck[j].status == 2)
+				can_throw_card++;
+		}
+		if (can_use_card < 2 && can_throw_card < 2)
+		{
+			cout << play_Character[i].ID << " is killed!!" << endl;
+			play_Character.erase(play_Character.begin() + i);
+			Map.print_Map(play_Character, Monster);
+		}
+	}
 	if (play_Character.size() == 0) 
 	{
 		if(UI_mode == false)
@@ -768,7 +786,7 @@ void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Ma
 			}
 		}
 	}
-	for (int i = play_Character.size() - 1; i >= 0; i--)
+	/*for (int i = play_Character.size() - 1; i >= 0; i--)
 	{
 		int can_use_card = 0, can_throw_card = 0;
 		for (int j = 0; j < play_Character[i].Deck.size(); j++) 
@@ -783,7 +801,7 @@ void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Ma
 			play_Character.erase(play_Character.begin() + i);
 			Map.print_Map(play_Character,Monster);
 		}
-	}
+	}*/
 }
 void character_move(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
 	string position_input;
@@ -865,6 +883,7 @@ void character_move(Character& C, int step, Map& Game_Map, vector<Character> pla
 //怪物移動
 void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster) {
 	Position start = C.position;
+	vector<Position> way;
 	for (int i = 0; i < position_input.size(); i++)
 	{
 		start = C.position;
@@ -874,6 +893,7 @@ void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<
 		case 'W':
 			if (move_Error_Monster(C.position.x, C.position.y - 1, play_Character, Game_Map) == true)
 			{
+				way.push_back(start);
 				C.position.y--;
 			}
 			break;
@@ -881,6 +901,7 @@ void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<
 		case 'S':
 			if (move_Error_Monster(C.position.x, C.position.y + 1, play_Character, Game_Map) == true)
 			{
+				way.push_back(start);
 				C.position.y++;
 			}
 			break;
@@ -888,29 +909,41 @@ void monster_move(Monster_Base& C, string position_input, Map& Game_Map, vector<
 		case 'A':
 			if (move_Error_Monster(C.position.x - 1, C.position.y, play_Character, Game_Map) == true)
 			{
+				way.push_back(start);
 				C.position.x--;
 			}
 			break;
 		case'd':
 		case 'D':
-			if (move_Error(C.position.x + 1, C.position.y, play_Character, Monster, Game_Map) == true)
+			if (move_Error_Monster(C.position.x + 1, C.position.y, play_Character, Game_Map) == true)
 			{
+				way.push_back(start);
 				C.position.x++;
 			}
 		}
 		if (i == position_input.size() - 1)
 		{
-			for (int j = 0; j < Monster.size(); j++)
+			bool check = true;
+			int L = way.size() - 1;
+			while (check) 
 			{
-				for (int k = 0; k < Monster[j].Creature_List.size(); k++) {
-					if (Monster[j].Creature_List[k].position.x == C.position.x && Monster[j].Creature_List[k].position.y == C.position.y&& Monster[j].Creature_List[k].icon!=C.icon)
-					{
-						C.position = start;
+				check = false;
+				for (int j = 0; j < Monster.size(); j++)
+				{
+					for (int k = 0; k < Monster[j].Creature_List.size(); k++) {
+						if (Monster[j].Creature_List[k].position.x == C.position.x && Monster[j].Creature_List[k].position.y == C.position.y&& Monster[j].Creature_List[k].icon!=C.icon)
+						{
+							C.position = way[L];
+							L--;
+							check = true;
+						}
 					}
 				}
 			}
+			
 		}
 	}
+	
 }
 bool vision_search(Position p1, Position p2, Map Map) {
 	int xvalue, yvalue;
@@ -941,7 +974,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 	}
 	//斜率為正 左上到右下
 	else if (p1.x < p2.x && p2.y >= p1.y) {
-		float tan = (p1.y - p2.y) / (p1.x - p2.x);
+		float tan = float(p1.y - p2.y) / float(p1.x - p2.x);
 		//cout << tan << endl;
 		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
 			xvalue = floor(i + p1.x + 0.5);
@@ -953,7 +986,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 	}
 	//斜率為負 左下到右上
 	else if (p1.x < p2.x && p1.y >= p2.y) {
-		float tan = (p1.y - p2.y) / (p1.x - p2.x) * -1;
+		float tan = float(p1.y - p2.y) / float(p1.x - p2.x) * -1;
 		//cout << tan << endl;
 		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
 			xvalue = floor(i + 0.5 + p1.x);
@@ -969,19 +1002,19 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 {
 	vector<int> target_List;
 	int min_Distance = -1;
-	for (int i = 0; i < play_Character.size(); i++) 
+	for (int i = 0; i < play_Character.size(); i++)
 	{
 		if (min_Distance == -1)
 			min_Distance = abs(M.position.x - play_Character[i].position.x) + abs(M.position.y - play_Character[i].position.y);
 		int distance = abs(M.position.x - play_Character[i].position.x) + abs(M.position.y - play_Character[i].position.y);
-		if (range + M.Range == 0) 
+		if (range + M.Range == 0)
 		{
-			if (distance == 1) 
+			if (distance == 1)
 			{
 				target_List.push_back(i);
 			}
 		}
-		else 
+		else
 		{
 			if (distance <= range + M.Range && vision_search(M.position, play_Character[i].position, Game_Map) == false)
 			{
@@ -991,17 +1024,17 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 		if (distance < min_Distance)
 			min_Distance = distance;
 	}
-	for (int i = target_List.size() - 1; i >= 0; i--) 
+	for (int i = target_List.size() - 1; i >= 0; i--)
 	{
 		if ((abs(M.position.x - play_Character[target_List[i]].position.x) + abs(M.position.y - play_Character[target_List[i]].position.y)) > min_Distance)
 			target_List.erase(target_List.begin() + i);
 	}
 	int final_Target = 99;
-	for (int i = 0; i < attack_Sort.size(); i++) 
+	for (int i = 0; i < attack_Sort.size(); i++)
 	{
-		for (int j = 0; j < target_List.size(); j++) 
+		for (int j = 0; j < target_List.size(); j++)
 		{
-			if (play_Character[target_List[j]].ID == attack_Sort[i]) 
+			if (play_Character[target_List[j]].ID == attack_Sort[i])
 			{
 				final_Target = target_List[j];
 			}
@@ -1009,7 +1042,7 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 		if (final_Target != 99)
 			break;
 	}
-	if (final_Target == 99) 
+	if (final_Target == 99)
 	{
 		cout << "no one lock" << endl;
 		return false;
@@ -1017,17 +1050,17 @@ bool monster_Attack(Monster_Base& M,int value,int range, vector<char> attack_Sor
 	int distance = abs(M.position.x - play_Character[final_Target].position.x) + abs(M.position.y - play_Character[final_Target].position.y);
 	cout << M.icon << " lock " << play_Character[final_Target].ID << " in distance " << distance << endl;
 	//b attack A 3 damage, A shield 1, A remain 12 hp
-	cout << M.icon << " attack " << play_Character[final_Target].ID << " " << (M.Damage +value) << " damage, " << play_Character[final_Target].ID << " shield " << play_Character[final_Target].Shield << ", " << play_Character[final_Target].ID << " remain ";
-	if (play_Character[final_Target].Shield < M.Damage + value) 
+	cout << M.icon << " attack " << play_Character[final_Target].ID << " " << (M.Damage + value) << " damage, " << play_Character[final_Target].ID << " shield " << play_Character[final_Target].Shield << ", " << play_Character[final_Target].ID << " remain ";
+	if (play_Character[final_Target].Shield < M.Damage + value)
 	{
 		play_Character[final_Target].Hp -= ((M.Damage + value) - play_Character[final_Target].Shield);
 	}
-	else 
+	else
 	{
-		play_Character[final_Target].Shield -= (M.Damage + value);
+		
 	}
 	cout << play_Character[final_Target].Hp << " hp" << endl;
-	if (play_Character[final_Target].Hp <= 0) 
+	if (play_Character[final_Target].Hp <= 0)
 	{
 		cout << play_Character[final_Target].ID << " is killed!!" << endl;
 		play_Character.erase(play_Character.begin() + final_Target);
@@ -1426,6 +1459,28 @@ bool find_by_step(int x1, int y1, int x2, int y2, int step)
 		return false;
 	}
 }
+bool find_by_step_2(int x1, int y1, int x2, int y2, int step, int& distance, Map game_map)
+{
+	if (x1 == x2 && y1 == y2)
+	{
+		distance = step;
+		return true;
+	}
+	if (step > 0 && game_map.Game_Map[y1][x1] == 1)
+	{
+		if (find_by_step(x1 + 1, y1, x2, y2, step - 1) == true
+			|| find_by_step(x1, y1 + 1, x2, y2, step - 1) == true
+			|| find_by_step(x1 - 1, y1, x2, y2, step - 1) == true
+			|| find_by_step(x1, y1 - 1, x2, y2, step - 1) == true)
+		{
+			return true;
+		}
+	}
+	else if (step == 0)
+	{
+		return false;
+	}
+}
 //確認移動路徑
 bool move_Error(int x,int y,vector<Character> play_Character, vector<Ethnicity> Monster, Map Game_Map)
 {
@@ -1597,15 +1652,6 @@ void check_all_dex(vector<Character> Play_Character, vector<Ethnicity> Monster)
 
 void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_Map)
 {
-
-	if (Project_Start_UI() == 1) 
-	{
-		system("cls");
-		cout << "感謝您的遊玩" << endl << endl;
-		system("pause");
-		return;
-	}
-	system("cls");
 	vector<Character> Base_Character;	//角色模板，，用於之後創建角色清單時從裡面複製角色資料
 	vector<Ethnicity> Monster;			//所有種族
 	vector<Character> play_Character;	//玩家選擇的角色列表
@@ -1614,6 +1660,14 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 
 	while (1) 
 	{
+		system("cls");
+		if (Project_Start_UI() == 1)
+		{
+			system("cls");
+			cout << "感謝您的遊玩" << endl << endl;
+			system("pause");
+			return;
+		}
 		system("cls");
 		Map GameMap; //所有Map
 		creat_Character_UI(Base_Character,play_Character);
@@ -2185,7 +2239,7 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 	srand(time(NULL));
 	int round = 1;
 	vector<string> game_Massage_string;
-	while (end_Game(play_Character, Monster, Game_Map, true))
+	while (end_Game_UI(play_Character, Monster, Game_Map, true))
 	{
 		setPrintPosition(0, Game_Map.High + 4);
 		for (int i = 0; i < 30; i++) 
@@ -2660,10 +2714,10 @@ int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 	{
 		setPrintPosition(64, printPoint + i);	cout << game_Massage_string[i];
 	}
-	if (allPoint > 20)
+	if (allPoint > 30)
 		return allPoint;
 	else 
-		return 20;
+		return 30;
 }
 void check_hand_UI(vector<Character>& play_Character,int character,int printPoint) 
 {
@@ -3595,11 +3649,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3616,11 +3671,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "□";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3633,11 +3689,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3675,11 +3732,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3696,11 +3754,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "□";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3713,11 +3772,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3754,11 +3814,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3775,11 +3836,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "□";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3792,11 +3854,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3833,11 +3896,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3854,11 +3918,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "□";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3871,11 +3936,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
 					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
 					{
-						cout << "  ";
-					}
-					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
-					{
-						cout << "∩";
+						if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -3907,7 +3973,12 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					SetColor(7); setPrintPosition((stephistory[i].x + 1) * 2, stephistory[i].y);
 					if (samePositionCharacter(stephistory[i].x, stephistory[i].y, C, play_Character) == -1)
 					{
-						cout << "□";
+						if (Game_Map.Game_Map[stephistory[i].y][stephistory[i].x] == 3)
+						{
+							cout << "∩";
+						}
+						else
+							cout << "□";
 					}
 					else
 					{
@@ -4189,6 +4260,69 @@ void end_round_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster,
 			play_Character.erase(play_Character.begin() + i);
 		}
 	}
+}
+bool end_Game_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map, bool UI_mode) 
+{
+	for (int i = play_Character.size() - 1; i >= 0; i--)
+	{
+		int can_use_card = 0, can_throw_card = 0;
+		for (int j = 0; j < play_Character[i].Deck.size(); j++)
+		{
+			if (play_Character[i].Deck[j].status == 1)
+				can_use_card++;
+			if (play_Character[i].Deck[j].status == 2)
+				can_throw_card++;
+		}
+		if (can_use_card < 2 && can_throw_card < 2)
+		{
+			setPrintPosition((play_Character[i].position.x + 1) * 2, play_Character[i].position.y);
+			SetColor(7); cout << "□";
+			setPrintPosition(0, 49);
+			play_Character.erase(play_Character.begin() + i);
+		}
+	}
+	if (play_Character.size() == 0)
+	{
+		if (UI_mode == false)
+			cout << "monster win~" << endl;
+		else
+		{
+			system("cls");
+			cout << "monster win~" << endl;
+		}
+		return false;
+	}
+	bool all_Monsters_Dead = true;
+	for (int i = 0; i < Monster.size(); i++)
+	{
+		if (Monster[i].Creature_List.size() != 0)
+		{
+			all_Monsters_Dead = false;
+		}
+	}
+	bool all_Door_open = true;
+	for (int i = 0; i < Map.High; i++)
+	{
+		for (int j = 0; j < Map.Width; j++)
+		{
+			if (Map.Game_Map[i][j] == 3)
+			{
+				all_Door_open = false;
+			}
+		}
+	}
+	if (all_Monsters_Dead == true && all_Door_open == true)
+	{
+		if (UI_mode == false)
+			cout << "character win~" << endl;
+		else
+		{
+			system("cls");
+			cout << "character win~" << endl;
+		}
+		return false;
+	}
+	return true;
 }
 char keyBoard(char input) 
 {

@@ -77,7 +77,7 @@ void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
 				if ((i == player[k].position.y && i != 0) && (j == player[k].position.x && j != 0)) 
 				{
 
-					char output = 'A' + k;
+					char output = player[k].ID;
 					cout << output;
 					check_Continue = true;
 				}
@@ -99,7 +99,10 @@ void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
 			}
 			else if (Game_Map[i][j] == 3) 
 			{
-				cout << "3";
+				if (Game_Map[i - 1][j] == 1 || Game_Map[i + 1][j] == 1 || Game_Map[i][j + 1] == 1 || Game_Map[i][j - 1] == 1 || Game_Map[i - 1][j] == 5 || Game_Map[i + 1][j] == 5 || Game_Map[i][j + 1] == 5 || Game_Map[i][j - 1] == 5)
+					cout << "3";
+				else
+					cout << " ";
 			}
 			else if(Game_Map[i][j]==5)
 			{
@@ -120,6 +123,14 @@ void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
 		}
 		cout << endl;
 	}
+	/*for (int i = 0; i < this->High; i++) 
+	{
+		for (int j = 0; j < this->Width; j++) 
+		{
+			cout << this->Game_Map[i][j];
+		}
+		cout << endl;
+	}*/
 }
 
 void Map::print_Map_UI(vector<Character> player, vector<Ethnicity> Monster) 
@@ -197,7 +208,12 @@ void Map::print_Map_UI(vector<Character> player, vector<Ethnicity> Monster)
 			}
 			else if (Game_Map[i][j] == 3)
 			{
-				cout << "¡ä";
+				if (Game_Map[i - 1][j] == 1 || Game_Map[i + 1][j] == 1 || Game_Map[i][j + 1] == 1 || Game_Map[i][j - 1] == 1 || Game_Map[i - 1][j] == 5 || Game_Map[i + 1][j] == 5 || Game_Map[i][j + 1] == 5 || Game_Map[i][j - 1] == 5)
+					cout << "¡ä";
+				else 
+				{
+					cout << "  ";
+				}
 			}
 			else if (Game_Map[i][j] == 5)
 			{
@@ -221,6 +237,20 @@ void Map::print_Map_UI(vector<Character> player, vector<Ethnicity> Monster)
 			}
 		}
 		cout << endl;
+	}
+	for (int i = 0; i < High; i++)
+	{
+		for (int j = 0; j < Width; j++)
+		{
+			if (Game_Map[i][j] == 3 && Game_Map[i - 1][j] != 1 && Game_Map[i + 1][j] != 1 && Game_Map[i][j + 1] != 1 && Game_Map[i][j - 1] != 1 && Game_Map[i - 1][j] != 5 && Game_Map[i + 1][j] != 5 && Game_Map[i][j + 1] != 5 && Game_Map[i][j - 1] != 5)
+			{
+				setPrintPosition((j + 1 + 1) * 2, i);	cout << "  ";
+				setPrintPosition((j + 1 - 1) * 2, i);	cout << "  ";
+				setPrintPosition((j + 1) * 2, i + 1);	cout << "  ";
+				setPrintPosition((j + 1) * 2, i - 1);	cout << "  ";
+			}
+			setPrintPosition(0, 49);
+		}
 	}
 	for (int i = 0; i < this->Width + 2; i++)
 	{

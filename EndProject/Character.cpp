@@ -87,7 +87,7 @@ bool Character::Attack_UI(int value, int range, vector<Ethnicity>& Monster, Map 
 	{
 		for (int j = 0; j < Monster[i].Creature_List.size(); j++) 
 		{
-			if (find_by_step(this->position.x, this->position.y, Monster[i].Creature_List[j].position.x, Monster[i].Creature_List[j].position.y, range) == true && vision_search(this->position, Monster[i].Creature_List[j].position, map) == false) 
+			if (Monster[i].Creature_List[j].active == true && find_by_step(this->position.x, this->position.y, Monster[i].Creature_List[j].position.x, Monster[i].Creature_List[j].position.y, range) == true && vision_search(this->position, Monster[i].Creature_List[j].position, map) == false) 
 			{
 				target.push_back(Monster[i].Creature_List[j].icon);
 			}
