@@ -2,6 +2,7 @@
 
 void main(int argc, char* argv[])
 {	
+	ConsoleFullScreen();
 	fstream File_Character, File_Monster, File_Map;
 	int DEBUG_MODE = 0;		//0:未開啟	1:開啟	2:UI_Mode
 	

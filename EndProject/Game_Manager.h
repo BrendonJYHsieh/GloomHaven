@@ -43,6 +43,7 @@ bool move_Error(int x, int y, vector<Character> play_Character, vector<Ethnicity
 bool move_Error_Monster(int x, int y, vector<Character> play_Character, Map Game_Map); //判斷怪物是否移動正確
 void print_character_sort_onActive_monster(vector<Ethnicity> Monster,vector<Character>); //怪物按照順序排 and print 
 bool abcSort(Monster_Base a, Monster_Base b); //英文排序
+void ConsoleFullScreen();
 
 /*==============DEBUG_MODE================*/
 void get_All_Base_Character_Data(vector<Character> Base_Character);	//顯示所有角色的變數值
