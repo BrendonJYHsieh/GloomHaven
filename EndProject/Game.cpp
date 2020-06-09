@@ -1113,6 +1113,7 @@ void check(Character C) {
 			cout << C.Deck[i].ID << " ";
 		}
 	}
+	cout << ";";
 	cout << "Discard:";
 	for (int i = 0; i < C.Deck.size(); i++) {
 		if (C.Deck[i].status == 2) {
