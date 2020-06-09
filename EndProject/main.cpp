@@ -15,8 +15,8 @@ void main(int argc, char* argv[])
 
 
 	/*====測試時使用====*/
-	File_Character.open("character1.txt", ios::in);
-	File_Monster.open("monster1.txt", ios::in);
+	File_Character.open("character3.txt", ios::in);
+	File_Monster.open("monster3.txt", ios::in);
 	std::cin >> DEBUG_MODE;
 	system("cls");
 
