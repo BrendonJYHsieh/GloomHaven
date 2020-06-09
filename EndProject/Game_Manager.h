@@ -60,6 +60,11 @@ int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 void player_Use_Card_UI(vector<Character>& play_Character, int character, int printPoint);
 void players_round_UI(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map, int printPoint,vector<string>& game_Massage_string); //角色回合 - 已防呆
 void monsters_round_UI(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort, int printPoint, vector<string>& game_Massage_string); //怪物回合
+void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster, int printPoint);
+bool samePositionMonster(int x, int y, vector<Ethnicity> Monster);
+int samePositionCharacter(int x, int y, Character C , vector<Character> play_Character);
+void monster_Attack_UI(Monster_Base& M, int value, int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map, int printPoint, vector<string>& game_Massage_string);
+void end_round_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map);
 char keyBoard(char input);
 /*=============Windows.h的function==============*/
 void setPrintPosition(int x, int y);	//改變Print的起始位置

@@ -45,19 +45,19 @@ void Map::check_road(int x,int y)
 	else if (Game_Map[y][x] == 6) 
 	{
 		Game_Map[y][x] = 2;
-		if (Game_Map[y - 1][x] == 4)
+		if (Game_Map[y - 1][x] == 4 || Game_Map[y - 1][x] == 6)
 		{
 			this->check_road(x, y - 1);
 		}
-		if (Game_Map[y + 1][x] == 4)
+		if (Game_Map[y + 1][x] == 4 || Game_Map[y + 1][x] == 6)
 		{
 			this->check_road(x, y + 1);
 		}
-		if (Game_Map[y][x - 1] == 4)
+		if (Game_Map[y][x - 1] == 4 || Game_Map[y][x - 1] == 6)
 		{
 			this->check_road(x - 1, y);
 		}
-		if (Game_Map[y][x + 1] == 4)
+		if (Game_Map[y][x + 1] == 4 || Game_Map[y][x + 1] == 6)
 		{
 			this->check_road(x + 1, y);
 		}
@@ -124,7 +124,8 @@ void Map::print_Map(vector<Character> player, vector<Ethnicity> Monster)
 
 void Map::print_Map_UI(vector<Character> player, vector<Ethnicity> Monster) 
 {
-	system("cls");
+	//system("cls");
+	setPrintPosition(0, 0);
 	bool start_point = false;	//辨識初始點*已經列印了
 	for (int i = 0; i < High; i++)
 	{

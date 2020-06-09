@@ -70,7 +70,7 @@ public:
 		active = false;
 	}
 	void Skill_shield(int x) {
-		this->Shield = x;
+		this->Shield += x;
 	}
 	void Skill_heal(int x) {
 		if ((this->Hp + x) > this->Max_HP) {

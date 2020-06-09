@@ -443,6 +443,11 @@ bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map
 	{
 		if(UI_mode == false)
 			cout << "monster win~" << endl;
+		else
+		{
+			system("cls");
+			cout << "monster win~" << endl;
+		}
 		return false;
 	}
 	bool all_Monsters_Dead = true;
@@ -468,6 +473,11 @@ bool end_Game(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map
 	{
 		if(UI_mode == false)
 			cout << "character win~" << endl;
+		else 
+		{
+			system("cls");
+			cout << "character win~" << endl;
+		}
 		return false;
 	}
 	return true;
@@ -703,6 +713,7 @@ void end_round(vector<Character>& play_Character, vector<Ethnicity>& Monster, Ma
 	//護甲歸0
 	for (int i = 0; i < play_Character.size(); i++) {
 		play_Character[i].Shield = 0;
+		play_Character[i].Rest = false;
 	}
 	for (int i = 0; i < Monster.size(); i++) {
 		if (Monster[i].Command != -1) 
@@ -915,7 +926,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 	//斜率為正 左上到右下
 	else if (p1.x < p2.x && p2.y >= p1.y) {
 		float tan = (p1.y - p2.y) / (p1.x - p2.x);
-		cout << tan << endl;
+		//cout << tan << endl;
 		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
 			xvalue = floor(i + p1.x + 0.5);
 			yvalue = floor(i * tan + p1.y + 0.5);
@@ -927,7 +938,7 @@ bool vision_search(Position p1, Position p2, Map Map) {
 	//斜率為負 左下到右上
 	else if (p1.x < p2.x && p1.y >= p2.y) {
 		float tan = (p1.y - p2.y) / (p1.x - p2.x) * -1;
-		cout << tan << endl;
+		//cout << tan << endl;
 		for (float i = 0; i <= p2.x - p1.x; i += 0.0001) {
 			xvalue = floor(i + 0.5 + p1.x);
 			yvalue = floor(p1.y + 0.5 - i * tan);
@@ -1596,7 +1607,6 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 		choose_Start_Position_UI(play_Character, Monster, GameMap);		//選擇起始位置
 		check_Monsters_Active(Monster, GameMap);	//檢查怪物狀態
 		main_Battle_UI(play_Character, Monster, GameMap);
-
 		system("pause");
 		//重置
 		play_Character.clear();
@@ -2038,6 +2048,7 @@ void choose_Start_Position_UI(vector<Character>& play_Character, vector<Ethnicit
 	{
 		Game_Map.check_road(Game_Map.Init_Pos[i].x, Game_Map.Init_Pos[i].y);
 	}
+	system("cls");
 	Game_Map.print_Map_UI(play_Character, Monster);
 	for (int i = 0; i < play_Character.size(); i++) 
 	{
@@ -2128,6 +2139,12 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 	vector<string> game_Massage_string;
 	while (end_Game(play_Character, Monster, Game_Map, true))
 	{
+		setPrintPosition(0, Game_Map.High + 4);
+		for (int i = 0; i < 30; i++) 
+		{
+			cout << "                                                                                                                         " << endl;
+		}
+		setPrintPosition(0, 0);
 		setPrintPosition(0, Game_Map.High + 4);
 		cout << "========第" << round << "回合========" << endl << endl;
 		cout << "行動順序：" << endl << endl;
@@ -2324,10 +2341,6 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 					delete[] already_played;
 				}
 			}
-			for (int i = 0; i < play_Character.size(); i++)
-			{
-				cout << play_Character[i].ID << "：" << play_Character[i].Command[0] << play_Character[i].Command[1] << "\t";
-			}
 			setPrintPosition(0, Game_Map.High + 8);
 			for (int i = 0; i < 9; i++)
 			{
@@ -2470,6 +2483,8 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 			}
 			//檢查排序
 			setPrintPosition(0, Game_Map.High + 6);
+			cout << "                                                                                                                         " << endl;
+			setPrintPosition(0, Game_Map.High + 6);
 			cout << "行動順序：";
 			for (int i = 0; i < attack_Sort.size(); i++)
 			{
@@ -2506,16 +2521,16 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 					{
 						setPrintPosition(0, Game_Map.High + 8);
 						cout << "======敵人行動階段======" << endl << endl;
-						monsters_round_UI(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map, Monster, attack_Sort, Game_Map.High + 8,game_Massage_string);
+						monsters_round_UI(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map, Monster, attack_Sort, Game_Map.High + 10,game_Massage_string);
 					}
 				}
 			}
 		}
-
-
-
+		attack_Sort.clear();
+		end_round_UI(play_Character, Monster, Game_Map);
 		round++;
 	}
+
 }
 int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Game_Map, vector<string>& game_Massage_string)
 {
@@ -2575,7 +2590,12 @@ int game_Massage(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 		printPoint += 2;
 	}
 	allPoint = printPoint - (Game_Map.High + 12);
-	printPoint = Game_Map.High + 12;
+	printPoint = Game_Map.High + 16;
+	if (game_Massage_string.size() > 17) 
+	{
+		int eraser = game_Massage_string.size() - 17;
+		game_Massage_string.erase(game_Massage_string.begin(), game_Massage_string.begin() + eraser);
+	}
 	for (int i = 0; i < game_Massage_string.size(); i++) 
 	{
 		setPrintPosition(64, printPoint + i);	cout << game_Massage_string[i];
@@ -2762,10 +2782,10 @@ void player_Use_Card_UI(vector<Character>& play_Character, int character, int pr
 				//完成選擇
 				if (use_card.size() == 2) 
 				{
-					play_Character[character].Command[0] = use_card[0];
-					play_Character[character].Command[1] = use_card[1];
-					play_Character[character].Deck[use_card[0]].status = 4;
-					play_Character[character].Deck[use_card[1]].status = 4;
+					play_Character[character].Command[0] = can_Use_Card[use_card[0]];
+					play_Character[character].Command[1] = can_Use_Card[use_card[1]];
+					play_Character[character].Deck[can_Use_Card[use_card[0]]].status = 4;
+					play_Character[character].Deck[can_Use_Card[use_card[1]]].status = 4;
 					return;
 				}
 				break;
@@ -2775,6 +2795,7 @@ void player_Use_Card_UI(vector<Character>& play_Character, int character, int pr
 }
 void players_round_UI(vector<Character>& play_Character, Character& Character, vector<Ethnicity>& Monster, Map& Game_Map, int printPoint, vector<string>& game_Massage_string) //角色回合 - 已防呆
 {
+	SetColor(7); setPrintPosition(0, printPoint);
 	if (Character.Rest == false)
 	{
 		cout << "====請選擇" << Character.ID << "的卡牌指令====" << endl;
@@ -3034,143 +3055,310 @@ void players_round_UI(vector<Character>& play_Character, Character& Character, v
 		{
 			for (int j = 0; j < Character.Deck[Character.Command[now_card]].MovementUp.size(); j++)
 			{
+				setPrintPosition(0, printPoint + 1);
+				for (int i = 0; i < 10; i++) 
+				{
+					cout << "                                                                                                                         " << endl;
+				}
+				setPrintPosition(0, 49);
 				string output_log;
 				if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "attack") {
 					if (Character.Deck[Character.Command[now_card]].MovementUp[j].range == 0)
 					{
-						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Monster) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, 1, Monster, Game_Map,printPoint,game_Massage_string);
+						//輸出attack
 					}
-					else
+					else 
 					{
-						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 				}
 				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "shield") {
 					Character.Skill_shield(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
 					//輸出shield
-					output_log = Character.ID + "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "點護甲值";
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "點護甲值";
 					setPrintPosition(0, printPoint + 5);
 					cout << "                                                                                                                         " << endl;
 					setPrintPosition(0, printPoint + 5);
-					cout << output_log;
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
 				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "heal") {
 					Character.Skill_heal(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
 					//輸出heal
-					output_log = Character.ID + "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "點生命值";
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "點生命值";
 					setPrintPosition(0, printPoint + 5);
 					cout << "                                                                                                                         " << endl;
 					setPrintPosition(0, printPoint + 5);
-					cout << output_log;
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
 				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "move") {
 					//輸出move
+					Position old_position = Character.position;
+					character_move_UI(Character, Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Game_Map, play_Character, Monster, printPoint);
+					Position new_position = Character.position;
+					output_log.push_back(Character.ID);
+					output_log += "從(" + to_string(old_position.x) + "," + to_string(old_position.y) + ")移動到(" + to_string(new_position.x) + "," + to_string(new_position.y) + ")";
+					SetColor(7); setPrintPosition(0, printPoint + 5);
+					for (int i = 0; i < 9; i++)
+					{
+						cout << "                                                                                                                         " << endl;
+					}
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					SetColor(7); setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
-				game_Massage_string.push_back(output_log);
 			}
 			
 			for (int j = 0; j < Character.Deck[Character.Command[card]].MovementDown.size(); j++)
 			{
+				setPrintPosition(0, printPoint + 1);
+				for (int i = 0; i < 10; i++)
+				{
+					cout << "                                                                                                                         " << endl;
+				}
+				setPrintPosition(0, 49);
 				string output_log;
 				if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "attack") {
-					if (Character.Deck[Character.Command[card]].MovementDown[j].range == 0)
+					if (Character.Deck[Character.Command[card]].MovementUp[j].range == 0)
 					{
-						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Monster) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, 1, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 					else
 					{
-						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Character.Deck[Character.Command[card]].MovementDown[j].range, Monster, Game_Map) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 				}
 				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "shield") {
 					Character.Skill_shield(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
 					//輸出shield
-					output_log = Character.ID + "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "點護甲值";
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value) + "點護甲值";
 					setPrintPosition(0, printPoint + 5);
 					cout << "                                                                                                                         " << endl;
 					setPrintPosition(0, printPoint + 5);
-					cout << output_log;
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
 				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "heal") {
 					Character.Skill_heal(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
 					//輸出heal
-					output_log = Character.ID + "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value) + "點生命值";
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value) + "點生命值";
 					setPrintPosition(0, printPoint + 5);
 					cout << "                                                                                                                         " << endl;
 					setPrintPosition(0, printPoint + 5);
-					cout << output_log;
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
 				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "move") {
 					//輸出move
+					Position old_position = Character.position;
+					character_move_UI(Character, Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Game_Map, play_Character, Monster, printPoint);
+					Position new_position = Character.position;
+					output_log.push_back(Character.ID);
+					output_log += "從(" + to_string(old_position.x) + "," + to_string(old_position.y) + ")移動到(" + to_string(new_position.x) + "," + to_string(new_position.y) + ")";
+					SetColor(7); setPrintPosition(0, printPoint + 5);
+					for (int i = 0; i < 9; i++)
+					{
+						cout << "                                                                                                                         " << endl;
+					}
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					SetColor(7); setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
-				game_Massage_string.push_back(output_log);
 			}
 		}
 		else 
 		{
-			for (int j = 0; j < Character.Deck[Character.Command[now_card]].MovementUp.size(); j++)
+			for (int j = 0; j < Character.Deck[Character.Command[now_card]].MovementDown.size(); j++)
 			{
-				if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "attack") {
+				setPrintPosition(0, printPoint + 1);
+				for (int i = 0; i < 10; i++)
+				{
+					cout << "                                                                                                                         " << endl;
+				}
+				setPrintPosition(0, 49);
+				string output_log;
+				if (Character.Deck[Character.Command[now_card]].MovementDown[j].Movement == "attack") {
 					if (Character.Deck[Character.Command[now_card]].MovementUp[j].range == 0)
 					{
-						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Monster) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, 1, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 					else
 					{
-						if (Character.Attack(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[now_card]].MovementUp[j].range, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 				}
-				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "shield") {
-					Character.Skill_shield(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
+				else if (Character.Deck[Character.Command[now_card]].MovementDown[j].Movement == "shield") {
+					Character.Skill_shield(Character.Deck[Character.Command[now_card]].MovementDown[j].Movement_Value);
 					//輸出shield
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementDown[j].Movement_Value) + "點護甲值";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					game_Massage_string.push_back(output_log);
 				}
-				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "heal") {
-					Character.Skill_heal(Character.Deck[Character.Command[now_card]].MovementUp[j].Movement_Value);
+				else if (Character.Deck[Character.Command[now_card]].MovementDown[j].Movement == "heal") {
+					Character.Skill_heal(Character.Deck[Character.Command[now_card]].MovementDown[j].Movement_Value);
 					//輸出heal
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[now_card]].MovementDown[j].Movement_Value) + "點生命值";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					game_Massage_string.push_back(output_log);
 				}
-				else if (Character.Deck[Character.Command[now_card]].MovementUp[j].Movement == "move") {
+				else if (Character.Deck[Character.Command[now_card]].MovementDown[j].Movement == "move") {
 					//輸出move
+					Position old_position = Character.position;
+					character_move_UI(Character, Character.Deck[Character.Command[now_card]].MovementDown[j].Movement_Value, Game_Map, play_Character, Monster, printPoint);
+					Position new_position = Character.position;
+					output_log.push_back(Character.ID);
+					output_log += "從(" + to_string(old_position.x) + "," + to_string(old_position.y) + ")移動到(" + to_string(new_position.x) + "," + to_string(new_position.y) + ")";
+					SetColor(7); setPrintPosition(0, printPoint + 5);
+					for (int i = 0; i < 9; i++)
+					{
+						cout << "                                                                                                                         " << endl;
+					}
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					SetColor(7); setPrintPosition(0, 49);
+					game_Massage_string.push_back(output_log);
 				}
 			}
 
-			for (int j = 0; j < Character.Deck[Character.Command[card]].MovementDown.size(); j++)
+			for (int j = 0; j < Character.Deck[Character.Command[card]].MovementUp.size(); j++)
 			{
-				if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "attack") {
-					if (Character.Deck[Character.Command[card]].MovementDown[j].range == 0)
+				setPrintPosition(0, printPoint + 1);
+				for (int i = 0; i < 10; i++)
+				{
+					cout << "                                                                                                                         " << endl;
+				}
+				setPrintPosition(0, 49);
+				string output_log;
+				if (Character.Deck[Character.Command[card]].MovementUp[j].Movement == "attack") {
+					if (Character.Deck[Character.Command[card]].MovementUp[j].range == 0)
 					{
-						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Monster) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value, 1, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 					else
 					{
-						if (Character.Attack(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value, Character.Deck[Character.Command[card]].MovementDown[j].range, Monster, Game_Map) == true)
-							//輸出attack
-							;
+						Character.Attack_UI(Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value, Character.Deck[Character.Command[card]].MovementUp[j].range, Monster, Game_Map, printPoint, game_Massage_string);
+						//輸出attack
 					}
 				}
-				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "shield") {
-					Character.Skill_shield(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
+				else if (Character.Deck[Character.Command[card]].MovementUp[j].Movement == "shield") {
+					Character.Skill_shield(Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value);
 					//輸出shield
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value) + "點護甲值";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					game_Massage_string.push_back(output_log);
 				}
-				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "heal") {
-					Character.Skill_heal(Character.Deck[Character.Command[card]].MovementDown[j].Movement_Value);
+				else if (Character.Deck[Character.Command[card]].MovementUp[j].Movement == "heal") {
+					Character.Skill_heal(Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value);
 					//輸出heal
+					setPrintPosition(0, printPoint + 1);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 1);
+					cout << "角色：" << Character.Character_name << "	[hp：(" << Character.Hp << "/" << Character.Max_HP << ")][shield：" << Character.Shield << "]" << endl;
+					output_log.push_back(Character.ID);
+					output_log += "獲得了" + to_string(Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value) + "點生命值";
+					setPrintPosition(0, printPoint + 5);
+					cout << "                                                                                                                         " << endl;
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					setPrintPosition(0, 49);
+					game_Massage_string.push_back(output_log);
 				}
-				else if (Character.Deck[Character.Command[card]].MovementDown[j].Movement == "move") {
+				else if (Character.Deck[Character.Command[card]].MovementUp[j].Movement == "move") {
 					//輸出move
+					Position old_position = Character.position;
+					character_move_UI(Character, Character.Deck[Character.Command[card]].MovementUp[j].Movement_Value, Game_Map, play_Character, Monster, printPoint);
+					Position new_position = Character.position;
+					output_log.push_back(Character.ID);
+					output_log += "從(" + to_string(old_position.x) + "," + to_string(old_position.y) + ")移動到(" + to_string(new_position.x) + "," + to_string(new_position.y) + ")";
+					SetColor(7); setPrintPosition(0, printPoint + 5);
+					for (int i = 0; i < 9; i++)
+					{
+						cout << "                                                                                                                         " << endl;
+					}
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl << endl;
+					system("pause");
+					SetColor(7); setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
 				}
 			}
 		}
@@ -3262,10 +3450,614 @@ void players_round_UI(vector<Character>& play_Character, Character& Character, v
 			}
 		}
 	}
+	SetColor(7); setPrintPosition(0, printPoint);
+	for (int i = 0; i < 10; i++)
+	{
+		cout << "                                                                                                                         " << endl;
+	}
+}
+void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> play_Character, vector<Ethnicity> Monster, int printPoint)
+{
+	setPrintPosition(0, printPoint + 5);
+	cout << "還有" << step << "步" << endl << endl;
+	cout << "※使用wasd移動角色" << C.ID;	//7
+	setPrintPosition(0, 49);
+	vector<Position> stephistory;
+	bool chooseComplete = false;
+	while (chooseComplete == false)
+	{
+		SetColor(7); setPrintPosition(0, printPoint + 5);
+		cout << "還有" << step << "步" << endl << endl;
+		setPrintPosition(0, 49);
+		switch (keyBoard(_getch()))
+		{
+		case 'w':
+			if (step == 0)
+			{
+				if (stephistory[stephistory.size() - 1].y != C.position.y - 1)
+					break;
+			}
+			if ((Game_Map.Game_Map[C.position.y - 1][C.position.x] == 1 || Game_Map.Game_Map[C.position.y - 1][C.position.x] == 3) && samePositionMonster(C.position.x, C.position.y - 1, Monster) == false)
+			{
+				if (stephistory.size() == 0)
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				else if (C.position.y - 1 == stephistory[stephistory.size() - 1].y && C.position.x == stephistory[stephistory.size() - 1].x)
+				{
+					stephistory.pop_back();
+					step++;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "□";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						SetColor(10);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+				}
+				else
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				C.position.y--;
+				setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+				if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+				{
+					SetColor(10); cout << "p" << C.ID;
+				}
+				else
+				{
+					SetColor(202);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+				}
+
+			}
+			SetColor(7);	setPrintPosition(0, 49);
+			break;
+		case 's':
+			if (step == 0)
+			{
+				if (stephistory[stephistory.size() - 1].y != C.position.y + 1)
+					break;
+			}
+			if ((Game_Map.Game_Map[C.position.y + 1][C.position.x] == 1 || Game_Map.Game_Map[C.position.y + 1][C.position.x] == 3) && samePositionMonster(C.position.x, C.position.y + 1, Monster) == false)
+			{
+				if (stephistory.size() == 0)
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				else if (C.position.y + 1 == stephistory[stephistory.size() - 1].y && C.position.x == stephistory[stephistory.size() - 1].x)
+				{
+					stephistory.pop_back();
+					step++;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "□";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						SetColor(10);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+				}
+				else
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				C.position.y++;
+				setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+				if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+				{
+					SetColor(10); cout << "p" << C.ID;
+				}
+				else
+				{
+					SetColor(202);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+				}
+			}
+			SetColor(7);	setPrintPosition(0, 49);
+			break;
+		case 'a':
+			if (step == 0)
+			{
+				if (stephistory[stephistory.size() - 1].x != C.position.x - 1)
+					break;
+			}
+			if ((Game_Map.Game_Map[C.position.y][C.position.x - 1] == 1 || Game_Map.Game_Map[C.position.y][C.position.x - 1] == 3) && samePositionMonster(C.position.x - 1, C.position.y, Monster) == false)
+			{
+				if (stephistory.size() == 0)
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				else if (C.position.y == stephistory[stephistory.size() - 1].y && C.position.x - 1 == stephistory[stephistory.size() - 1].x)
+				{
+					stephistory.pop_back();
+					step++;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "□";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						SetColor(10);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+				}
+				else
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				C.position.x--;
+				setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+				if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+				{
+					SetColor(10); cout << "p" << C.ID;
+				}
+				else
+				{
+					SetColor(202);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+				}
+			}
+			SetColor(7);	setPrintPosition(0, 49);
+			break;
+		case 'd':
+			if (step == 0)
+			{
+				if (stephistory[stephistory.size() - 1].x != C.position.x + 1)
+					break;
+			}
+			if ((Game_Map.Game_Map[C.position.y][C.position.x + 1] == 1 || Game_Map.Game_Map[C.position.y][C.position.x + 1] == 3) && samePositionMonster(C.position.x + 1, C.position.y, Monster) == false)
+			{
+				if (stephistory.size() == 0)
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				else if (C.position.y == stephistory[stephistory.size() - 1].y && C.position.x + 1 == stephistory[stephistory.size() - 1].x)
+				{
+					stephistory.pop_back();
+					step++;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "□";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						SetColor(10);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+				}
+				else
+				{
+					step--;
+					setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(176);
+					if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+					{
+						cout << "  ";
+					}
+					else if (Game_Map.Game_Map[C.position.y][C.position.x] == 3)
+					{
+						cout << "∩";
+					}
+					else
+					{
+						cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+					}
+					Position newhistory;
+					newhistory.x = C.position.x; newhistory.y = C.position.y;
+					stephistory.push_back(newhistory);
+				}
+				C.position.x++;
+				setPrintPosition((C.position.x + 1) * 2, C.position.y); SetColor(7);
+				if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+				{
+					SetColor(10); cout << "p" << C.ID;
+				}
+				else
+				{
+					SetColor(202);	cout << "p" << play_Character[samePositionCharacter(C.position.x, C.position.y, C, play_Character)].ID;
+				}
+			}
+			SetColor(7);	setPrintPosition(0, 49);
+			break;
+		case 13:
+			if (samePositionCharacter(C.position.x, C.position.y, C, play_Character) == -1)
+			{
+				chooseComplete = true;
+				for (int i = 0; i < stephistory.size(); i++)
+				{
+					SetColor(7); setPrintPosition((stephistory[i].x + 1) * 2, stephistory[i].y);
+					if (samePositionCharacter(stephistory[i].x, stephistory[i].y, C, play_Character) == -1)
+					{
+						cout << "□";
+					}
+					else
+					{
+						SetColor(10);	cout << "p" << play_Character[samePositionCharacter(stephistory[i].x, stephistory[i].y, C, play_Character)].ID;
+					}
+				}
+			}
+
+			break;
+		}
+	}
+}
+int samePositionCharacter(int x, int y, Character C, vector<Character> play_Character)
+{
+	for (int i = 0; i < play_Character.size(); i++)
+	{
+		if (play_Character[i].position.x == x && play_Character[i].position.y == y && play_Character[i].ID != C.ID)
+			return i;
+	}
+	return -1;
+}
+bool samePositionMonster(int x, int y, vector<Ethnicity> Monster) 
+{
+	for (int i = 0; i < Monster.size(); i++) 
+	{
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++) 
+		{
+			if (Monster[i].Creature_List[j].position.x == x && Monster[i].Creature_List[j].position.y == y)
+				return true;
+		}
+	}
+	return false;
 }
 void monsters_round_UI(vector<Character>& play_Character, Ethnicity& Monster_Ethnicity, Monster_Base& monster, Map Game_Map, vector<Ethnicity>& Monster, vector<char> attack_Sort, int printPoint, vector<string>& game_Massage_string) //怪物回合
 {
+	setPrintPosition(0, printPoint);
+	for (int i = 0; i < 20; i++)
+	{
+		cout << "                                                                                                                         " << endl;
+	}
+	if (Monster_Ethnicity.Command == -1) 
+	{
+		return;
+	}
+	for (int i = 0; i < Monster_Ethnicity.Deck.size(); i++)
+	{
+		setPrintPosition(0, printPoint);
+		cout << "====" << Monster_Ethnicity.Ethnicity_Name << "行動階段====" << endl << endl;
+		if (Monster_Ethnicity.Deck[i].status == 2)
+		{
+			for (int j = 0; j < Monster_Ethnicity.Deck[i].Movement.size(); j++)
+			{
+				string output_log;
+				setPrintPosition(0, printPoint + 2);
+				for (int i = 0; i < 10; i++)
+				{
+					cout << "                                                                                                                         " << endl;
+				}
+				setPrintPosition(0, printPoint + 2);
+				if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "attack") {
+					monster_Attack_UI(monster, Monster_Ethnicity.Deck[i].Movement[j].Movement_Value, Monster_Ethnicity.Deck[i].Movement[j].range, attack_Sort, Monster, play_Character, Game_Map, printPoint, game_Massage_string);
+				}
+				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "shield") {
+					monster.Skill_shield(Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value);
+					output_log.push_back(monster.icon);
+					output_log += "獲得了" + to_string(Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value) + "點護甲值";
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl;
+					setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
+				}
+				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "heal") {
+					monster.Skill_heal(Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value);
+					output_log.push_back(monster.icon);
+					output_log += "獲得了" + to_string(Monster_Ethnicity.Deck[Monster_Ethnicity.Command].Movement[j].Movement_Value) + "點生命值";
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl;
+					setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
+				}
+				else if (Monster_Ethnicity.Deck[i].Movement[j].Movement == "move") {
+					Position old_position = monster.position;
+					setPrintPosition((old_position.x + 1) * 2, old_position.y);
+					cout << "□";
+					monster_move(monster, Monster_Ethnicity.Deck[i].Movement[j].Move_Command, Game_Map, play_Character, Monster);
+					Position new_position = monster.position;
+					setPrintPosition((new_position.x + 1) * 2, new_position.y);
+					SetColor(12); cout << monster.icon;
+					if (monster.mode == 2)
+						cout << "+";
+					else
+						cout << "-";
+					SetColor(7);
+					output_log.push_back(monster.icon);
+					output_log += "從(" + to_string(old_position.x) + "," + to_string(old_position.y) + ")移動到(" + to_string(new_position.x) + "," + to_string(new_position.y) + ")";
+					setPrintPosition(0, printPoint + 5);
+					cout << output_log << endl;
+					SetColor(7); setPrintPosition(0, 49);
+					Sleep(500);
+					game_Massage_string.push_back(output_log);
+				}
+			}
+			break;
+			Monster_Ethnicity.Deck[i].status == 1;
+		}
+	}
+	setPrintPosition(0, printPoint);
+	for (int i = 0; i < 20; i++)
+	{
+		cout << "                                                                                                                         " << endl;
+	}
+}
+void monster_Attack_UI(Monster_Base& M, int value, int range, vector<char> attack_Sort, vector<Ethnicity> Monster, vector<Character>& play_Character, Map& Game_Map, int printPoint, vector<string>& game_Massage_string) 
+{
+	vector<int> target_List;
+	int min_Distance = -1;
+	for (int i = 0; i < play_Character.size(); i++)
+	{
+		if (min_Distance == -1)
+			min_Distance = abs(M.position.x - play_Character[i].position.x) + abs(M.position.y - play_Character[i].position.y);
+		int distance = abs(M.position.x - play_Character[i].position.x) + abs(M.position.y - play_Character[i].position.y);
+		if (range + M.Range == 0)
+		{
+			if (distance == 1)
+			{
+				target_List.push_back(i);
+			}
+		}
+		else
+		{
+			if (distance <= range + M.Range && vision_search(M.position, play_Character[i].position, Game_Map) == false)
+			{
+				target_List.push_back(i);
+			}
+		}
+		if (distance < min_Distance)
+			min_Distance = distance;
+	}
+	for (int i = target_List.size() - 1; i >= 0; i--)
+	{
+		if ((abs(M.position.x - play_Character[target_List[i]].position.x) + abs(M.position.y - play_Character[target_List[i]].position.y)) > min_Distance)
+			target_List.erase(target_List.begin() + i);
+	}
+	int final_Target = 99;
+	for (int i = 0; i < attack_Sort.size(); i++)
+	{
+		for (int j = 0; j < target_List.size(); j++)
+		{
+			if (play_Character[target_List[j]].ID == attack_Sort[i])
+			{
+				final_Target = target_List[j];
+			}
+		}
+		if (final_Target != 99)
+			break;
+	}
+	string output_log = "";
+	if (final_Target == 99)
+	{
+		output_log.push_back(M.icon);
+		output_log += "放棄攻擊";
+		setPrintPosition(0, printPoint + 5);
+		cout << output_log << endl;
+		SetColor(7); setPrintPosition(0, 49);
+		Sleep(500);
+		game_Massage_string.push_back(output_log);
+		return;
+	}
+	int distance = abs(M.position.x - play_Character[final_Target].position.x) + abs(M.position.y - play_Character[final_Target].position.y);
+	setPrintPosition(0, printPoint + 5); cout << M.icon << " 鎖定 " << play_Character[final_Target].ID << " 距離：" << distance;
+	//b attack A 3 damage, A shield 1, A remain 12 hp
+	output_log.push_back(M.icon); output_log += " 攻擊 "; output_log.push_back(play_Character[final_Target].ID); output_log += "(護甲：" + to_string(play_Character[final_Target].Shield) + ") " + to_string(M.Damage + value) + "點傷害";
+	if (play_Character[final_Target].Shield < M.Damage + value)
+	{
+		play_Character[final_Target].Hp -= ((M.Damage + value) - play_Character[final_Target].Shield);
+	}
+	else
+	{
+		//play_Character[final_Target].Shield -= (M.Damage + value);
+	}
+	if (play_Character[final_Target].Hp <= 0)
+	{
+		output_log.push_back(play_Character[final_Target].ID); output_log += " 死亡";
+		play_Character.erase(play_Character.begin() + final_Target);
+	}
+	else 
+	{
+		output_log.push_back(play_Character[final_Target].ID); output_log += " 剩餘 " + to_string(play_Character[final_Target].Hp) + "點生命值";
+	}
+	setPrintPosition(0, printPoint + 7);
+	cout << output_log << endl;
+	SetColor(7); setPrintPosition(0, 49);
+	Sleep(500);
+	game_Massage_string.push_back(output_log);
+	return;
+}
+void end_round_UI(vector<Character>& play_Character, vector<Ethnicity>& Monster, Map& Map) 
+{
+	bool no_monster = true;
+	//護甲歸0
+	for (int i = 0; i < play_Character.size(); i++) {
+		play_Character[i].Shield = 0;
+		play_Character[i].Rest = false;
+	}
+	for (int i = 0; i < Monster.size(); i++) {
+		if (Monster[i].Command != -1)
+		{
+			Monster[i].Deck[Monster[i].Command].status = 1;
+		}
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++) {
+			Monster[i].Creature_List[j].Shield = 0;
+			if (Monster[i].Creature_List[j].active) {
+				no_monster = false;
+			}
+		}
+		//怪物判斷是否有重洗
+		if (Monster[i].Shuffle_Mark) {
+			for (int j = 0; j < Monster[i].Deck.size(); j++) {
+				if (Monster[i].Deck[j].status == 1) {
+					Monster[i].Deck[j].status = 0;
+				}
+			}
+			Monster[i].Shuffle_Mark = false;
+		}
+	}
+	//判斷角色有沒有在門上和判斷有沒有剩餘怪物 開門 and 重置角色長休狀態
+	bool open_Door = false;
+	for (int i = 0; i < play_Character.size(); i++)
+	{
+		play_Character[i].Rest = false;
+		if (Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] == 3 && no_monster == true) {
+			Map.Game_Map[play_Character[i].position.y][play_Character[i].position.x] = 1;
+			open_Door = true;
+		}
+	}
+	//等所有門都開完再重新探視野
 
+	if (open_Door == true)
+	{
+		for (int i = 0; i < play_Character.size(); i++)
+		{
+			Map.check_road(play_Character[i].position.x, play_Character[i].position.y);
+		}
+		Map.print_Map_UI(play_Character, Monster);
+	}
+
+	for (int i = 0; i < Monster.size(); i++)
+	{
+		for (int j = 0; j < Monster[i].Creature_List.size(); j++)
+		{
+			int x = Monster[i].Creature_List[j].position.x;
+			int y = Monster[i].Creature_List[j].position.y;
+			if (Map.Game_Map[y][x] == 1)
+			{
+				Monster[i].Creature_List[j].active = true;
+			}
+		}
+	}
 }
 char keyBoard(char input) 
 {
