@@ -15,10 +15,10 @@ void main(int argc, char* argv[])
 
 
 	/*====測試時使用====*/
-	File_Character.open("character3.txt", ios::in);
-	File_Monster.open("monster3.txt", ios::in);
-	cout << "請輸入遊玩模式(0:正常Mode 1:Debug Mode 2:GUI Mode):";
-	std::cin >> DEBUG_MODE;
+	/*File_Character.open("character3.txt", ios::in);
+	File_Monster.open("monster3.txt", ios::in);*/
+	//cout << "請輸入遊玩模式(0:正常Mode 1:Debug Mode 2:GUI Mode):";
+	//std::cin >> DEBUG_MODE;
 	system("cls");
 
 
