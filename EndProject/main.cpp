@@ -2,7 +2,7 @@
 
 void main(int argc, char* argv[])
 {	
-	//ConsoleFullScreen();
+	ConsoleFullScreen();
 	fstream File_Character, File_Monster, File_Map;
 	int DEBUG_MODE = 0;		//0:未開啟	1:開啟	2:UI_Mode
 	
@@ -18,6 +18,7 @@ void main(int argc, char* argv[])
 	File_Character.open("character3.txt", ios::in);
 	File_Monster.open("monster3.txt", ios::in);
 	cout << "請選擇模式 ( 0：基本輸出版 | 1：DebugMode | 2：UI模式) ：";
+	cout << "請輸入遊玩模式(0:正常Mode 1:Debug Mode 2:GUI Mode):";
 	std::cin >> DEBUG_MODE;
 	system("cls");
 
@@ -30,6 +31,7 @@ void main(int argc, char* argv[])
 		Main_Game(File_Character, File_Monster, File_Map, DEBUG_MODE);
 		break;
 	case 2:
+		ConsoleFullScreen();
 		Main_Game_UI(File_Character, File_Monster, File_Map);
 		break;
 	}
