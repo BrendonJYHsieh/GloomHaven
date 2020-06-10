@@ -9,6 +9,13 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 
 	read_Character_Data(File_Character, Base_Character);	//Character讀檔
 	read_Monster_Data(File_Monster, Monster);			//Monster讀檔
+	string start;
+	do {
+		cout << "請輸入play以開始遊戲，或是輸入exit退出：";
+		std::cin >> start;
+	} while (start != "play" && start != "exit");
+	if (start == "exit")
+		return;
 	while (1) 
 	{
 		Map GameMap; //所有Map
@@ -33,9 +40,9 @@ void Main_Game(fstream& File_Character,fstream& File_Monster,fstream& File_Map, 
 		GameMap.~Map();
 		string again;
 		do {
-			cout << "是否選擇再遊玩一次？(y/exit)";
+			cout << "是否選擇再遊玩一次？(play/exit)";
 			std::cin >> again;
-		} while (again != "y" && again != "Y" && again != "exit");
+		} while (again != "play" && again != "exit");
 		if (again == "exit")
 			break;
 	}
@@ -428,6 +435,8 @@ void main_Battle(vector<Character>& play_Character, vector<Ethnicity>& Monster, 
 				{
 					if(Monster[attack_Sort[i]-'a'].Creature_List[k].active == true)
 						monsters_round(play_Character, Monster[attack_Sort[i] - 'a'], Monster[attack_Sort[i] - 'a'].Creature_List[k], Game_Map,Monster,attack_Sort);
+					if(DEBUG_MODE == 0)
+						_getch();
 				}
 			}
 		}
@@ -683,6 +692,7 @@ void players_round(vector<Character>& play_Character, Character& Character, vect
 			else {
 			cout << "Please Enter Right Command" << endl;
 			}	
+			cout << "請輸入動作指令:";
 		}	
 	}
 	else
@@ -1698,7 +1708,7 @@ void Main_Game_UI(fstream& File_Character, fstream& File_Monster, fstream& File_
 //開始介面  回傳值 = 0:開始遊戲 ，回傳值 = 1:結束遊戲
 int Project_Start_UI() 
 {
-	cout << "    GloomHaven   " << endl << endl;
+	cout << "    GloomHaven		by B10815044謝鈞曜、B10815058卜啟皓" << endl << endl;
 	cout << "=================" << endl;
 	cout << "=      "; SetColor(240); cout << "開始"; SetColor(7);cout << "     =" << endl;
 	cout << "=      離開     =" << endl;
@@ -1725,6 +1735,7 @@ int Project_Start_UI()
 		{
 		case 'W':
 		case 'w':
+		case 72:
 			if (mode == 0) 
 				mode = 1;
 			else 
@@ -1732,6 +1743,7 @@ int Project_Start_UI()
 			break;
 		case 'S':
 		case 's':
+		case 80:
 			if (mode == 1)
 				mode = 0;
 			else
@@ -2404,7 +2416,12 @@ void main_Battle_UI(vector<Character>& play_Character, vector<Ethnicity>& Monste
 										int clean = game_Massage(play_Character, Monster, Game_Map, game_Massage_string);
 										cout << endl;
 										setPrintPosition(0, Game_Map.High + 12 + clean + 2);
-										system("pause");
+										cout << "※按下Enter鍵返回";
+										while (1) 
+										{
+											if (keyBoard(_getch()) == 13)
+												break;
+										}
 										setPrintPosition(0, Game_Map.High + 12);
 										for (int i = 0; i < clean + 4; i++)
 										{
@@ -2735,7 +2752,7 @@ void check_hand_UI(vector<Character>& play_Character,int character,int printPoin
 		setPrintPosition(i * 5, printPoint + 3);	cout << "╚══╝";
 	}
 	SetColor(7); setPrintPosition(0, printPoint + 7);	cout << "※卡片狀態：	白色->手上	紅色->棄牌區	灰色->場外" << endl;
-	cout << "※按下Enter鍵返回";
+	cout << endl << "※按下Enter鍵返回";
 	bool checkComplete = false;
 	int nowCard = 0, card = 1;
 	setPrintPosition(0, 49);
@@ -3655,7 +3672,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3695,7 +3712,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3738,7 +3755,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3778,7 +3795,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3820,7 +3837,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3860,7 +3877,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3902,7 +3919,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3942,7 +3959,7 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 							cout << "∩";
 						}
 						else
-							cout << "□";
+							cout << "  ";
 					}
 					else
 					{
@@ -3985,6 +4002,8 @@ void character_move_UI(Character& C, int step, Map& Game_Map, vector<Character> 
 					{
 						SetColor(10);	cout << "p" << play_Character[samePositionCharacter(stephistory[i].x, stephistory[i].y, C, play_Character)].ID;
 					}
+					setPrintPosition(0, 49);
+					Sleep(100);
 				}
 			}
 
@@ -4331,18 +4350,22 @@ char keyBoard(char input)
 	{
 	case 'w':
 	case 'W':
+	case 72:
 		return 'w';
 		break;
 	case 'a':
 	case 'A':
+	case 75:
 		return 'a';
 		break;
 	case 's':
 	case 'S':
+	case 80:
 		return 's';
 		break;
 	case 'd':
 	case 'D':
+	case 77:
 		return 'd';
 		break;
 	case 13:
